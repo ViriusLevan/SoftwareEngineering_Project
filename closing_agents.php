@@ -9,7 +9,7 @@
         <?php
         	include('session.php');
 
-            $idSQL = "SELECT agent_has_closing.Agent_ID, Percentage, PhoneNumber 
+            $idSQL = "SELECT Agent.Name, Percentage, PhoneNumber 
                       from Agent_has_closing, Agent 
                       where Agent.Agent_ID = agent_has_closing.Agent_ID
                       AND Closing_ID = 2";//YOU KNOW WHAT TO DO
@@ -19,7 +19,7 @@
             // output data of each row
               while($agentRow = $idResults->fetch_assoc()) { 
                 // output data of each row
-                echo "ID: " . $agentRow["Agent_ID"]. "<br>"; 
+                echo "Name: " . $agentRow["Name"]. "<br>"; 
                 echo "Percentage: " . $agentRow["Percentage"]. "<br>"; 
                 echo "Phone: " . $agentRow["PhoneNumber"]. "<br>";
                 echo "-------------<br>";
