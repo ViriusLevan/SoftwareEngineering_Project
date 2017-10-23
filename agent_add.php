@@ -6,7 +6,7 @@
 include('session.php');
 ?>
 
-	<h1>Add Branch</h1>
+	<h1>Add Agent</h1>
 	<form method="post" action="<?php echo htmlspecialchars($_SERVER['PHP_SELF']);?>">
 		
 		Name: <input type="text" name="name" required><br>
@@ -91,8 +91,6 @@ include('session.php');
 		    	die("Connection failed: " . mysqli_connect_error());
 			}
 			else{
-					$stmt = $db->prepare("INSERT INTO branch (President_ID, VicePresident_ID, Name, status)
-							VALUES (?, ?, ?, ?, 1)");
 					$stmt = $db->prepare("
 						INSERT INTO agent (Branch_ID, Name, ImmediateUpline_ID, Status, PhoneNumber, Password) 
 						VALUES (?,?,?,1,?,?)");
