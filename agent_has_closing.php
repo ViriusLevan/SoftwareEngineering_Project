@@ -20,7 +20,7 @@
                 if ($closingResults->num_rows > 0) {
                 // output data of each row
                   while($closingRow = $closingResults->fetch_assoc()) {
-                    echo "ID: " . $closingRow["Closing_ID"]. "<br>"; 
+                    echo "ID: " . $closingRow["closing_ID"]. "<br>"; 
                     echo "Date: " . $closingRow["Date"]. "<br>";
                     echo "Price: " . $closingRow["Price"]. "<br>"; 
                     echo "Address: " . $closingRow["Address"]. "<br>";

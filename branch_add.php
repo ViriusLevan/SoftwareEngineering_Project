@@ -49,11 +49,7 @@ include('session.php');
 
 
 <?php
-	echo "<h2>Your Input:</h2>";
-	if(isset($name))echo $name. "<br>";  
-	if(isset($PresidentID))echo $PresidentID. "<br>";  
-	if(isset($VicePresidentID))echo $VicePresidentID. "<br>";  
-	echo "<br>";
+	
 
 
 	$name = $PresidentID = $VicePresidentID = "";
@@ -61,6 +57,12 @@ include('session.php');
 		$name = test_input($_POST["name"]);
 		$PresidentID = test_input($_POST["PresidentID"]);
 		$VicePresidentID = test_input($_POST["VicePresidentID"]);
+
+		echo "<h2>Your Input:</h2>";
+		if(isset($name))echo $name. "<br>";  
+		if(isset($PresidentID))echo $PresidentID. "<br>";  
+		if(isset($VicePresidentID))echo $VicePresidentID. "<br>";  
+		echo "<br>";
 
 	  	$check = $db->prepare("SELECT Branch_ID FROM branch where status = 1 AND name = ?");
 		$check->bind_param('s', $field1);
