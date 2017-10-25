@@ -13,19 +13,19 @@ include('session.php');
 		Date : <input type="date" name="date" required><br>
 		Price : <input type="number" name="price" required><br>
 		Number of Agents : 
-		<select name="nAgents">
+		<select name="nAgents" id="nAgents">
 			<option value="1">1</option>
 			<option value="2">2</option>
 			<option value="3">3</option>
 			<option value="4">4</option>
 		</select>
 		<!-- JAVASCRIPT NEEDED -->
-		Agent 1
+		Agent 1 (Main Agent)
 		<?php
 			$agentSQL = "SELECT agent.Name, agent.Agent_ID from agent where status=1";
 		    $agentResult = mysqli_query($db, $agentSQL);
 		    if ($agentResult->num_rows > 0) {
-		    	echo "<select name='agent1ID'>";
+		    	echo "<select name='agent1ID' id='agent1Select'>";
 			    while($agentRow = $agentResult->fetch_assoc()) {
 			        echo "<option value=".$agentRow["Agent_ID"]."> ". $agentRow["Name"] ." </option>"; 
 			    }
@@ -35,16 +35,93 @@ include('session.php');
 		    	echo "No agents to assign to <br>";
 			}
 		?>
+
+		Agent 2
+		<?php
+			$agentSQL = "SELECT agent.Name, agent.Agent_ID from agent where status=1";
+		    $agentResult = mysqli_query($db, $agentSQL);
+		    if ($agentResult->num_rows > 0) {
+		    	echo "<select name='agent2ID' id='agent2Select'>";
+			    while($agentRow = $agentResult->fetch_assoc()) {
+			        echo "<option value=".$agentRow["Agent_ID"]."> ". $agentRow["Name"] ." </option>"; 
+			    }
+			    echo "</select> <br>";
+			}     
+			else {
+		    	echo "No agents to assign to <br>";
+			}
+		?>
+
+		Agent 3
+		<?php
+			$agentSQL = "SELECT agent.Name, agent.Agent_ID from agent where status=1";
+		    $agentResult = mysqli_query($db, $agentSQL);
+		    if ($agentResult->num_rows > 0) {
+		    	echo "<select name='agent3ID' id='agent3Select'>";
+			    while($agentRow = $agentResult->fetch_assoc()) {
+			        echo "<option value=".$agentRow["Agent_ID"]."> ". $agentRow["Name"] ." </option>"; 
+			    }
+			    echo "</select> <br>";
+			}     
+			else {
+		    	echo "No agents to assign to <br>";
+			}
+		?>
+
+		Agent 4
+		<?php
+			$agentSQL = "SELECT agent.Name, agent.Agent_ID from agent where status=1";
+		    $agentResult = mysqli_query($db, $agentSQL);
+		    if ($agentResult->num_rows > 0) {
+		    	echo "<select name='agent4ID' id='agent4Select'>";
+			    while($agentRow = $agentResult->fetch_assoc()) {
+			        echo "<option value=".$agentRow["Agent_ID"]."> ". $agentRow["Name"] ." </option>"; 
+			    }
+			    echo "</select> <br>";
+			}     
+			else {
+		    	echo "No agents to assign to <br>";
+			}
+		?>
+
 		<!-- JAVASCRIPT NEEDED -->
 
 		<input type="submit" name="submit" value="Submit">
 	</form>
 
+	<script type="text/javascript">
+	function agentOptions(){
+		var n = document.getElementById("nAgents");
+		var strN = n.options[n.selectedIndex].value;
+// Agent Select disabling
+// probably needs improvement
+		if(n == 1){
+			document.getElementById("agent2Select").disabled = true;
+			document.getElementById("agent3Select").disabled = true;
+			document.getElementById("agent4Select").disabled = true;
+		}
+		if(n==2){
+			document.getElementById("agent2Select").disabled = false;
+			document.getElementById("agent3Select").disabled = true;
+			document.getElementById("agent4Select").disabled = true;
+		}if(n==3){
+			document.getElementById("agent2Select").disabled = false;
+			document.getElementById("agent3Select").disabled = false;
+			document.getElementById("agent4Select").disabled = true;
+		}
+		if(n==4){
+			document.getElementById("agent2Select").disabled = false;
+			document.getElementById("agent3Select").disabled = false;
+			document.getElementById("agent4Select").disabled = false;
+		}
+	}
+	</script>
+
 
 <?php
 	
 
-	$name = $phone = $UplineID = $BranchID = "";
+	$address = $date = $price = $nAgents = $agent1ID = "";
 	$password = $passwordCon = "";
 	if ($_SERVER["REQUEST_METHOD"] == "POST") {
 		$address = test_input($_POST["address"]);
@@ -52,7 +129,9 @@ include('session.php');
 		$price = test_input($_POST["price"]);
 		$nAgents = test_input($_POST["nAgents"]);
 		$agent1ID = test_input($_POST["agent1ID"]);
-		// $passwordCon = test_input($_POST["passwordCon"]);
+		$agent1ID = test_input($_POST["agent2ID"]);
+		$agent1ID = test_input($_POST["agent3ID"]);
+		$agent1ID = test_input($_POST["agent4ID"]);
 
 		$agents = [];
 
@@ -66,15 +145,15 @@ include('session.php');
 			$agents = $agent1ID;
 		}
 		if(isset($agent2ID)){
-			echo $agent1ID. "<br>";
+			echo $agent2ID. "<br>";
 			$agents = $agent2ID;
 		}
 		if(isset($agent3ID)){
-			echo $agent1ID. "<br>";
+			echo $agent3ID. "<br>";
 			$agents = $agent3ID;
 		}
 		if(isset($agent4ID)){
-			echo $agent1ID. "<br>";
+			echo $agent4ID. "<br>";
 			$agents = $agent4ID;
 		} 
 		echo "<br>";
@@ -101,41 +180,188 @@ include('session.php');
 				$field2 = $price;
 				$field3 = $address;
 
-				if ($stmt->execute()) {
+				if ($stmt->execute()) {//Closing Creation
 					$stmt->close();
 				    echo "New closing created successfully";
 
 				    //sql to get closing_id
+				    $lselect = "SELECT LAST_INSERT_ID();"
+				    $cID = mysqli_query($db, $agentSQL);
 
+				    $p = 0;
 				    if($nAgents == 1){
 				    	$p = 100;
 				    }else if($nAgents == 2){
 				    	$p = 50;
-				    }else if($nAgents == 3){
-				    	$p = 25;
-				    }else {
+				    }else{//3 & 4 agents
 				    	$p = 25;
 				    }
 
-				    for ($i = 0; $i < $nAgents; $i++) {
+				    for ($i = 0; $i < $nAgents; $i++) {//agent_involved_in_closing Creation primary level
 					    echo $i;
 					    $stmti = $db->prepare("
-					    INSERT INTO `agent_has_closing`(`Agent_ID`, `Closing_ID`, `Percentage`) 
-					    VALUES (?,?,?)");
-	    				$stmti->bind_param('iii', $field1, $field2, $field3);
-	    				if($i == 0 && $nAgents == 3){
-		    				$f1 = $agents[$i];
-							$f3 = $p;
-	    				}else{
-		    				$f1 = $agents[$i];
-							$f3 = $p;
+					    INSERT INTO `agent_involved_in_closing`(`Agent_ID`, `Closing_ID`, `earning`, `workedAs`) 
+					    VALUES (?,?,?,?)");
+	    				$stmti->bind_param('iidi', $f1, $f2, $f3, $f4);
+	    				
+	    				$f1 = $agents[$i];
+						$f2 = $cID;
+	    				if($nAgents == 3){
+	    					if($i == 0){
+	    						$p == 50;
+	    					}else{
+	    						$p == 25;
+	    					}
 	    				}
 
-						$f2 = $;//closing id
+						$f3 = $p*$price/100;
+						$f4 = 6*$i + 1;
 
 						if($stmti->execute()){
 							$stmti->close();
-						    echo "Agent has closing created successfully";
+						    echo "Agent Involved In Closing (Agent) created successfully";
+
+						    //Agent Involved In Closing secondary level
+						    $cAgentSQL = 
+							    "SELECT branch.President_ID,branch.VicePresident_ID, agent.ImmediateUpline_ID 
+									FROM branch,agent 
+									WHERE branch.branch_id = agent.Branch_ID 
+										AND agent.Agent_ID " .$Agents[$i];
+		    				$cAgentResult = mysqli_query($db, $cAgentSQL);
+		    				$cAgentRow = $cAgentResult->fetch_assoc();
+
+						    //President & Vice President
+		    				$PresidentID  = $cAgentRow["President_ID"];
+		    				$VicePresidentID  = $cAgentRow["VicePresident_ID"];
+		    				$ImmediateUplineID = $cAgentRow["ImmediateUpline_ID"];
+
+		    				if($PresidentID != null){
+								$cPresPSQL = //Current President Percentage
+								    "SELECT Percentage FROM `paypercentages` WHERE JobName = 'President'";
+			    				$cPresPResult = mysqli_query($db, $cPresPSQL);
+			    				$cPresPRow = $cAgentResult->fetch_assoc();
+			    				$cPresP = $cPresPRow["Percentage"];
+
+								$stmtis = $db->prepare("
+								    INSERT INTO `agent_involved_in_closing`(`Agent_ID`, `Closing_ID`, `earning`, `workedAs`) 
+								    VALUES (?,?,?,?)");
+			    				$stmtis->bind_param('iidi', $f1, $f2, $f3, $f4);
+			    				$f1 = $PresidentID;
+			    				$f2 = $cID;
+			    				$f3 = $price * $p * $cPresP / 100;
+			    				$f4 = 6*$i + 2;
+			    				if($stmtis->execute()){
+								$stmtis->close();
+							    	echo "Agent Involved In Closing (president) created successfully";
+								}else{
+									$stmtis->close();
+									echo "Error: <br>" . mysqli_error($db);
+								}
+		    				}
+		    				if($VicePresidentID != null){
+		    					$cVPPSQL = //Current Vice President Percentage
+							    	"SELECT Percentage FROM `paypercentages` WHERE JobName = 'President'";
+			    				$cVPPResult = mysqli_query($db, $cVPPSQL);
+			    				$cVPPRow = $cAgentResult->fetch_assoc();
+			    				$cVPP = $cPresPRow["Percentage"];
+
+		    					$stmtis = $db->prepare("
+								    INSERT INTO `agent_involved_in_closing`(`Agent_ID`, `Closing_ID`, `earning`, `workedAs`) 
+								    VALUES (?,?,?,?)");
+			    				$stmtis->bind_param('iidi', $f1, $f2, $f3, $f4);
+			    				$f1 = $VicePresidentID;
+			    				$f2 = $cID;
+			    				$f3 = $price * $p * $cVPP / 100;
+			    				$f4 = 6*$i + 3;
+			    				if($stmtis->execute()){
+								$stmtis->close();
+							    	echo "Agent Involved In Closing (vice president) created successfully";
+								}else{
+									$stmtis->close();
+									echo "Error: <br>" . mysqli_error($db);
+								}
+		    				}
+
+		    				//Uplines
+		    				
+		    				if($ImmediateUplineID != null){//Upline 1
+		    					if($ImmediateUplineID != $PresidentID 
+		    						&& $ImmediateUplineID != $VicePresidentID){//Insert Agent Involved In Closing
+
+		    						$stmtis = $db->prepare("
+									    INSERT INTO `agent_involved_in_closing`(`Agent_ID`, `Closing_ID`, `earning`, `workedAs`) 
+									    VALUES (?,?,?,?)");
+				    				$stmtis->bind_param('iidi', $f1, $f2, $f3, $f4);
+				    				$f1 = $ImmediateUplineID;
+				    				$f2 = $cID;
+				    				$f3 = $price * $p * 7 / 100;
+				    				$f4 = 6*$i + 4;
+				    				if($stmtis->execute()){
+									$stmtis->close();
+								    	echo "Agent Involved In Closing (upline 1) created successfully";
+									}else{
+										$stmtis->close();
+										echo "Error: <br>" . mysqli_error($db);
+									}
+		    					}
+		    					//continue for 2nd upline
+		    					$UP2IDSQL = //Upline 2 ID
+							    	"SELECT ImmediateUpline_ID FROM agent WHERE Agent_ID=" . $ImmediateUplineID;
+			    				$UP2IDResult = mysqli_query($db, $UP2IDSQL);
+			    				$UP2IDRow = $UP2IDResult->fetch_assoc();
+			    				$UP2ID = $UP2IDRow["ImmediateUplineID"];
+
+			    				if($UP2ID != null){
+			    					if($UP2ID != $PresidentID 
+		    							&& $UP2ID != $VicePresidentID){
+			    						$stmtis2 = $db->prepare("
+										    INSERT INTO `agent_involved_in_closing`(`Agent_ID`, `Closing_ID`, `earning`, `workedAs`) 
+										    VALUES (?,?,?,?)");
+					    				$stmtis2->bind_param('iidi', $f1, $f2, $f3, $f4);
+					    				$f1 = $UP2ID;
+					    				$f2 = $cID;
+					    				$f3 = $price * $p * 2 / 100;
+					    				$f4 = 6*$i + 5;
+					    				if($stmtis2->execute()){
+										$stmtis2->close();
+									    	echo "Agent Involved In Closing (upline 2) created successfully";
+										}else{
+											$stmtis2->close();
+											echo "Error: <br>" . mysqli_error($db);
+										}
+		    						}
+		    						//continue for 3rd upline
+									$UP3IDSQL = //Upline 2 ID
+								    	"SELECT ImmediateUpline_ID FROM agent WHERE Agent_ID=" . $UP2ID;
+				    				$UP3IDResult = mysqli_query($db, $UP3IDSQL);
+				    				$UP3IDRow = $UP3IDResult->fetch_assoc();
+				    				$UP3ID = $UP3IDRow["ImmediateUplineID"];
+
+				    				if($UP3ID != null){
+				    					if($UP3ID != $PresidentID 
+		    								&& $UP3ID != $VicePresidentID){
+				    						$stmtis3 = $db->prepare("
+											    INSERT INTO `agent_involved_in_closing`(`Agent_ID`, `Closing_ID`, `earning`, `workedAs`) 
+											    VALUES (?,?,?,?)");
+						    				$stmtis3->bind_param('iidi', $f1, $f2, $f3, $f4);
+						    				$f1 = $UP3ID;
+						    				$f2 = $cID;
+						    				$f3 = $price * $p * 1 / 100;
+						    				$f4 = 6*$i + 6;
+						    				if($stmtis3->execute()){
+											$stmtis3->close();
+										    	echo "Agent Involved In Closing (upline 3) created successfully";
+											}else{
+												$stmtis3->close();
+												echo "Error: <br>" . mysqli_error($db);
+											}
+
+		    							}
+				    				}
+			    				}
+		    				}
+
+
 						}else{
 							$stmti->close();
 							echo "Error: <br>" . mysqli_error($db);
