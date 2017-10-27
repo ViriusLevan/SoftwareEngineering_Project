@@ -9,7 +9,7 @@
         <?php
         	include('session.php');
 
-            $idSQL = "SELECT Closing_ID from Agent_has_closing where Agent_ID = 1";//YOU KNOW WHAT TO DO
+            $idSQL = "SELECT Closing_ID from Agent_involved_in_closing where Agent_ID = 1";//YOU KNOW WHAT TO DO
             $idResults = mysqli_query($db,$idSQL);
 
             if ($idResults->num_rows > 0) {

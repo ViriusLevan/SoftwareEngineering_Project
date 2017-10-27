@@ -8,9 +8,19 @@
       <p>
         <?php
         	include('session.php');
-          include_once('class_agent.php');
-          	
-          $a = new Agent(1, 1, "John", "0123456789", NULL);
+          require('class_agent.php');
+          
+          $row = $_GET["id"];
+
+          $AgentSQL =
+                "SELECT * FROM agent WHERE Agent_ID=" . $row;
+          $AgentResult = mysqli_query($db, $AgentSQL);
+          $AgentRow = $AgentResult->fetch_assoc();
+
+          $a = new Agent($AgentRow["Agent_ID"], $AgentRow["Branch_ID"], 
+            $AgentRow["Name"], $AgentRow["PhoneNumber"], $AgentRow["ImmediateUpline_ID"]);
+          
+          $a->printDetails();
           $a->getDownline($db);
 
         ?>

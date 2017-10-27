@@ -3,7 +3,7 @@
 -- https://www.phpmyadmin.net/
 --
 -- Host: 127.0.0.1
--- Generation Time: Oct 25, 2017 at 02:49 PM
+-- Generation Time: Oct 27, 2017 at 06:43 AM
 -- Server version: 10.1.21-MariaDB
 -- PHP Version: 7.1.1
 
@@ -51,18 +51,17 @@ CREATE TABLE `agent` (
   `Name` varchar(150) NOT NULL,
   `ImmediateUpline_ID` int(11) DEFAULT NULL,
   `Status` tinyint(4) NOT NULL,
-  `PhoneNumber` varchar(30) NOT NULL,
-  `Password` varchar(50) NOT NULL
+  `PhoneNumber` varchar(30) NOT NULL
 ) ENGINE=InnoDB DEFAULT CHARSET=latin1;
 
 --
 -- Dumping data for table `agent`
 --
 
-INSERT INTO `agent` (`Agent_ID`, `Branch_ID`, `Name`, `ImmediateUpline_ID`, `Status`, `PhoneNumber`, `Password`) VALUES
-(1, 1, 'John', NULL, 1, '0123456789', 'cheese'),
-(2, 1, 'Jane', 1, 1, '0025134', 'meat'),
-(3, 1, 'Dude', NULL, 1, '01234', 'FFF');
+INSERT INTO `agent` (`Agent_ID`, `Branch_ID`, `Name`, `ImmediateUpline_ID`, `Status`, `PhoneNumber`) VALUES
+(1, 1, 'John', NULL, 1, '0123456789'),
+(2, 1, 'Jane', 1, 1, '0025134'),
+(3, 1, 'Dude', NULL, 1, '01234');
 
 -- --------------------------------------------------------
 
@@ -131,14 +130,6 @@ CREATE TABLE `closing` (
   `Price` double NOT NULL,
   `Address` varchar(200) NOT NULL
 ) ENGINE=InnoDB DEFAULT CHARSET=latin1;
-
---
--- Dumping data for table `closing`
---
-
-INSERT INTO `closing` (`closing_ID`, `Date`, `Price`, `Address`) VALUES
-(1, '2015-07-04', 1000000, 'Burma'),
-(2, '2017-10-21', 999999999, 'Dubai');
 
 -- --------------------------------------------------------
 
@@ -253,7 +244,7 @@ ALTER TABLE `agent_has_downline`
 --
 ALTER TABLE `agent_involved_in_closing`
   ADD CONSTRAINT `fk_Agent_Has_Closing_Agent_ID` FOREIGN KEY (`Agent_ID`) REFERENCES `agent` (`Agent_ID`),
-  ADD CONSTRAINT `fk_Agent_Has_Closing_Closing_ID` FOREIGN KEY (`Closing_ID`) REFERENCES `closing` (`Closing_ID`);
+  ADD CONSTRAINT `fk_Agent_Has_Closing_Closing_ID` FOREIGN KEY (`Closing_ID`) REFERENCES `closing` (`closing_ID`);
 
 --
 -- Constraints for table `branch`
