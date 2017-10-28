@@ -1,5 +1,5 @@
 <html>
-	<body>
+	<body onload="agentOptions(1)">
 
 
 <?php
@@ -11,22 +11,22 @@ include('session.php');
 		
 		Address: <input type="text" name="address" required><br>
 		Date : <input type="date" name="date" required><br>
-		Price : <input type="number" name="price" required><br>
+		Price : <input type="number" name="price" min=100000.00 step="any" required><br>
 		Number of Agents : 
 		<select name="nAgents" id="nAgents" onchange="agentOptions(this.value)">
 			<option value="1">1</option>
 			<option value="2">2</option>
 			<option value="3">3</option>
 			<option value="4">4</option>
-		</select>
+		</select><br>
 		<!-- JAVASCRIPT NEEDED -->
 		Agent 1 (Main Agent)
 		<?php
-			$agentSQL = "SELECT agent.Name, agent.Agent_ID from agent where status=1";
+			$agentSQL = "SELECT agent.Name, agent.Agent_ID from agent where status=1 AND Agent_ID != 0";
 		    $agentResult = mysqli_query($db, $agentSQL);
 		    if ($agentResult->num_rows > 0) {
 		    	echo "<select name='agent1ID' id='agent1Select' 
-		    		onchange='agentOptions()' class='agentSelection' >";
+		    		onchange='optionDisabling()' class='agentSelection' required>";
 			    while($agentRow = $agentResult->fetch_assoc()) {
 			        echo "<option value=".$agentRow["Agent_ID"]."> ". $agentRow["Name"] ." </option>"; 
 			    }
@@ -39,11 +39,11 @@ include('session.php');
 
 		Agent 2
 		<?php
-			$agentSQL = "SELECT agent.Name, agent.Agent_ID from agent where status=1";
+			$agentSQL = "SELECT agent.Name, agent.Agent_ID from agent where status=1 AND Agent_ID != 0";
 		    $agentResult = mysqli_query($db, $agentSQL);
 		    if ($agentResult->num_rows > 0) {
 		    	echo "<select name='agent2ID' id='agent2Select' 
-		    		onchange='agentOptions()' class='agentSelection'>";
+		    		onchange='optionDisabling()' class='agentSelection' required>";
 			    while($agentRow = $agentResult->fetch_assoc()) {
 			        echo "<option value=".$agentRow["Agent_ID"]."> ". $agentRow["Name"] ." </option>"; 
 			    }
@@ -56,11 +56,11 @@ include('session.php');
 
 		Agent 3
 		<?php
-			$agentSQL = "SELECT agent.Name, agent.Agent_ID from agent where status=1";
+			$agentSQL = "SELECT agent.Name, agent.Agent_ID from agent where status=1 AND Agent_ID != 0";
 		    $agentResult = mysqli_query($db, $agentSQL);
 		    if ($agentResult->num_rows > 0) {
 		    	echo "<select name='agent3ID' id='agent3Select' 
-		    		onchange='agentOptions()' class='agentSelection'>";
+		    		onchange='optionDisabling()' class='agentSelection' required>";
 			    while($agentRow = $agentResult->fetch_assoc()) {
 			        echo "<option value=".$agentRow["Agent_ID"]."> ". $agentRow["Name"] ." </option>"; 
 			    }
@@ -73,11 +73,11 @@ include('session.php');
 
 		Agent 4
 		<?php
-			$agentSQL = "SELECT agent.Name, agent.Agent_ID from agent where status=1";
+			$agentSQL = "SELECT agent.Name, agent.Agent_ID from agent where status=1 AND Agent_ID != 0";
 		    $agentResult = mysqli_query($db, $agentSQL);
 		    if ($agentResult->num_rows > 0) {
 		    	echo "<select name='agent4ID' id='agent4Select' 
-		    		onchange='agentOptions()' class='agentSelection'>";
+		    		onchange='optionDisabling()' class='agentSelection' required>";
 			    while($agentRow = $agentResult->fetch_assoc()) {
 			        echo "<option value=".$agentRow["Agent_ID"]."> ". $agentRow["Name"] ." </option>"; 
 			    }
@@ -116,6 +116,7 @@ include('session.php');
 			document.getElementById("agent3Select").disabled = false;
 			document.getElementById("agent4Select").disabled = false;
 		}
+		optionDisabling();
 	}
 
 	function optionDisabling(){
@@ -131,12 +132,12 @@ include('session.php');
 			for (var j = 0; j < opt.length; j++) {
 				if(selections.indexOf(opt[j].value) == -1){
 				//not found on selections
-					opt[j].disabled = true;
-				}else if(opt[j].value != select[i].options[select[i].selectedIndex].value){
-				//not the currently selected option
-					opt[j].disabled = true; 
-				}else{
 					opt[j].disabled = false;
+				}else if(opt[j].value == select[i].options[select[i].selectedIndex].value){
+				//the currently selected option
+					opt[j].disabled = false; 
+				}else{//Found on selection and not the currently selected option
+					opt[j].disabled = true;
 				}
 			}
 		}
@@ -155,9 +156,9 @@ include('session.php');
 		$price = test_input($_POST["price"]);
 		$nAgents = test_input($_POST["nAgents"]);
 		$agent1ID = test_input($_POST["agent1ID"]);
-		$agent1ID = test_input($_POST["agent2ID"]);
-		$agent1ID = test_input($_POST["agent3ID"]);
-		$agent1ID = test_input($_POST["agent4ID"]);
+		if($nAgents>1)$agent2ID = test_input($_POST["agent2ID"]);
+		if($nAgents>2)$agent3ID = test_input($_POST["agent3ID"]);
+		if($nAgents>3)$agent4ID = test_input($_POST["agent4ID"]);
 
 		$agents = [];
 
@@ -168,247 +169,228 @@ include('session.php');
 		if(isset($nAgents))echo $nAgents. "<br>";
 		if(isset($agent1ID)){
 			echo $agent1ID. "<br>";
-			$agents = $agent1ID;
+			$agents[] = $agent1ID;
 		}
 		if(isset($agent2ID)){
 			echo $agent2ID. "<br>";
-			$agents = $agent2ID;
+			$agents[] = $agent2ID;
 		}
 		if(isset($agent3ID)){
 			echo $agent3ID. "<br>";
-			$agents = $agent3ID;
+			$agents[] = $agent3ID;
 		}
 		if(isset($agent4ID)){
 			echo $agent4ID. "<br>";
-			$agents = $agent4ID;
+			$agents[] = $agent4ID;
 		} 
 		echo "<br>";
 
 
-//ERROR CHECKS
-/*	  	var_dump($passCheck, $password, $passwordCon);
-	  	if($passCheck === 0){//HOW THE FUCK DOES THIS NOT WORK
-	  		$differentPasswords = true;
-	  		echo "The passwords you've entered did not match";
-	  	}*/
+	  	if (!$db) {
+	    	die("Connection failed: " . mysqli_connect_error());
+		}
+		else{
+			$stmt = $db->prepare("
+					INSERT INTO closing (`Date`, `Price`, `Address`) 
+					VALUES (?,?,?)");
+			$stmt->bind_param('sis', $field1, $field2, $field3);
 
-	  	// if(!$differentPasswords){
-		  	if (!$db) {
-		    	die("Connection failed: " . mysqli_connect_error());
-			}
-			else{
-				$stmt = $db->prepare("
-						INSERT INTO closing (`Date`, `Price`, `Address`) 
-						VALUES (?,?,?)");
-				$stmt->bind_param('sis', $field1, $field2, $field3);
+			$field1 = $date;
+			$field2 = $price;
+			$field3 = $address;
 
-				$field1 = $date;
-				$field2 = $price;
-				$field3 = $address;
+			if ($stmt->execute()) {//Closing Creation
+				$stmt->close();
+			    echo "New closing created successfully <br>";
 
-				if ($stmt->execute()) {//Closing Creation
-					$stmt->close();
-				    echo "New closing created successfully";
+			    //sql to get closing_id
+			    $lselect = "SELECT LAST_INSERT_ID()";
+			    $cID =  mysqli_insert_id($db);
 
-				    //sql to get closing_id
-				    $lselect = "SELECT LAST_INSERT_ID();"
-				    $cID = mysqli_query($db, $agentSQL);
+			    $p = 0;
+			    if($nAgents == 1){
+			    	$p = 100;
+			    }else if($nAgents == 2){
+			    	$p = 50;
+			    }else{//3 & 4 agents
+			    	$p = 25;
+			    }
 
-				    $p = 0;
-				    if($nAgents == 1){
-				    	$p = 100;
-				    }else if($nAgents == 2){
-				    	$p = 50;
-				    }else{//3 & 4 agents
-				    	$p = 25;
-				    }
+			    for ($i = 0; $i < $nAgents; $i++) {//Primary involvement insertion
+				    $stmti = $db->prepare("
+				    INSERT INTO `agent_involved_in_closing`(`Agent_ID`, `Closing_ID`, `earning`, `workedAs`) 
+				    VALUES (?,?,?,?)");
+    				$stmti->bind_param('iidi', $f1, $f2, $f3, $f4);
+    				
+    				$f1 = $agents[$i];
+					$f2 = $cID;
+    				if($nAgents == 3){
+    					if($i == 0){
+    						$p == 50;
+    					}else{
+    						$p == 25;
+    					}
+    				}
 
-				    for ($i = 0; $i < $nAgents; $i++) {//Primary involvement insertion
-					    echo $i;
-					    $stmti = $db->prepare("
-					    INSERT INTO `agent_involved_in_closing`(`Agent_ID`, `Closing_ID`, `earning`, `workedAs`) 
-					    VALUES (?,?,?,?)");
-	    				$stmti->bind_param('iidi', $f1, $f2, $f3, $f4);
-	    				
-	    				$f1 = $agents[$i];
-						$f2 = $cID;
-	    				if($nAgents == 3){
-	    					if($i == 0){
-	    						$p == 50;
-	    					}else{
-	    						$p == 25;
-	    					}
+					$f3 = $p*$price/100;
+					$f4 = 6*$i + 1;
+
+					if($stmti->execute()){
+						$stmti->close();
+
+					    echo $i. "Primary Agent Involvement created successfully <br>";
+
+					    //Secondary involvement insertion
+					    $cAgentSQL = 
+						    "SELECT branch.President_ID,branch.VicePresident_ID, agent.ImmediateUpline_ID 
+								FROM branch,agent 
+								WHERE branch.branch_id = agent.Branch_ID 
+									AND agent.Agent_ID = " . $agents[$i];
+	    				$cAgentResult = mysqli_query($db, $cAgentSQL);
+	    				$cAgentRow = $cAgentResult->fetch_assoc();
+
+					    //President & Vice President
+	    				$PresidentID  = $cAgentRow["President_ID"];
+	    				$VicePresidentID  = $cAgentRow["VicePresident_ID"];
+	    				$ImmediateUplineID = $cAgentRow["ImmediateUpline_ID"];
+
+	    				$cPresP = $cVPP = "";
+
+	    				//If there is a president and he's not the primary agent
+	    				if($PresidentID != null && $PresidentID != $agents[$i]){
+							$cPresPSQL = //Current President Percentage
+							    "SELECT Percentage FROM `paypercentages` WHERE JobName = 'President'";
+		    				$cPresPResult = mysqli_query($db, $cPresPSQL);
+		    				$cPresPRow = $cAgentResult->fetch_assoc();
+		    				$cPresP = $cPresPRow["Percentage"];
+
+		    				secondaryInvolvementInsertion(
+			    							$db, $PresidentID, $cID, $price, $p, $cPresP, $i, 2);
 	    				}
 
-						$f3 = $p*$price/100;
-						$f4 = 6*$i + 1;
+	    				//If there is a vice president and he's not the primary agent
+	    				if($VicePresidentID != null && $VicePresidentID != $agents[$i]){
+	    					$cVPPSQL = //Current Vice President Percentage
+						    	"SELECT Percentage FROM `paypercentages` WHERE JobName = 'Vice President'";
+		    				$cVPPResult = mysqli_query($db, $cVPPSQL);
+		    				$cVPPRow = $cAgentResult->fetch_assoc();
+		    				$cVPP = $cPresPRow["Percentage"];
 
-						if($stmti->execute()){
-							$stmti->close();
-						    echo "Primary Agent Involvement created successfully";
+		    				secondaryInvolvementInsertion(
+			    							$db, $VicePresidentID, $cID, $price, $p, $cVPP, $i, 3);
+	    				}
 
-						    //Secondary involvement insertion
-						    $cAgentSQL = 
-							    "SELECT branch.President_ID,branch.VicePresident_ID, agent.ImmediateUpline_ID 
-									FROM branch,agent 
-									WHERE branch.branch_id = agent.Branch_ID 
-										AND agent.Agent_ID " .$Agents[$i];
-		    				$cAgentResult = mysqli_query($db, $cAgentSQL);
-		    				$cAgentRow = $cAgentResult->fetch_assoc();
+	    				//Uplines
+	    				
+	    				if($ImmediateUplineID != null){//Upline 1
+	    					if(in_array($ImmediateUplineID , $agents)){//one of the primary agents involved
+	    						if($ImmediateUplineID == $PresidentID ){//Branch President
+									secondaryInvolvementInsertion(
+				    							$db, 0, $cID, $price, $p, $cPresP, $i, 2);
+								}else if($ImmediateUplineID == $VicePresidentID){//Branch VP
+									secondaryInvolvementInsertion(
+				    							$db, 0, $cID, $price, $p, $cVPP, $i, 3);
+								}else{//Neither branch pres nor VP
+									secondaryInvolvementInsertion(
+			    							$db, 0, $cID, $price, $p, 7, $i, 4);
+								}
 
-						    //President & Vice President
-		    				$PresidentID  = $cAgentRow["President_ID"];
-		    				$VicePresidentID  = $cAgentRow["VicePresident_ID"];
-		    				$ImmediateUplineID = $cAgentRow["ImmediateUpline_ID"];
+	    					}else if($ImmediateUplineID == $PresidentID){//Branch President
+	    						secondaryInvolvementInsertion(
+			    							$db, $ImmediateUplineID, $cID, $price, $p, $cPresP, $i, 2);
+	    					}
+	    					else if($ImmediateUplineID == $VicePresidentID){//Branch VP
+	    						secondaryInvolvementInsertion(
+			    							$db, $ImmediateUplineID, $cID, $price, $p, $cVPP, $i, 3);
+	    					}
+	    					else if($ImmediateUplineID != $PresidentID 
+	    						&& $ImmediateUplineID != $VicePresidentID){
+	    						//Not the pres or vp and not one of the primary agents
+	    						secondaryInvolvementInsertion(
+			    							$db, $ImmediateUplineID, $cID, $price, $p, 7, $i, 4);
+	    					} 
+	    					//continue for 2nd upline
+	    					$UP2IDSQL = //Upline 2 ID
+						    	"SELECT ImmediateUpline_ID FROM agent WHERE Agent_ID=" . $ImmediateUplineID;
+		    				$UP2IDResult = mysqli_query($db, $UP2IDSQL);
+		    				$UP2IDRow = $UP2IDResult->fetch_assoc();
+		    				$UP2ID = $UP2IDRow["ImmediateUpline_ID"];
 
-		    				if($PresidentID != null){
-								$cPresPSQL = //Current President Percentage
-								    "SELECT Percentage FROM `paypercentages` WHERE JobName = 'President'";
-			    				$cPresPResult = mysqli_query($db, $cPresPSQL);
-			    				$cPresPRow = $cAgentResult->fetch_assoc();
-			    				$cPresP = $cPresPRow["Percentage"];
+		    				if($UP2ID != null){
+		    					if(in_array($UP2ID , $agents)){//one of the primary agents involved
+		    						if($UP2ID == $PresidentID ){//Branch President
+										secondaryInvolvementInsertion(
+					    							$db, 0, $cID, $price, $p, $cPresP, $i, 2);
+									}else if($UP2ID == $VicePresidentID){//Branch VP
+										secondaryInvolvementInsertion(
+					    							$db, 0, $cID, $price, $p, $cVPP, $i, 3);
+									}else{//Neither branch pres nor VP
+										secondaryInvolvementInsertion(
+				    							$db, 0, $cID, $price, $p, 2, $i, 4);
+									}
 
-			    				secondaryInvolvementInsertion(
-				    							$db, $PresidentID, $cID, $price, $p, $cPresP, $i, 2);
-								/*$stmtis = $db->prepare("
-								    INSERT INTO `agent_involved_in_closing`(`Agent_ID`, `Closing_ID`, `earning`, `workedAs`) 
-								    VALUES (?,?,?,?)");
-			    				$stmtis->bind_param('iidi', $f1, $f2, $f3, $f4);
-			    				$f1 = $PresidentID;
-			    				$f2 = $cID;
-			    				$f3 = $price * $p * $cPresP / 100;
-			    				$f4 = 6*$i + 2;
-			    				if($stmtis->execute()){
-								$stmtis->close();
-							    	echo "Agent Involved In Closing (president) created successfully";
-								}else{
-									$stmtis->close();
-									echo "Error: <br>" . mysqli_error($db);
-								}*/
-		    				}
-		    				if($VicePresidentID != null){
-		    					$cVPPSQL = //Current Vice President Percentage
-							    	"SELECT Percentage FROM `paypercentages` WHERE JobName = 'Vice President'";
-			    				$cVPPResult = mysqli_query($db, $cVPPSQL);
-			    				$cVPPRow = $cAgentResult->fetch_assoc();
-			    				$cVPP = $cPresPRow["Percentage"];
-
-			    				secondaryInvolvementInsertion(
-				    							$db, $VicePresidentID, $cID, $price, $p, $cVPP, $i, 3);
-		    					/*$stmtis = $db->prepare("
-								    INSERT INTO `agent_involved_in_closing`(`Agent_ID`, `Closing_ID`, `earning`, `workedAs`) 
-								    VALUES (?,?,?,?)");
-			    				$stmtis->bind_param('iidi', $f1, $f2, $f3, $f4);
-			    				$f1 = $VicePresidentID;
-			    				$f2 = $cID;
-			    				$f3 = $price * $p * $cVPP / 100;
-			    				$f4 = 6*$i + 3;
-			    				if($stmtis->execute()){
-								$stmtis->close();
-							    	echo "Agent Involved In Closing (vice president) created successfully";
-								}else{
-									$stmtis->close();
-									echo "Error: <br>" . mysqli_error($db);
-								}*/
-		    				}
-
-		    				//Uplines
-		    				
-		    				if($ImmediateUplineID != null){//Upline 1
-		    					if($ImmediateUplineID != $PresidentID 
-		    						&& $ImmediateUplineID != $VicePresidentID){//Insert Agent Involved In Closing
+		    					}else if($UP2ID == $PresidentID){//Branch President
 		    						secondaryInvolvementInsertion(
-				    							$db, $ImmediateUplineID, $cID, $price, $p, 7, $i, 4);
-		    						/*$stmtis = $db->prepare("
-									    INSERT INTO `agent_involved_in_closing`(`Agent_ID`, `Closing_ID`, `earning`, `workedAs`) 
-									    VALUES (?,?,?,?)");
-				    				$stmtis->bind_param('iidi', $f1, $f2, $f3, $f4);
-				    				$f1 = $ImmediateUplineID;
-				    				$f2 = $cID;
-				    				$f3 = $price * $p * 7 / 100;
-				    				$f4 = 6*$i + 4;
-				    				if($stmtis->execute()){
-									$stmtis->close();
-								    	echo "Agent Involved In Closing (upline 1) created successfully";
-									}else{
-										$stmtis->close();
-										echo "Error: <br>" . mysqli_error($db);
-									}*/
+				    							$db, $ImmediateUplineID, $cID, $price, $p, $cPresP, $i, 2);
 		    					}
-		    					//continue for 2nd upline
-		    					$UP2IDSQL = //Upline 2 ID
-							    	"SELECT ImmediateUpline_ID FROM agent WHERE Agent_ID=" . $ImmediateUplineID;
-			    				$UP2IDResult = mysqli_query($db, $UP2IDSQL);
-			    				$UP2IDRow = $UP2IDResult->fetch_assoc();
-			    				$UP2ID = $UP2IDRow["ImmediateUplineID"];
+		    					else if($UP2ID == $VicePresidentID){//Branch VP
+		    						secondaryInvolvementInsertion(
+				    							$db, $ImmediateUplineID, $cID, $price, $p, $cVPP, $i, 3);
+		    					}
+		    					else if($UP2ID != $PresidentID 
+		    						&& $UP2ID != $VicePresidentID){
+		    						//Not the pres or vp and not one of the primary agents
+		    						secondaryInvolvementInsertion(
+				    							$db, $ImmediateUplineID, $cID, $price, $p, 2, $i, 4);
+		    					} 
 
-			    				if($UP2ID != null){
-			    					if($UP2ID != $PresidentID 
-		    							&& $UP2ID != $VicePresidentID){
-			    						secondaryInvolvementInsertion(
-				    							$db, $UP2ID, $cID, $price, $p, 2, $i, 5;
-			    						/*$stmtis2 = $db->prepare("
-										    INSERT INTO `agent_involved_in_closing`(`Agent_ID`, `Closing_ID`, `earning`, `workedAs`) 
-										    VALUES (?,?,?,?)");
-					    				$stmtis2->bind_param('iidi', $f1, $f2, $f3, $f4);
-					    				$f1 = $UP2ID;
-					    				$f2 = $cID;
-					    				$f3 = $price * $p * 2 / 100;
-					    				$f4 = 6*$i + 5;
-					    				if($stmtis2->execute()){
-										$stmtis2->close();
-									    	echo "Agent Involved In Closing (upline 2) created successfully";
-										}else{
-											$stmtis2->close();
-											echo "Error: <br>" . mysqli_error($db);
-										}*/
-		    						}
-		    						//continue for 3rd upline
-									$UP3IDSQL = //Upline 2 ID
-								    	"SELECT ImmediateUpline_ID FROM agent WHERE Agent_ID=" . $UP2ID;
-				    				$UP3IDResult = mysqli_query($db, $UP3IDSQL);
-				    				$UP3IDRow = $UP3IDResult->fetch_assoc();
-				    				$UP3ID = $UP3IDRow["ImmediateUplineID"];
+	    						//continue for 3rd upline if he exists
+								$UP3IDSQL = //Upline 2 ID
+							    	"SELECT ImmediateUpline_ID FROM agent WHERE Agent_ID=" . $UP2ID;
+			    				$UP3IDResult = mysqli_query($db, $UP3IDSQL);
+			    				$UP3IDRow = $UP3IDResult->fetch_assoc();
+			    				$UP3ID = $UP3IDRow["ImmediateUpline_ID"];
 
-				    				if($UP3ID != null){
-				    					if($UP3ID != $PresidentID 
-		    								&& $UP3ID != $VicePresidentID){
-				    						secondaryInvolvementInsertion(
-				    							$db, $UP3ID, $cID, $price, $p, 1, $i, 6);
-				    						/*$stmtis3 = $db->prepare("
-											    INSERT INTO `agent_involved_in_closing`(`Agent_ID`, `Closing_ID`, `earning`, `workedAs`) 
-											    VALUES (?,?,?,?)");
-						    				$stmtis3->bind_param('iidi', $f1, $f2, $f3, $f4);
-						    				$f1 = $UP3ID;
-						    				$f2 = $cID;
-						    				$f3 = $price * $p * 1 / 100;
-						    				$f4 = 6*$i + 6;
-						    				if($stmtis3->execute()){
-											$stmtis3->close();
-										    	echo "Agent Involved In Closing (upline 3) created successfully";
-											}else{
-												$stmtis3->close();
-												echo "Error: <br>" . mysqli_error($db);
-											}
-*/		
-		    							}
-				    				}
-			    				}
+			    				if(in_array($UP3ID , $agents)){//one of the primary agents involved
+		    						if($UP3ID == $PresidentID ){//Branch President
+										secondaryInvolvementInsertion(
+					    							$db, 0, $cID, $price, $p, $cPresP, $i, 2);
+									}else if($UP3ID == $VicePresidentID){//Branch VP
+										secondaryInvolvementInsertion(
+					    							$db, 0, $cID, $price, $p, $cVPP, $i, 3);
+									}else{//Neither branch pres nor VP
+										secondaryInvolvementInsertion(
+				    							$db, 0, $cID, $price, $p, 1, $i, 4);
+									}
+
+		    					}else if($UP3ID == $PresidentID){//Branch President
+		    						secondaryInvolvementInsertion(
+				    							$db, $UP3ID, $cID, $price, $p, $cPresP, $i, 2);
+		    					}
+		    					else if($UP3ID == $VicePresidentID){//Branch VP
+		    						secondaryInvolvementInsertion(
+				    							$db, $UP3ID, $cID, $price, $p, $cVPP, $i, 3);
+		    					}
+		    					else if($UP3ID != $PresidentID 
+		    						&& $UP3ID != $VicePresidentID){
+		    						//Not the pres or vp and not one of the primary agents
+		    						secondaryInvolvementInsertion(
+				    							$db, $UP3ID, $cID, $price, $p, 1, $i, 4);
+		    					} 
 		    				}
-
-
-						}else{
-							$stmti->close();
-							echo "Error: <br>" . mysqli_error($db);
-						}
+	    				}
+					} 
+					else{
+						$stmti->close();
+						echo "Error: <br>" . mysqli_error($db);
 					}
-
-				} else {
-					$stmt->close();
-				    echo "Error: <br>" . mysqli_error($db);
 				}
+
+			} else {
+				$stmt->close();
+			    echo "Error: <br>" . mysqli_error($db);
 			}
-		// }
+		}
 
 	}
 
@@ -427,14 +409,14 @@ include('session.php');
 		$insertion->bind_param('iidi', $field1, $field2, $field3, $field4);
 		$field1 = $Agent_ID;
 		$field2 = $Closing_ID;
-		$field3 = $price * $agentPercentage * $ownPercentage / 100;
+		$field3 = $price * $agentPercentage * $ownPercentage / 10000;
 		$field4 = 6*$agentNumber + $workedAs;
 		if($insertion->execute()){
 		$insertion->close();
-	    	echo "Secondary Agent Involvement created successfully";
+	    	echo "Secondary Agent Involvement created successfully <br>";
 		}else{
 			$insertion->close();
-			echo "Error: <br>" . mysqli_error($db);
+			echo "Error: " . mysqli_error($db);
 		}
 	}
 ?>

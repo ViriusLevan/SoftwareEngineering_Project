@@ -3,7 +3,7 @@
 -- https://www.phpmyadmin.net/
 --
 -- Host: 127.0.0.1
--- Generation Time: Oct 27, 2017 at 06:43 AM
+-- Generation Time: Oct 28, 2017 at 07:07 AM
 -- Server version: 10.1.21-MariaDB
 -- PHP Version: 7.1.1
 
@@ -59,6 +59,7 @@ CREATE TABLE `agent` (
 --
 
 INSERT INTO `agent` (`Agent_ID`, `Branch_ID`, `Name`, `ImmediateUpline_ID`, `Status`, `PhoneNumber`) VALUES
+(0, 1, 'COMPANY', NULL, 1, '0000000000'),
 (1, 1, 'John', NULL, 1, '0123456789'),
 (2, 1, 'Jane', 1, 1, '0025134'),
 (3, 1, 'Dude', NULL, 1, '01234');
@@ -220,7 +221,7 @@ ALTER TABLE `branch`
 -- AUTO_INCREMENT for table `closing`
 --
 ALTER TABLE `closing`
-  MODIFY `closing_ID` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=3;
+  MODIFY `closing_ID` int(11) NOT NULL AUTO_INCREMENT;
 --
 -- Constraints for dumped tables
 --

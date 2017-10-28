@@ -21,6 +21,15 @@
             $AgentRow["Name"], $AgentRow["PhoneNumber"], $AgentRow["ImmediateUpline_ID"]);
           
           $a->printDetails();
+
+          ?>
+            <a class="btn btn-warning" 
+              href='agent_involved_in_closing.php?id=<?php echo $row; ?>'
+              >Click to see Agent's involvement in closings</a> 
+            <br>
+          <?php
+
+          echo"Agent's Downlines <br>-----------------------------------<br>";
           $a->getDownline($db);
 
         ?>

@@ -5,7 +5,7 @@
    if ($result->num_rows > 0) {
     // output data of each row
 	    while($row = $result->fetch_assoc()) {
-	        echo "ID: " . $row["Branch_ID"]. "<br>"; 
+	        echo "ID: " . $row["branch_id"]. "<br>"; 
 	        if($row["President_ID"] == null){
 	        	echo "President: Noone <br>"; 
 	        }else{

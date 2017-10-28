@@ -34,7 +34,7 @@
 			    while($row = $downlineResult->fetch_assoc()) {
 		            $iteration = new Agent($row["Agent_ID"], $row["Branch_ID"], $row["Name"],
 		            	$row["PhoneNumber"], $row["ImmediateUpline_ID"]);
-		            $downlines = clone $iteration;
+		            $downlines[] = clone $iteration;
 			    }
 			    print_r($downlines);
   			} else {

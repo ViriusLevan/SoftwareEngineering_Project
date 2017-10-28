@@ -8,31 +8,28 @@
       <p>
         <?php
         	include('session.php');
-          	class agent{
-                public $name, $branchID, $uplineID, $phone;
-                
-                public function __construct($name, $branchID, $uplineID, $phone){
-                    $this->name=$name;
-                    $this->branchID=$branchID;
-               		$this->uplineID=$uplineID;
-               		$this->phone=$phone;
-                }   
-                
-            }
 
             $sql = "SELECT * FROM closing";
     		    $result = mysqli_query($db,$sql);
     		    if ($result->num_rows > 0) {
-    		    // output data of each row
+              echo "<table>";
+              echo "<tr> <th>ID</th> <th>Date</th> <th>Price</th> 
+                <th>Address</th> <th>Agents Involved</th> </tr>";
     			    while($row = $result->fetch_assoc()) {
-  			        echo "ID: " . $row["Closing_ID"]. "<br>"; 
-  			        echo "Date: " . $row["Date"]. "<br>";
-  			        echo "Price: " . $row["Price"]. "<br>"; 
-                echo "Address: " . $row["Address"]. "<br>";
-  			        echo "-------------<br>";
+            // output data of each row
+  			        echo "<tr><td> " . $row["closing_ID"]. " </td>"; 
+  			        echo "<td> " . $row["Date"]. " </td>";
+  			        echo "<td> " . $row["Price"]. " </td>"; 
+                echo "<td> " . $row["Address"]. " </td>";
+  			        
+                ?> 
+                <td>
+                  <a class="btn btn-warning" href='closing_agents.php?id=<?php echo $row["closing_ID"]; ?>'>Details</a> 
+                </td></tr>
+                <?php
     			    }
     			  } else {
-    		    	echo "0 results";
+    		    	echo "No closing found";
     			  }
         ?>
       </p>

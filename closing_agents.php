@@ -8,30 +8,40 @@
       <p>
         <?php
         	include('session.php');
+          $row = $_GET["id"];
 
-            $idSQL = "SELECT Agent.Name, agent_involved_in_closing.earning, 
-                        agent_involved_in_closing.workedAs, PhoneNumber 
-                      from Agent_involved_in_closing, Agent 
-                      where Agent.Agent_ID = agent_involved_in_closing.Agent_ID
-                      AND Closing_ID = 2";//YOU KNOW WHAT TO DO
-            $idResults = mysqli_query($db, $idSQL);
+          $idSQL = "SELECT Agent.Agent_ID, Agent.Name, agent_involved_in_closing.earning, 
+                      agent_involved_in_closing.workedAs, PhoneNumber 
+                    from Agent_involved_in_closing, Agent 
+                    where Agent.Agent_ID = agent_involved_in_closing.Agent_ID
+                    AND Closing_ID = ". $row;
+          $idResults = mysqli_query($db, $idSQL);
 
-            if ($idResults->num_rows > 0) {
-              while($agentRow = $idResults->fetch_assoc()) { 
-                $workedAs = "";
-                $workedAs = setWorkedAs($agentRow["workedAs"]);
+          if ($idResults->num_rows > 0) {
+            echo "<table>";
+            echo "<tr> <th>Name</th> <th>Earned</th> <th>Worked as</th> 
+                <th>Phone Number</th> <th>Agent Details</th> </tr>";
+            while($agentRow = $idResults->fetch_assoc()) { 
+              $workedAs = "";
+              $workedAs = setWorkedAs($agentRow["workedAs"]);
 
-                // output data of each row
-                echo "Name: " . $agentRow["Name"]. "<br>"; 
-                echo "Earned: " . $agentRow["earning"]. "<br>"; 
-                echo "Worked as :"; .  
-                echo "Phone: " . $agentRow["PhoneNumber"]. "<br>";
-                echo "-------------<br>";
-                
-              }
-            } else {
-              echo "Agent has no closing";
+              // output data of each row
+              echo "<tr><td> " . $agentRow["Name"]. " </td>"; 
+              echo "<td> " . $agentRow["earning"]. " </td>"; 
+              echo "<td> " .  $workedAs . " </td>";
+              echo "<td> " . $agentRow["PhoneNumber"]. " </td>";
+              
+              ?> 
+                <td>
+                  <a class="btn btn-warning" href='agent_details.php?id=<?php echo $agentRow["Agent_ID"]; ?>'>Click</a> 
+                </td></tr>
+              <?php
+
             }
+          } else {
+            //SHOULD NEVER HAPPEN
+            echo "No agents found";
+          }
               
         ?>
       </p>
