@@ -180,7 +180,7 @@ ALTER TABLE `agent_has_downline`
 -- Indexes for table `agent_involved_in_closing`
 --
 ALTER TABLE `agent_involved_in_closing`
-  ADD PRIMARY KEY (`Agent_ID`,`Closing_ID`),
+  ADD PRIMARY KEY (`Agent_ID`,`Closing_ID`, `workedAs`),
   ADD KEY `fk_Agent_Has_Closing_Closing_ID` (`Closing_ID`);
 
 --
