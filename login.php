@@ -33,50 +33,22 @@
 ?>
 
 <html>
-   
    <head>
-      <title>Login Page</title>
-      
-      <style type = "text/css">
-         body {
-            font-family:Arial, Helvetica, sans-serif;
-            font-size:14px;
-         }
-         
-         label {
-            font-weight:bold;
-            width:100px;
-            font-size:14px;
-         }
-         
-         .box {
-            border:#666666 solid 1px;
-         }
-      </style>
-      
+   <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/4.0.0-beta.2/css/bootstrap.min.css" integrity="sha384-PsH8R72JQ3SOdhVi3uxftmaW6Vc51MKb0q5P2rRUpPvrszuE4W1povHYgTpBfshb" crossorigin="anonymous">
+   <link rel="stylesheet" type="text/css" href="style.css">
+      <title>Login</title>
    </head>
-   
-   <body bgcolor = "#FFFFFF">
-	
+   <body class="loginbody">
       <div align = "center">
-         <div style = "width:300px; border: solid 1px #333333; " align = "left">
-            <div style = "background-color:#333333; color:#FFFFFF; padding:3px;"><b>Login</b></div>
-				
-            <div style = "margin:30px">
-               
+            <div style = "margin:10% 40%">
+            <img class="mainlogo" src="img/mainlogo.png" alt="">
                <form action = "" method = "post">
-                  <label>UserName  :</label><input type = "text" name = "username" class = "box"/><br /><br />
-                  <label>Password  :</label><input type = "password" name = "password" class = "box" /><br/><br />
-                  <input type = "submit" value = " Submit "/><br />
+                  <input type = "text" name = "username" class = "form-control form" placeholder="Username" />
+                  <input type = "password" name = "password" class = "form-control form" placeholder="Password" />
+                  <input type = "submit" value = " LOGIN " class="btn btn-primary form" /><br />
                </form>
-               
                <div style = "font-size:11px; color:#cc0000; margin-top:10px"><?php if(isset($error))echo $error; ?></div>
-					
             </div>
-				
-         </div>
-			
       </div>
-
    </body>
 </html>
