@@ -19,7 +19,6 @@ include('session.php');
 			<option value="3">3</option>
 			<option value="4">4</option>
 		</select><br>
-		<!-- JAVASCRIPT NEEDED -->
 		Agent 1 (Main Agent)
 		<?php
 			$agentSQL = "SELECT agent.Name, agent.Agent_ID from agent where status=1 AND Agent_ID != 0";
@@ -88,8 +87,6 @@ include('session.php');
 			}
 		?>
 
-		<!-- JAVASCRIPT NEEDED -->
-
 		<input type="submit" name="submit" value="Submit">
 	</form>
 
@@ -102,16 +99,16 @@ include('session.php');
 			document.getElementById("agent3Select").disabled = true;
 			document.getElementById("agent4Select").disabled = true;
 		}
-		if(n==2){
+		if(n == 2){
 			document.getElementById("agent2Select").disabled = false;
 			document.getElementById("agent3Select").disabled = true;
 			document.getElementById("agent4Select").disabled = true;
-		}if(n==3){
+		}if(n == 3){
 			document.getElementById("agent2Select").disabled = false;
 			document.getElementById("agent3Select").disabled = false;
 			document.getElementById("agent4Select").disabled = true;
 		}
-		if(n==4){
+		if(n == 4){
 			document.getElementById("agent2Select").disabled = false;
 			document.getElementById("agent3Select").disabled = false;
 			document.getElementById("agent4Select").disabled = false;
@@ -394,6 +391,7 @@ include('session.php');
 
 	}
 
+//Trims and prevents malicious inputs
 	function test_input($data) {
 	  $data = trim($data);
 	  $data = stripslashes($data);
@@ -401,6 +399,7 @@ include('session.php');
 	  return $data;
 	} 
 
+//Function to add Secondary level involvement of an agent e.g.: Uplines, President & VP
 	function secondaryInvolvementInsertion($db, $Agent_ID, $Closing_ID, $price, $agentPercentage,
 											$ownPercentage, $agentNumber, $workedAs){
 		$insertion = $db->prepare("

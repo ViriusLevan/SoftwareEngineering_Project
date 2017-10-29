@@ -20,6 +20,16 @@
 	    	echo "Upline ID : " . $this->uplineID . "<br>";
 	    }
 
+	    public function getEarningTotal($db){
+
+	    	$earningSQL = "SELECT SUM(earning) as total FROM `agent_involved_in_closing` WHERE Agent_ID = " . $this->Agent_ID;
+			$earningResult = mysqli_query($db, $earningSQL);
+			$earningRow = $earningResult->fetch_assoc();
+
+			$total = $earningRow["total"];
+			echo "Total Earning : " . $total . "<br>";
+	    }
+
 	    public function getDownline($db){
 	    	$downlineSQL = 
 	            "SELECT Agent.Agent_ID, Agent.PhoneNumber, Agent.ImmediateUpline_ID, Agent.Branch_ID, Agent.Name  

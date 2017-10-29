@@ -20,6 +20,7 @@
           $a = new Agent($AgentRow["Agent_ID"], $AgentRow["Branch_ID"], 
             $AgentRow["Name"], $AgentRow["PhoneNumber"], $AgentRow["ImmediateUpline_ID"]);
           
+          $a->getEarningTotal($db);
           $a->printDetails();
 
           ?>
