@@ -78,6 +78,11 @@ a{
 a:hover{
 	text-decoration: none;
 }
+
+.active{	
+	background-color:#17C7CB;
+	color: #183A56;
+}
 /****************************/
 
 .header{
@@ -85,11 +90,18 @@ a:hover{
 	height: 15%;
 }
 
+.pagetitle{
+	width: 59%;
+	display: inline-block;
+	padding: 2.5% 5%;
+	color: #183A56;
+}
+
 .headersearchform{
-	padding-top: 3%;
 	float: right;
+	padding-top: 3%;
 	width: 40%;
-	margin: 0 8px;
+	display: inline-block;
 }
 
 .searchform{
@@ -150,7 +162,7 @@ h4{
 	height: 50px;
 	background-color: #005859;
 	color: #fff;
-	padding-top: 13px;
+	padding-top: 6px;
 	margin-right: 3px;
 }
 
@@ -182,4 +194,61 @@ h4{
 
 .kantormainformlabel{
 	display: inline-block;	
+}
+
+.kantormainselectvpv{
+	width: 100%;
+}
+
+.kantormaintambahbatalsimpan{
+	width: 25%;
+	margin: 5% 0 2% 75%;
+}
+
+.kantormaintambahbatal{
+	width: 47%;
+	display: inline-block;
+	border-radius: 0;
+	height: 50px;
+	background-color: #999;
+	color: #fff;
+	padding-top: 6px;
+	margin-right: 3px;
+}
+
+.kantormaintambahsimpan{
+	width: 47%;
+	display: inline-block;
+	border-radius: 0;
+	height: 50px;
+	background-color: #183A56;
+	color: #fff;
+	padding-top: 6px;
+	margin-left: 3px;
+}
+
+/*************************************/
+
+td{
+	vertical-align: middle !important;
+}
+
+.kantordaftarubah{
+	width: 47%;
+	display: inline-block;
+	border-radius: 0;
+	height: 35px;
+	background-color: #D45C00;
+	color: #fff;
+	padding-top: 6px;
+}
+
+.kantordaftarhapus{
+	width: 47%;
+	display: inline-block;
+	border-radius: 0;
+	height: 35px;
+	background-color: #D63438;
+	color: #fff;
+	padding-top: 6px;
 }

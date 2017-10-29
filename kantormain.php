@@ -1,8 +1,7 @@
+<?php $pagename='kantor'; ?>
 <html>
 	<head>
-		<link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/4.0.0-beta.2/css/bootstrap.min.css" integrity="sha384-PsH8R72JQ3SOdhVi3uxftmaW6Vc51MKb0q5P2rRUpPvrszuE4W1povHYgTpBfshb" crossorigin="anonymous">
-		<link rel="stylesheet" href="font-awesome/css/font-awesome.min.css">
-		<link rel="stylesheet" type="text/css" href="style.css">
+		<?php include('htmlhead.php'); ?>
 		<title>Login</title>
 	</head>
 	<body class="kantormain">
@@ -11,8 +10,8 @@
 			<?php include('header.php'); ?>
 			<div class="maincontent">
 				<div class="kantormainbtn">
-					<a href="" class="btn kantormaintambahbtn">TAMBAH</a>
-					<a href="" class="btn kantormainprodukbtn">PRODUKTIVITAS KANTOR</a>
+					<button onclick="document.getElementById('tambah').style.display='block'" class="btn kantormaintambahbtn" data-toggle="modal" data-target="#exampleModal">TAMBAH</button>
+					<a href="kantordaftar.php" class="btn kantormainprodukbtn">DAFTAR KANTOR</a>
 				</div>
 				<br>
 				<div class="kantormainfilter">
@@ -92,6 +91,43 @@
 							<td>30</td>
 						</tr>
 					</table>
+				</div>
+				<div id="tambah" class="w3-modal" data-backdrop="">
+					<div class="w3-modal-content w3-animate-top w3-card-4">
+						<header class="w3-container">
+							<span onclick="document.getElementById('tambah').style.display='none'"
+							class="w3-button w3-display-topright">&times;</span>
+							<h2>TAMBAH KANTOR BARU</h2>
+						</header>
+						<div class="w3-container">
+							<form action="">
+								<h5 class="kantormainformlabel">Nama Kantor</h5>
+								<input class="form-control" type="text" placeholder="Masukkan nama kantor">
+								<h5 class="kantormainformlabel">Alamat Kantor</h5>
+								<input class="form-control" type="text" placeholder="Masukkan alamat kantor">
+								<br>
+								<div class="row">
+									<div class="col">
+										<h5 class="kantormainformlabel">Principal</h5>
+										<select name="kantor" class="form-control kantormainselectvpv">
+											<option value="id">Nama Principal</option>
+										</select>
+									</div>
+									<div class="col">
+										<h5 class="kantormainformlabel">Vice Principal</h5>
+										<select name="kantor" class="form-control kantormainselectvpv">
+											<option value="id">Nama Vice Principal</option>
+										</select>
+									</div>
+								</div>
+								<br>
+								<div class="kantormaintambahbatalsimpan">
+									<button type="submit" class="btn kantormaintambahbatal" onclick="document.getElementById('tambah').style.display='none'">BATAL</button>
+									<button type="submit" class="btn kantormaintambahsimpan">SIMPAN</button>
+								</div> 
+							</form>
+						</div>
+					</div>
 				</div>
 			</div>
 		</div>
