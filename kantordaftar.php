@@ -4,7 +4,7 @@
 		<?php include('htmlhead.php'); ?>
 		<title>Login</title>
 	</head>
-	<body class="kantormain">
+	<body class="mainbody">
 		<?php include('sidebar.php'); ?>
 		<div class="content">
 			<?php include('header.php'); ?>
@@ -38,7 +38,7 @@
 				</div>
 				<div id="tambah" class="w3-modal" data-backdrop="">
 					<div class="w3-modal-content w3-animate-top w3-card-4">
-						<header class="w3-container">
+						<header class="w3-container modalheader">
 							<span onclick="document.getElementById('tambah').style.display='none'"
 							class="w3-button w3-display-topright">&times;</span>
 							<h2>TAMBAH KANTOR BARU</h2>
@@ -65,9 +65,9 @@
 									</div>
 								</div>
 								<br>
-								<div class="kantormaintambahbatalsimpan">
-									<button type="submit" class="btn kantormaintambahbatal" onclick="document.getElementById('tambah').style.display='none'">BATAL</button>
-									<button type="submit" class="btn kantormaintambahsimpan">SIMPAN</button>
+								<div class="modalfooter">
+									<button type="submit" class="btn modalleftbtn" onclick="document.getElementById('tambah').style.display='none'">BATAL</button>
+									<button type="submit" class="btn modalrightbtn">SIMPAN</button>
 								</div>
 							</form>
 						</div>
@@ -79,9 +79,9 @@
 							<h2>Apakah anda yakin ingin menghapus item ini?</h2>
 						</header>
 						<div class="w3-container">							
-							<div class="kantormaintambahbatalsimpan">
-								<button type="submit" class="btn kantormaintambahbatal" onclick="document.getElementById('hapus').style.display='none'">TIDAK</button>
-								<button type="submit" class="btn kantormaintambahsimpan">IYA</button>
+							<div class="modalfooter">
+								<button type="submit" class="btn modalleftbtn" onclick="document.getElementById('hapus').style.display='none'">TIDAK</button>
+								<button type="submit" class="btn modalrightbtn">IYA</button>
 							</div>
 						</div>
 					</div>

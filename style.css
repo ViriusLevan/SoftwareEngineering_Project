@@ -127,6 +127,9 @@ a:hover{
 
 /****************************/
 
+.mainbody{
+	background-color: #fff;
+}
 
 .content{
 	display: inline-block;
@@ -141,10 +144,6 @@ a:hover{
 }
 
 /****************************/
-
-.kantormain{
-	background-color: #fff;
-}
 
 .kantormaintabelheader{
 	background-color: #183A56;
@@ -200,12 +199,20 @@ h4{
 	width: 100%;
 }
 
-.kantormaintambahbatalsimpan{
+/*************************************/
+
+.modalheader{
+	background-color: #183A56;
+	color: #15C7CB;
+	text-align: center;
+}
+
+.modalfooter{
 	width: 25%;
 	margin: 5% 0 2% 75%;
 }
 
-.kantormaintambahbatal{
+.modalleftbtn{
 	width: 47%;
 	display: inline-block;
 	border-radius: 0;
@@ -216,7 +223,7 @@ h4{
 	margin-right: 3px;
 }
 
-.kantormaintambahsimpan{
+.modalrightbtn{
 	width: 47%;
 	display: inline-block;
 	border-radius: 0;
@@ -251,4 +258,75 @@ td{
 	background-color: #D63438;
 	color: #fff;
 	padding-top: 6px;
+}
+
+/*************************************/
+
+.agentree{
+	height:75%; 
+}
+
+.agenfooter{
+	height: 10%;
+}
+
+.agentambahbtn{
+	width: 15%;
+	display: inline-block;
+	border-radius: 0;
+	height: 50px;
+	background-color: #183A56;
+	color: #fff;
+	padding-top: 6px;
+	margin-left: 80%;
+}
+
+.agencontainer{
+	padding: 5%;
+}
+
+.agenkembalihapusubah{
+	width: 35%;
+	margin-left: 65%;
+}
+
+.agenkembali{
+	width: 30%;
+	display: inline-block;
+	border-radius: 0;
+	height: 50px;
+	background-color: #999;
+	color: #fff;
+	padding-top: 6px;
+	margin-bottom: 5%;
+}
+
+.agenhapus{
+	width: 30%;
+	display: inline-block;
+	border-radius: 0;
+	height: 50px;
+	background-color: #D63438;
+	color: #fff;
+	padding-top: 6px;
+	margin-bottom: 5%;
+}
+
+.agenubah{
+	width: 30%;
+	display: inline-block;
+	border-radius: 0;
+	height: 50px;
+	background-color: #D45C00;
+	color: #fff;
+	padding-top: 6px;
+	margin-bottom: 5%;
+}
+
+/*************************************/
+
+.propertyselect{
+	margin: 3px;
+	width: 20.5%;
+	display: inline-block;
 }
