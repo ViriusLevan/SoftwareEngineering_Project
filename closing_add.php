@@ -38,7 +38,6 @@ include('session.php');
 
 		Agent 2
 		<?php
-			$agentSQL = "SELECT agent.Name, agent.Agent_ID from agent where status=1 AND Agent_ID != 0";
 		    $agentResult = mysqli_query($db, $agentSQL);
 		    if ($agentResult->num_rows > 0) {
 		    	echo "<select name='agent2ID' id='agent2Select' 
@@ -55,7 +54,6 @@ include('session.php');
 
 		Agent 3
 		<?php
-			$agentSQL = "SELECT agent.Name, agent.Agent_ID from agent where status=1 AND Agent_ID != 0";
 		    $agentResult = mysqli_query($db, $agentSQL);
 		    if ($agentResult->num_rows > 0) {
 		    	echo "<select name='agent3ID' id='agent3Select' 
@@ -72,7 +70,6 @@ include('session.php');
 
 		Agent 4
 		<?php
-			$agentSQL = "SELECT agent.Name, agent.Agent_ID from agent where status=1 AND Agent_ID != 0";
 		    $agentResult = mysqli_query($db, $agentSQL);
 		    if ($agentResult->num_rows > 0) {
 		    	echo "<select name='agent4ID' id='agent4Select' 
@@ -121,7 +118,9 @@ include('session.php');
 		var selections = [];
 
 		for (var i = 0; i < 4; i++) {
-			selections.push(select[i].options[select[i].selectedIndex].value);
+			if(select[i].disabled == false){
+				selections.push(select[i].options[select[i].selectedIndex].value);
+			}
 		}
 
 		for (var i = 0; i<4; i++) {
