@@ -19,33 +19,45 @@
 				<div class="kantormainfilter">
 					<h2>Filter</h2>
 					<form action="">
-						<h5 class="kantormainformlabel">Nama Agen&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;:</h5>
+						<h5 class="kantormainformlabel">Date Filter&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;:</h5>
 						<!-- <select name="bfrbulan" class="form-control propertyselect">
 							<option value="agenA">Agen A</option>
 						</select> -->
-						<?php
-							$sql = "SELECT * FROM agent where status = 1 AND Agent_ID!=0";
-						    $result = mysqli_query($db, $sql);
-						    if ($result->num_rows > 0) {
-						    	echo "<select name='AgentName'>";
-							    echo "<option value='empty'> Noone </option>";
-							    while($row = $result->fetch_assoc()) {
-							        echo "<option value=".$row["Name"]."> ". $row["Name"] ." </option>"; 
-							    }
-							    echo "</select> <br>";
-							}     
-							else {
-						    	echo "No agents available<br>";
-							}
-						?>
+						<input type="date" name="bfrDate" id="startDate" class="form-control kantormainselect">
+						<input type="date" name="aftDate" id="endDate" class="form-control kantormainselect">
 						<!-- JS Not implemented YET -->
 						<br>
+						<script>
+							function closingFilter() {
+							  var startDt = document.getElementById("startDate").value;
+							  var endDt = document.getElementById("endDate").value;
+							  // Declare variables
+							  var table, tr, td, i;
+							  table = document.getElementById("closingTable");
+							  tr = table.getElementsByTagName("tr");
+							  dt1 = new Date(startDt).getTime();
+							  dt2 = new Date(endDt).getTime();
+
+							  // Loop through all table rows, and hide those who don't match the search query
+							  for (i = 0; i < tr.length; i++) {
+							    td = tr[i].getElementsByTagName("td")[0];
+							    if (td) {
+							      if ((Date(td.innerHTML)).getTime()<dt1 
+							      	|| (Date(td.innerHTML)).getTime()>dt2) {
+							        tr[i].style.display = "none";
+							      }else{
+							      	tr[i].style.display = "";
+							      }
+							    }
+							  }
+							}
+						</script>
 					</form>
 				</div>
 				<br>
 				<div class="kantormaintabel">
 					<div class="kantormaintabelheader"><h4>Hasil Closing</h4></div>
-					<table class="table">
+					<table class="table" id="closingTable">
 						<tr>
 							<th>Alamat</th>
 							<th>Harga (Rp)</th>

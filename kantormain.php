@@ -21,9 +21,6 @@
 					<h2>Filter</h2>
 					<form action="">
 						<h5 class="kantormainformlabel">Bulan&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;:</h5>
-						<input type="date" name="bfrDate" class="form-control kantormainselect">
-						<input type="date" name="aftDate" class="form-control kantormainselect">
-						<!-- JavaScript not added yet for filter functionality -->
 						<!-- 
 						BOOM
 						<select name="bfrbulan" class="form-control kantormainselect">
