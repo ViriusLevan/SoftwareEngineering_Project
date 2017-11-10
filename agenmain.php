@@ -160,26 +160,51 @@
 			    	die("Connection failed: " . mysqli_connect_error());
 				}
 				else{
-						$stmt = $db->prepare("
-							INSERT INTO agent (Branch_ID, Name, ImmediateUpline_ID, Status, PhoneNumber 
-							VALUES (?,?,?,1,?)");
-						$stmt->bind_param('isiss', $field1, $field2, $field3, $field4);
+					$stmt = $db->prepare("
+					INSERT INTO agent (Branch_ID, Name, ImmediateUpline_ID, Status, PhoneNumber) 
+					VALUES (?,?,?,1,?)");
+					$stmt->bind_param('isis', $field1, $field2, $field3, $field4);
 
-						$field1 = $BranchID;
-						$field2 = $name;
-						$field3 = $UplineID;
-						$field4 = $phone;
+					$field1 = $BranchID;
+					$field2 = $name;
+					$field3 = $UplineID;
+					$field4 = $phone;
 
 					if ($stmt->execute()) {
 						$stmt->close();
 					    echo "New agent created successfully";
+
+					    $agentID =  mysqli_insert_id($db);
+					    while($UplineID != NULL){
+					    	$upSTMT = $db->prepare("
+					    		INSERT INTO `agent_has_downline`(`Agent_ID`, `Downline_ID`) 
+					    		VALUES (?,?)");
+					    	$upSTMT->bind_param('ii' ,$Up, $Down);
+					    	$Up = $UplineID;
+					    	$Down = $agentID;
+
+					    	if($upSTMT->execute()){
+					    		$upSTMT->close();
+					    		echo "Downline relation created successfully";
+					    	}else{
+					    		$upSTMT->close();
+					    		echo "Error: <br>" . mysqli_error($db);
+					    	}
+
+					    	$cAgentSQL = 
+								    "SELECT agent.ImmediateUpline_ID FROM agent 
+										WHERE agent.Agent_ID = " . $UplineID;
+			    			$cAgentResult = mysqli_query($db, $cAgentSQL);
+			    			$cAgentRow = $cAgentResult->fetch_assoc();
+			    			$UplineID = $cAgentRow["ImmediateUpline_ID"];
+					    }
+
 					} else {
 						$stmt->close();
 					    echo "Error: <br>" . mysqli_error($db);
 					}
-				}
 
-			}
+				}
 
 			function test_input($data) {
 			  $data = trim($data);

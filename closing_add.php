@@ -235,7 +235,7 @@ include('session.php');
 						$stmti->close();
 
 					    echo $i. "Primary Agent Involvement created successfully <br>";
-
+////////////
 					    //Secondary involvement insertion
 					    $cAgentSQL = 
 						    "SELECT branch.President_ID,branch.VicePresident_ID, agent.ImmediateUpline_ID 
@@ -255,7 +255,8 @@ include('session.php');
 	    				//If there is a president and he's not the primary agent
 	    				if($PresidentID != null && $PresidentID != $agents[$i]){
 							$cPresPSQL = //Current President Percentage
-							    "SELECT Percentage FROM `paypercentages` WHERE JobName = 'President'";
+							    "SELECT Percentage FROM `paypercentages` 
+							    	WHERE JobName = 'President' AND ValidityEnd IS NULL";
 		    				$cPresPResult = mysqli_query($db, $cPresPSQL);
 		    				$cPresPRow = $cAgentResult->fetch_assoc();
 		    				$cPresP = $cPresPRow["Percentage"];
@@ -267,7 +268,8 @@ include('session.php');
 	    				//If there is a vice president and he's not the primary agent
 	    				if($VicePresidentID != null && $VicePresidentID != $agents[$i]){
 	    					$cVPPSQL = //Current Vice President Percentage
-						    	"SELECT Percentage FROM `paypercentages` WHERE JobName = 'Vice President'";
+						    	"SELECT Percentage FROM `paypercentages` 
+						    		WHERE JobName = 'Vice President' AND ValidityEnd IS NULL";
 		    				$cVPPResult = mysqli_query($db, $cVPPSQL);
 		    				$cVPPRow = $cAgentResult->fetch_assoc();
 		    				$cVPP = $cPresPRow["Percentage"];
@@ -347,32 +349,34 @@ include('session.php');
 			    				$UP3IDRow = $UP3IDResult->fetch_assoc();
 			    				$UP3ID = $UP3IDRow["ImmediateUpline_ID"];
 
-			    				if(in_array($UP3ID , $agents)){//one of the primary agents involved
-		    						if($UP3ID == $PresidentID ){//Branch President
-										secondaryInvolvementInsertion(
-					    							$db, 0, $cID, $price, $p, $cPresP, $i, 2);
-									}else if($UP3ID == $VicePresidentID){//Branch VP
-										secondaryInvolvementInsertion(
-					    							$db, 0, $cID, $price, $p, $cVPP, $i, 3);
-									}else{//Neither branch pres nor VP
-										secondaryInvolvementInsertion(
-				    							$db, 0, $cID, $price, $p, 1, $i, 4);
-									}
+			    				if($UP3ID != null){
+				    				if(in_array($UP3ID , $agents)){//one of the primary agents involved
+			    						if($UP3ID == $PresidentID ){//Branch President
+											secondaryInvolvementInsertion(
+						    							$db, 0, $cID, $price, $p, $cPresP, $i, 2);
+										}else if($UP3ID == $VicePresidentID){//Branch VP
+											secondaryInvolvementInsertion(
+						    							$db, 0, $cID, $price, $p, $cVPP, $i, 3);
+										}else{//Neither branch pres nor VP
+											secondaryInvolvementInsertion(
+					    							$db, 0, $cID, $price, $p, 1, $i, 4);
+										}
 
-		    					}else if($UP3ID == $PresidentID){//Branch President
-		    						secondaryInvolvementInsertion(
-				    							$db, $UP3ID, $cID, $price, $p, $cPresP, $i, 2);
-		    					}
-		    					else if($UP3ID == $VicePresidentID){//Branch VP
-		    						secondaryInvolvementInsertion(
-				    							$db, $UP3ID, $cID, $price, $p, $cVPP, $i, 3);
-		    					}
-		    					else if($UP3ID != $PresidentID 
-		    						&& $UP3ID != $VicePresidentID){
-		    						//Not the pres or vp and not one of the primary agents
-		    						secondaryInvolvementInsertion(
-				    							$db, $UP3ID, $cID, $price, $p, 1, $i, 4);
-		    					} 
+			    					}else if($UP3ID == $PresidentID){//Branch President
+			    						secondaryInvolvementInsertion(
+					    							$db, $UP3ID, $cID, $price, $p, $cPresP, $i, 2);
+			    					}
+			    					else if($UP3ID == $VicePresidentID){//Branch VP
+			    						secondaryInvolvementInsertion(
+					    							$db, $UP3ID, $cID, $price, $p, $cVPP, $i, 3);
+			    					}
+			    					else if($UP3ID != $PresidentID 
+			    						&& $UP3ID != $VicePresidentID){
+			    						//Not the pres or vp and not one of the primary agents
+			    						secondaryInvolvementInsertion(
+					    							$db, $UP3ID, $cID, $price, $p, 1, $i, 4);
+			    					} 
+			    				}
 		    				}
 	    				}
 					} 
@@ -404,11 +408,14 @@ include('session.php');
 		$insertion = $db->prepare("
 		    INSERT INTO `agent_involved_in_closing`(`Agent_ID`, `Closing_ID`, `earning`, `workedAs`) 
 		    VALUES (?,?,?,?)");
+		
+
 		$insertion->bind_param('iidi', $field1, $field2, $field3, $field4);
 		$field1 = $Agent_ID;
 		$field2 = $Closing_ID;
 		$field3 = $price * $agentPercentage * $ownPercentage / 10000;
 		$field4 = 6*$agentNumber + $workedAs;
+		
 		if($insertion->execute()){
 		$insertion->close();
 	    	echo "Secondary Agent Involvement created successfully <br>";

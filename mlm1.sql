@@ -3,7 +3,7 @@
 -- https://www.phpmyadmin.net/
 --
 -- Host: 127.0.0.1
--- Generation Time: Oct 28, 2017 at 07:07 AM
+-- Generation Time: Nov 09, 2017 at 03:28 PM
 -- Server version: 10.1.21-MariaDB
 -- PHP Version: 7.1.1
 
@@ -47,7 +47,6 @@ INSERT INTO `admin` (`Username`, `Password`) VALUES
 
 CREATE TABLE `agent` (
   `Agent_ID` int(11) NOT NULL,
-  `Branch_ID` int(11) NOT NULL,
   `Name` varchar(150) NOT NULL,
   `ImmediateUpline_ID` int(11) DEFAULT NULL,
   `Status` tinyint(4) NOT NULL,
@@ -58,11 +57,37 @@ CREATE TABLE `agent` (
 -- Dumping data for table `agent`
 --
 
-INSERT INTO `agent` (`Agent_ID`, `Branch_ID`, `Name`, `ImmediateUpline_ID`, `Status`, `PhoneNumber`) VALUES
-(0, 1, 'COMPANY', NULL, 1, '0000000000'),
-(1, 1, 'John', NULL, 1, '0123456789'),
-(2, 1, 'Jane', 1, 1, '0025134'),
-(3, 1, 'Dude', NULL, 1, '01234');
+INSERT INTO `agent` (`Agent_ID`, `Name`, `ImmediateUpline_ID`, `Status`, `PhoneNumber`) VALUES
+(0, 'COMPANY', NULL, 1, '0000000000'),
+(1, 'John', NULL, 1, '0123456789'),
+(2, 'Jane', 1, 1, '0025134'),
+(3, 'Dude', NULL, 1, '01234'),
+(4, 'Tir', 2, 1, '11223344');
+
+-- --------------------------------------------------------
+
+--
+-- Table structure for table `Agent_Branch_Employment`
+--
+
+CREATE TABLE `Agent_Branch_Employment` (
+	`Agent_ID` int(11) NOT NULL,
+	`Branch_ID` int(11) NOT NULL,
+	`Started` DATE NOT NULL,
+	`End` date DEFAULT NULL
+)ENGINE=InnoDB DEFAULT CHARSET=latin1;
+
+--
+-- Dumping data for table `Agent_Branch_Employment`
+--
+
+INSERT INTO `Agent_Branch_Employment` (`Agent_ID`, `Branch_ID`, `Started`, `End`) VALUES
+(0, 1, '2000-01-01', NULL),
+(1, 1, '2000-01-01', NULL),
+(2, 1, '2000-01-01', NULL),
+(3, 1, '2000-01-01', NULL),
+(4, 1, '2000-01-01', NULL);
+
 
 -- --------------------------------------------------------
 
@@ -80,7 +105,9 @@ CREATE TABLE `agent_has_downline` (
 --
 
 INSERT INTO `agent_has_downline` (`Agent_ID`, `Downline_ID`) VALUES
-(1, 2);
+(1, 2),
+(1, 4),
+(2, 4);
 
 -- --------------------------------------------------------
 
@@ -94,6 +121,21 @@ CREATE TABLE `agent_involved_in_closing` (
   `earning` double NOT NULL,
   `workedAs` tinyint(4) NOT NULL
 ) ENGINE=InnoDB DEFAULT CHARSET=latin1 ROW_FORMAT=COMPACT;
+
+--
+-- Dumping data for table `agent_involved_in_closing`
+--
+
+INSERT INTO `agent_involved_in_closing` (`Agent_ID`, `Closing_ID`, `earning`, `workedAs`) VALUES
+(0, 1, 3500, 10),
+(0, 6, 5250, 10),
+(1, 1, 50000, 1),
+(1, 2, 500000, 1),
+(1, 5, 139300, 4),
+(1, 6, 75000, 1),
+(2, 1, 50000, 7),
+(2, 5, 1990000, 1),
+(2, 6, 75000, 7);
 
 -- --------------------------------------------------------
 
@@ -115,9 +157,9 @@ CREATE TABLE `branch` (
 --
 
 INSERT INTO `branch` (`branch_id`, `President_ID`, `VicePresident_ID`, `status`, `Name`, `address`) VALUES
-(1, NULL, NULL, 1, 'First', ''),
-(2, NULL, NULL, 1, 'Second', ''),
-(4, NULL, NULL, 1, 'Denver', '');
+(1, NULL, NULL, 1, 'First', 'AAAAAAA Street'),
+(2, NULL, NULL, 1, 'Second', 'Dukuh Kupang'),
+(4, NULL, NULL, 1, 'Denver', 'Citraland');
 
 -- --------------------------------------------------------
 
@@ -132,6 +174,16 @@ CREATE TABLE `closing` (
   `Address` varchar(200) NOT NULL
 ) ENGINE=InnoDB DEFAULT CHARSET=latin1;
 
+--
+-- Dumping data for table `closing`
+--
+
+INSERT INTO `closing` (`closing_ID`, `Date`, `Price`, `Address`) VALUES
+(1, '2017-10-12', 100000, 'Qual'),
+(2, '2017-10-28', 500000, 'Honolulu'),
+(5, '1990-10-10', 1990000, 'FFF'),
+(6, '2014-07-11', 150000, 'FFF');
+
 -- --------------------------------------------------------
 
 --
@@ -140,16 +192,18 @@ CREATE TABLE `closing` (
 
 CREATE TABLE `paypercentages` (
   `JobName` varchar(70) NOT NULL,
-  `Percentage` double NOT NULL
+  `Percentage` double NOT NULL,
+  `ValidityStart` date NOT NULL,
+  `ValidityEnd` date DEFAULT NULL
 ) ENGINE=InnoDB DEFAULT CHARSET=latin1;
 
 --
 -- Dumping data for table `paypercentages`
 --
 
-INSERT INTO `paypercentages` (`JobName`, `Percentage`) VALUES
-('President', 6),
-('Vice President', 4);
+INSERT INTO `paypercentages` (`JobName`, `Percentage`, `ValidityStart`, `ValidityEnd`) VALUES
+('President', 6, '2000-01-01', NULL),
+('Vice President', 4, '2000-01-01', NULL);
 
 --
 -- Indexes for dumped tables
@@ -166,8 +220,7 @@ ALTER TABLE `admin`
 --
 ALTER TABLE `agent`
   ADD PRIMARY KEY (`Agent_ID`),
-  ADD KEY `fk_Agent_ImmediateUpline_ID` (`ImmediateUpline_ID`),
-  ADD KEY `fk_Agent_Branch_ID` (`Branch_ID`);
+  ADD KEY `fk_Agent_ImmediateUpline_ID` (`ImmediateUpline_ID`);
 
 --
 -- Indexes for table `agent_has_downline`
@@ -180,7 +233,7 @@ ALTER TABLE `agent_has_downline`
 -- Indexes for table `agent_involved_in_closing`
 --
 ALTER TABLE `agent_involved_in_closing`
-  ADD PRIMARY KEY (`Agent_ID`,`Closing_ID`, `workedAs`),
+  ADD PRIMARY KEY (`Agent_ID`,`Closing_ID`,`workedAs`),
   ADD KEY `fk_Agent_Has_Closing_Closing_ID` (`Closing_ID`);
 
 --
@@ -211,7 +264,7 @@ ALTER TABLE `paypercentages`
 -- AUTO_INCREMENT for table `agent`
 --
 ALTER TABLE `agent`
-  MODIFY `Agent_ID` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=4;
+  MODIFY `Agent_ID` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=5;
 --
 -- AUTO_INCREMENT for table `branch`
 --
@@ -221,7 +274,7 @@ ALTER TABLE `branch`
 -- AUTO_INCREMENT for table `closing`
 --
 ALTER TABLE `closing`
-  MODIFY `closing_ID` int(11) NOT NULL AUTO_INCREMENT;
+  MODIFY `closing_ID` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=8;
 --
 -- Constraints for dumped tables
 --
@@ -230,9 +283,15 @@ ALTER TABLE `closing`
 -- Constraints for table `agent`
 --
 ALTER TABLE `agent`
-  ADD CONSTRAINT `fk_Agent_Branch_ID` FOREIGN KEY (`Branch_ID`) REFERENCES `branch` (`branch_id`),
   ADD CONSTRAINT `fk_Agent_ImmediateUpline_ID` FOREIGN KEY (`ImmediateUpline_ID`) REFERENCES `agent` (`Agent_ID`);
 
+--
+-- Constraints for table `Agent_Branch_Employment`
+--
+ALTER TABLE `Agent_Branch_Employment`
+  ADD CONSTRAINT `Works_or_worked` FOREIGN KEY (`Agent_ID`) REFERENCES `agent` (`Agent_ID`),
+  ADD CONSTRAINT `Has_or_had_an_agent` FOREIGN KEY (`Branch_ID`) REFERENCES `branch` (`branch_ID`);
+  
 --
 -- Constraints for table `agent_has_downline`
 --

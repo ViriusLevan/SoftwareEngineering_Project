@@ -13,7 +13,8 @@ include('session.php');
 		Phone Number : <input type="tel" name="phone" pattern="[0-9]+" required><br>
 		Immediate Upline:
 		<?php
-			$agentSQL = "SELECT agent.Name, agent.Agent_ID from agent where status=1";
+			$agentSQL = "SELECT agent.Name, agent.Agent_ID from agent 
+				WHERE status=1 AND agent.Agent_ID !=0";
 		    $agentResult = mysqli_query($db, $agentSQL);
 		    if ($agentResult->num_rows > 0) {
 		    	echo "<select name='UplineID'>";
@@ -75,18 +76,61 @@ include('session.php');
 		}
 		else{
 				$stmt = $db->prepare("
-					INSERT INTO agent (Branch_ID, Name, ImmediateUpline_ID, Status, PhoneNumber 
-					VALUES (?,?,?,1,?)");
-				$stmt->bind_param('isiss', $field1, $field2, $field3, $field4);
+					INSERT INTO agent (Name, ImmediateUpline_ID, Status, PhoneNumber) 
+					VALUES (?,?,1,?)");
+				$stmt->bind_param('sis', $field2, $field3, $field4);
 
-				$field1 = $BranchID;
 				$field2 = $name;
 				$field3 = $UplineID;
 				$field4 = $phone;
 
 			if ($stmt->execute()) {
 				$stmt->close();
-			    echo "New agent created successfully";
+			    echo "New agent created successfully <br>";
+				
+				$agentID =  mysqli_insert_id($db);//get last inserted AUTO_INCREMENT (which is agent ID)
+				//Branch Employment Insertion
+				$employmentSTMT = $db->prepare("
+			    		INSERT INTO `agent_branch_employment`(`Agent_ID`, `Branch_ID`, `Started`, `End`) 
+			    		VALUES (?,?,?,NULL)");
+				$employmentSTMT->bind_param('iis', $f1, $f2, $f3);
+				$f1 = $agentID;
+				$f2 = $BranchID;
+				$f3 = date("Y-m-d");
+				if($employmentSTMT->execute()){
+			    		$employmentSTMT->close();
+			    		echo "Employment entry created successfully <br>";
+		    	}else{
+		    		$employmentSTMT->close();
+		    		echo "Error: <br>" . mysqli_error($db);
+		    	}
+
+				//Recursive Insertion for downline relation
+			    while($UplineID != NULL){
+			    	$upSTMT = $db->prepare("
+			    		INSERT INTO `agent_has_downline`(`Agent_ID`, `Downline_ID`) 
+			    		VALUES (?,?)");
+			    	$upSTMT->bind_param('ii' ,$Up, $Down);
+			    	$Up = $UplineID;
+			    	$Down = $agentID;
+
+			    	
+			    	if($upSTMT->execute()){
+			    		$upSTMT->close();
+			    		echo "Downline relation created successfully <br>";
+			    	}else{
+			    		$upSTMT->close();
+			    		echo "Error: <br>" . mysqli_error($db);
+			    	}
+
+			    	$cAgentSQL = 
+						    "SELECT agent.ImmediateUpline_ID FROM agent 
+								WHERE agent.Agent_ID = " . $UplineID;
+	    			$cAgentResult = mysqli_query($db, $cAgentSQL);
+	    			$cAgentRow = $cAgentResult->fetch_assoc();
+	    			$UplineID = $cAgentRow["ImmediateUpline_ID"];
+			    }
+
 			} else {
 				$stmt->close();
 			    echo "Error: <br>" . mysqli_error($db);

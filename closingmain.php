@@ -23,8 +23,10 @@
 						<!-- <select name="bfrbulan" class="form-control propertyselect">
 							<option value="agenA">Agen A</option>
 						</select> -->
-						<input type="date" name="bfrDate" id="startDate" class="form-control kantormainselect">
-						<input type="date" name="aftDate" id="endDate" class="form-control kantormainselect">
+						<input type="date" name="bfrDate" 
+							id="startDate" onchange="closingFilter()" class="form-control kantormainselect">
+						<input type="date" name="aftDate" 
+							id="endDate" onchange="closingFilter()" class="form-control kantormainselect">
 						<!-- JS Not implemented YET -->
 						<br>
 						<script>
@@ -34,19 +36,19 @@
 							  // Declare variables
 							  var table, tr, td, i;
 							  table = document.getElementById("closingTable");
-							  tr = table.getElementsByTagName("tr");
+							  tr = table.getElementsByClassName("closingDate");
 							  dt1 = new Date(startDt).getTime();
 							  dt2 = new Date(endDt).getTime();
 
-							  // Loop through all table rows, and hide those who don't match the search query
+							  // Loop through all table rows, and hide
 							  for (i = 0; i < tr.length; i++) {
 							    td = tr[i].getElementsByTagName("td")[0];
 							    if (td) {
-							      if ((Date(td.innerHTML)).getTime()<dt1 
-							      	|| (Date(td.innerHTML)).getTime()>dt2) {
-							        tr[i].style.display = "none";
+							    	dtTD = (new Date(td.innerHTML)).getTime();
+							      if (dtTD<dt1 && dtTD<dt2) {
+							        tr[i].style.display = "";
 							      }else{
-							      	tr[i].style.display = "";
+							      	tr[i].style.display = "none";//DOESNT WORK I DONT KNOW WHY
 							      }
 							    }
 							  }
@@ -71,8 +73,7 @@
 			            // output data of each row
 			  			        echo "<tr><td> " . $row["Address"]. " </td>"; 
 			  			        echo "<td> " . $row["Price"]. " </td>"; 
-			                echo "<td> " . $row["Date"]. " </td>";
-			  			        
+			                	echo "<td class = 'closingDate'>   " . $row["Date"]. " </td>";
 			                ?> 
 			                <td>
 			                  <a class="btn btn-warning" 
