@@ -73,56 +73,45 @@
 							<option value="aft17">2017</option>
 						</select> -->
 						<br>
-						<h5 class="kantormainformlabel">Kantor&nbsp;&nbsp;&nbsp;&nbsp;:</h5><br>
-						<!-- <select name="kantor" class="form-control  kantormainselectkantor">
-							<option value="id">Nama kantor</option>
-						</select> -->
-						<?php 
-							$sql = "SELECT * FROM branch where status = 1";
-						   $result = mysqli_query($db,$sql);
+						
+					</form>
+				</div>
+				<br>
+				<div class="kantormaintabel">
+					<div class="kantormaintabelheader"><h4>Hasil Produktivitas Kantor</h4></div>
+					<table class="table">
+						<tr>
+							<th>Nama Kantor/Branch</th>
+							<th>Total Closing</th>
+							<th>Pendapatan cabang dari Closing (Rp)</th>
+						</tr>
+						<?php
+							$branchSQL = "SELECT branch.Name, 
+											COUNT(DISTINCT agent_involved_in_closing.Closing_ID) AS Productivity, 
+											SUM(agent_involved_in_closing.earning) AS Earnings
+											FROM agent_involved_in_closing, branch, agent, Agent_Branch_Employment
+											WHERE agent_involved_in_closing.workedAs IN (1,7,13,19)
+												AND agent_involved_in_closing.Agent_ID = agent.Agent_ID 
+											    AND agent.Agent_ID = Agent_Branch_Employment.Agent_ID
+											    AND Agent_Branch_Employment.Branch_ID = branch.Branch_ID
+											    AND agent_branch_employment.End IS NULL
+												AND Agent.Agent_ID != 0
+												GROUP BY branch.branch_id";
+						   $result = mysqli_query($db,$branchSQL);
 						   if ($result->num_rows > 0) {
-						    // output data of each row
 							    while($row = $result->fetch_assoc()) {
-							        echo "ID: " . $row["branch_id"]. "<br>"; 
-							        if($row["President_ID"] == null){
-							        	echo "President: Noone <br>"; 
-							        }else{
-							        	echo "President: " . $row["President_ID"]. "<br>"; 
-							    	}
-							    	if($row["VicePresident_ID"] == null){
-							        	echo " VP: Noone <br>";
-							        }else{
-							        	echo " VP: " . $row["VicePresident_ID"]. "<br>";
-							    	}
-							        echo "-------------<br>";
+							    	echo "<tr>";
+							    	echo "<td>". $row["Name"] ."</td>";
+							    	echo "<td>". $row["Productivity"] ."</td>";
+							    	echo "<td>". $row["Earnings"] ."</td>";
+							        echo "</tr>";
 							    }
 							} else {
 						    	echo "0 results";
 							}
-
 						?>
-					</form>
-				</div>
-				<br>
-				Move productivity to branch details <br>
-				Having it here will MURDER THE SERVER
-				<!-- <div class="kantormaintabel">
-					<div class="kantormaintabelheader"><h4>Hasil Produktivitas Kantor</h4></div>
-					<table class="table">
-						<tr>
-							<th>Kantor</th>
-							<th>Total Transaksi</th>
-							<th>Unit Terjual</th>
-							<th>Total Komisi (Rp)</th>
-						</tr>
-						<tr>
-							<td>Kantor A</td>
-							<td>10</td>
-							<td>20</td>
-							<td>30</td>
-						</tr>
 					</table>
-				</div> -->
+				</div>
 				<div id="tambah" class="w3-modal" data-backdrop="">
 					<div class="w3-modal-content w3-animate-top w3-card-4">
 						<header class="w3-container modalheader">

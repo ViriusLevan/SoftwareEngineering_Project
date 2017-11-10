@@ -68,9 +68,6 @@ include('session.php');
 
 	  	if ($UplineID == "empty") {$UplineID = null;}
 
-
-//ERROR CHECKS
-
 	  	if (!$db) {
 	    	die("Connection failed: " . mysqli_connect_error());
 		}

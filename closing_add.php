@@ -239,8 +239,10 @@ include('session.php');
 					    //Secondary involvement insertion
 					    $cAgentSQL = 
 						    "SELECT branch.President_ID,branch.VicePresident_ID, agent.ImmediateUpline_ID 
-								FROM branch,agent 
-								WHERE branch.branch_id = agent.Branch_ID 
+								FROM branch,agent, agent_branch_employment
+								WHERE branch.branch_id = agent_branch_employment.Branch_ID
+						        	AND agent_branch_employment.Agent_ID = agent.Agent_ID
+						            AND agent_branch_employment.End IS NULL
 									AND agent.Agent_ID = " . $agents[$i];
 	    				$cAgentResult = mysqli_query($db, $cAgentSQL);
 	    				$cAgentRow = $cAgentResult->fetch_assoc();

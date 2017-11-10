@@ -1,4 +1,7 @@
-<?php $pagename='kantor'; ?>
+<?php 
+	$pagename='kantor'; 
+	include('session.php');
+?>
 <html>
 	<head>
 		<?php include('htmlhead.php'); ?>
@@ -20,20 +23,37 @@
 						<tr>
 							<th>Kantor</th>
 							<th>Alamat</th>
-							<th>Principal</th>
-							<th>Vice Principal</th>
+							<th>President</th>
+							<th>Vice President</th>
 							<th>Opsi</th>
 						</tr>
-						<tr>
-							<td>Kantor A</td>
-							<td>Sepanjang Jl.Kenangan Kita Selalu Bergandeng Tangan</td>
-							<td>Hans</td>
-							<td>Fadiel</td>
-							<td>
-								<button type="submit" class="btn kantordaftarubah" onclick="document.getElementById('tambah').style.display='block'">UBAH</button>
-								<button type="submit" class="btn kantordaftarhapus" onclick="document.getElementById('hapus').style.display='block'">HAPUS</button>
-							</td>
-						</tr>
+						<?php 
+						$sql = "SELECT * FROM branch where status = 1";
+					   $result = mysqli_query($db,$sql);
+					   if ($result->num_rows > 0) {
+					    // output data of each row
+						    while($row = $result->fetch_assoc()) {
+						        echo "<tr> <td>". $row["Name"] . "</td>";
+						        echo "<td>". $row["address"] ."</td>"; 
+						        if($row["President_ID"] == null){
+						        	echo "<td> Noone </td>"; 
+						        }else{
+						        	echo "<td> " . $row["President_ID"]. "</td>"; 
+						    	}
+						    	if($row["VicePresident_ID"] == null){
+						        	echo "<td> Noone </td>";
+						        }else{
+						        	echo "<td> " . $row["VicePresident_ID"]. "</td>";
+						    	}?><td>
+						    	<button type="submit" class="btn kantordaftarubah" onclick="document.getElementById('tambah').style.display='block'">UBAH</button>
+								<button type="submit" class="btn kantordaftarhapus" onclick="document.getElementById('hapus').style.display='block'">HAPUS</button></td>
+						    	<?php 
+						    }
+						} else {
+					    	echo "0 results";
+						}
+
+					?>
 					</table>
 				</div>
 				<div id="tambah" class="w3-modal" data-backdrop="">

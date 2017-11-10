@@ -153,28 +153,41 @@
 
 			  	if ($UplineID == "empty") {$UplineID = null;}
 
-
-		//ERROR CHECKS
-
 			  	if (!$db) {
 			    	die("Connection failed: " . mysqli_connect_error());
 				}
 				else{
-					$stmt = $db->prepare("
-					INSERT INTO agent (Branch_ID, Name, ImmediateUpline_ID, Status, PhoneNumber) 
-					VALUES (?,?,?,1,?)");
-					$stmt->bind_param('isis', $field1, $field2, $field3, $field4);
+						$stmt = $db->prepare("
+							INSERT INTO agent (Name, ImmediateUpline_ID, Status, PhoneNumber) 
+							VALUES (?,?,1,?)");
+						$stmt->bind_param('sis', $field2, $field3, $field4);
 
-					$field1 = $BranchID;
-					$field2 = $name;
-					$field3 = $UplineID;
-					$field4 = $phone;
+						$field2 = $name;
+						$field3 = $UplineID;
+						$field4 = $phone;
 
 					if ($stmt->execute()) {
 						$stmt->close();
-					    echo "New agent created successfully";
+					    echo "New agent created successfully <br>";
+						
+						$agentID =  mysqli_insert_id($db);//get last inserted AUTO_INCREMENT (which is agent ID)
+						//Branch Employment Insertion
+						$employmentSTMT = $db->prepare("
+					    		INSERT INTO `agent_branch_employment`(`Agent_ID`, `Branch_ID`, `Started`, `End`) 
+					    		VALUES (?,?,?,NULL)");
+						$employmentSTMT->bind_param('iis', $f1, $f2, $f3);
+						$f1 = $agentID;
+						$f2 = $BranchID;
+						$f3 = date("Y-m-d");
+						if($employmentSTMT->execute()){
+					    		$employmentSTMT->close();
+					    		echo "Employment entry created successfully <br>";
+				    	}else{
+				    		$employmentSTMT->close();
+				    		echo "Error: <br>" . mysqli_error($db);
+				    	}
 
-					    $agentID =  mysqli_insert_id($db);
+						//Recursive Insertion for downline relation
 					    while($UplineID != NULL){
 					    	$upSTMT = $db->prepare("
 					    		INSERT INTO `agent_has_downline`(`Agent_ID`, `Downline_ID`) 
@@ -183,9 +196,10 @@
 					    	$Up = $UplineID;
 					    	$Down = $agentID;
 
+					    	
 					    	if($upSTMT->execute()){
 					    		$upSTMT->close();
-					    		echo "Downline relation created successfully";
+					    		echo "Downline relation created successfully <br>";
 					    	}else{
 					    		$upSTMT->close();
 					    		echo "Error: <br>" . mysqli_error($db);
@@ -203,8 +217,9 @@
 						$stmt->close();
 					    echo "Error: <br>" . mysqli_error($db);
 					}
-
 				}
+
+			}
 
 			function test_input($data) {
 			  $data = trim($data);
