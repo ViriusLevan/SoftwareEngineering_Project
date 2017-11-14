@@ -19,61 +19,14 @@
 				<br>
 				<div class="kantormainfilter">
 					<h2>Filter</h2>
-					<form action="">
-						<h5 class="kantormainformlabel">Bulan&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;:</h5>
-						<!-- 
-						BOOM
-						<select name="bfrbulan" class="form-control kantormainselect">
-							<option value="bfrjan">Januari</option>
-							<option value="bfrfeb">Februari</option>
-							<option value="bfrmar">Maret</option>
-							<option value="bfrapr">April</option>
-							<option value="bfrmay">Mei</option>
-							<option value="bfrjun">Juni</option>
-							<option value="bfrjul">Juli</option>
-							<option value="bfraug">Agustus</option>
-							<option value="bfrsep">September</option>
-							<option value="bfroct">Oktober</option>
-							<option value="bfrnov">November</option>
-							<option value="bfrdec">Desember</option>
-						</select>
-						<select name="bfrtahun" class="form-control kantormainselect">
-							<option value="bfr10">2010</option>
-							<option value="bfr11">2011</option>
-							<option value="bfr12">2012</option>
-							<option value="bfr13">2013</option>
-							<option value="bfr14">2014</option>
-							<option value="bfr15">2015</option>
-							<option value="bfr16">2016</option>
-							<option value="bfr17">2017</option>
-						</select>
-						<h5 class="kantormainformlabel">s/d</h5>
-						<select name="aftbulan" class="form-control kantormainselect">
-							<option value="aftjan">Januari</option>
-							<option value="aftfeb">Februari</option>
-							<option value="aftmar">Maret</option>
-							<option value="aftapr">April</option>
-							<option value="aftmay">Mei</option>
-							<option value="aftjun">Juni</option>
-							<option value="aftjul">Juli</option>
-							<option value="aftaug">Agustus</option>
-							<option value="aftsep">September</option>
-							<option value="aftoct">Oktober</option>
-							<option value="aftnov">November</option>
-							<option value="aftdec">Desember</option>
-						</select>
-						<select name="afttahun" class="form-control kantormainselect">
-							<option value="aft10">2010</option>
-							<option value="aft11">2011</option>
-							<option value="aft12">2012</option>
-							<option value="aft13">2013</option>
-							<option value="aft14">2014</option>
-							<option value="aft15">2015</option>
-							<option value="aft16">2016</option>
-							<option value="aft17">2017</option>
-						</select> -->
+					<form action=<?php echo htmlspecialchars($_SERVER["PHP_SELF"]); ?> method="post">
+						<h5 class="kantormainformlabel">Tanggal&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;:</h5>
+						<input type="date" name="bfrDate" 
+							id="startDate" onchange="closingFilter()" class="form-control kantormainselect">
+						<input type="date" name="aftDate" 
+							id="endDate" onchange="closingFilter()" class="form-control kantormainselect">
 						<br>
-						
+						<input type="submit" name="submit">
 					</form>
 				</div>
 				<br>
@@ -86,17 +39,38 @@
 							<th>Pendapatan cabang dari Closing (Rp)</th>
 						</tr>
 						<?php
-							$branchSQL = "SELECT branch.Name, 
-											COUNT(DISTINCT agent_involved_in_closing.Closing_ID) AS Productivity, 
-											SUM(agent_involved_in_closing.earning) AS Earnings
-											FROM agent_involved_in_closing, branch, agent, Agent_Branch_Employment
-											WHERE agent_involved_in_closing.workedAs IN (1,7,13,19)
-												AND agent_involved_in_closing.Agent_ID = agent.Agent_ID 
-											    AND agent.Agent_ID = Agent_Branch_Employment.Agent_ID
-											    AND Agent_Branch_Employment.Branch_ID = branch.Branch_ID
-											    AND agent_branch_employment.End IS NULL
-												AND Agent.Agent_ID != 0
-												GROUP BY branch.branch_id";
+							if (isset($_POST["bfrDate"]) && isset($_POST["aftDate"])){//filter still doesnt work
+								$bfrDate = $_POST["bfrDate"];
+								$aftDate = $_POST["aftDate"];
+								$branchSQL = "SELECT branch.Name, 
+												COUNT(DISTINCT agent_involved_in_closing.Closing_ID) AS Productivity, 
+												SUM(agent_involved_in_closing.earning) AS Earnings
+												FROM agent_involved_in_closing, branch, agent, 
+													Agent_Branch_Employment, closing
+												WHERE agent_involved_in_closing.workedAs IN (1,7,13,19)
+													AND agent_involved_in_closing.Agent_ID = agent.Agent_ID 
+												    AND agent.Agent_ID = Agent_Branch_Employment.Agent_ID
+												    AND Agent_Branch_Employment.Branch_ID = branch.Branch_ID
+												    AND agent_branch_employment.End IS NULL
+													AND Agent.Agent_ID != 0
+													AND agent_involved_in_closing.Closing_ID = closing.closing_ID
+													AND closing.Date >=$bfrDate
+													AND closing.Date <=$aftDate
+													GROUP BY branch.branch_id";
+							}else{
+								$branchSQL = "SELECT branch.Name, 
+												COUNT(DISTINCT agent_involved_in_closing.Closing_ID) AS Productivity, 
+												SUM(agent_involved_in_closing.earning) AS Earnings
+												FROM agent_involved_in_closing, branch, agent, 
+														Agent_Branch_Employment
+												WHERE agent_involved_in_closing.workedAs IN (1,7,13,19)
+													AND agent_involved_in_closing.Agent_ID = agent.Agent_ID 
+												    AND agent.Agent_ID = Agent_Branch_Employment.Agent_ID
+												    AND Agent_Branch_Employment.Branch_ID = branch.Branch_ID
+												    AND agent_branch_employment.End IS NULL
+													AND Agent.Agent_ID != 0
+													GROUP BY branch.branch_id";
+							}
 						   $result = mysqli_query($db,$branchSQL);
 						   if ($result->num_rows > 0) {
 							    while($row = $result->fetch_assoc()) {
