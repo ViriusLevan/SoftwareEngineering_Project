@@ -46,7 +46,6 @@
 						        	echo "<td> " . $row["VicePresident_ID"]. "</td>";
 						    	}?><td>
 						    	<button type="submit" class="btn kantordaftarubah" onclick="document.getElementById('tambah').style.display='block'">UBAH</button>
-								<button type="submit" class="btn kantordaftarhapus" onclick="document.getElementById('hapus').style.display='block'">HAPUS</button></td>
 						    	<?php 
 						    }
 						} else {
@@ -90,19 +89,6 @@
 									<button type="submit" class="btn modalrightbtn">SIMPAN</button>
 								</div>
 							</form>
-						</div>
-					</div>
-				</div>
-				<div id="hapus" class="w3-modal" data-backdrop="">
-					<div class="w3-modal-content w3-animate-top w3-card-4">
-						<header class="w3-container">
-							<h2>Apakah anda yakin ingin menghapus item ini?</h2>
-						</header>
-						<div class="w3-container">							
-							<div class="modalfooter">
-								<button type="submit" class="btn modalleftbtn" onclick="document.getElementById('hapus').style.display='none'">TIDAK</button>
-								<button type="submit" class="btn modalrightbtn">IYA</button>
-							</div>
 						</div>
 					</div>
 				</div>

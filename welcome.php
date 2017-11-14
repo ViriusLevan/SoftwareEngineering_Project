@@ -1,16 +1,15 @@
-<?php
-   include('session.php');
-
+<?php $pagename='welcome';
+include('session.php');
 ?>
-<html">
-   
-   <head>
-      <title>Welcome </title>
-   </head>
-   
-   <body>
-      <h1>Welcome <?php echo $login_session; ?></h1> 
-      <h2><a href = "logout.php">Sign Out</a></h2>
-   </body>
-   
+<html>
+	<head>
+		<?php include('htmlhead.php'); ?>
+		<title>Welcome</title>
+	</head>
+	<body class="mainbody" onload="agentOptions(1)">
+		<?php include('sidebar.php'); ?>
+		<div class="content">
+			<?php include('header.php'); ?>
+		</div>
+	</body>
 </html>
