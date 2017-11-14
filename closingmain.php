@@ -31,27 +31,27 @@
 						<br>
 						<script>
 							function closingFilter() {
+								// window.alert("shit");
 							  var startDt = document.getElementById("startDate").value;
 							  var endDt = document.getElementById("endDate").value;
 							  // Declare variables
-							  var table, tr, td, i;
+							  var table, td, i;
 							  table = document.getElementById("closingTable");
-							  tr = table.getElementsByClassName("closingDate");
+							  var numRows = table.rows.length;
 							  dt1 = new Date(startDt).getTime();
 							  dt2 = new Date(endDt).getTime();
 
-							  // Loop through all table rows, and hide
-							  for (i = 0; i < tr.length; i++) {
-							    td = tr[i].getElementsByTagName("td")[0];
-							    if (td) {
-							    	dtTD = (new Date(td.innerHTML)).getTime();
-							      if (dtTD<dt1 && dtTD<dt2) {
-							        tr[i].style.display = "";
-							      }else{
-							      	tr[i].style.display = "none";//DOESNT WORK I DONT KNOW WHY
-							      }
-							    }
-							  }
+
+								for (var i = 1; i < numRows; i++) {
+								    var cells = table.rows[i].getElementsByTagName('td');
+								    console.log(cells[2].innerHTML);
+								    dtTD = (new Date(cells[2].innerHTML)).getTime();
+							        if (dtTD>dt1 && dtTD<dt2) {
+							        	table.rows[i].style.display = "";
+							        }else{
+							      		table.rows[i].style.display = "none";
+							        }
+								}
 							}
 						</script>
 					</form>
@@ -73,7 +73,7 @@
 			            // output data of each row
 			  			        echo "<tr><td> " . $row["Address"]. " </td>"; 
 			  			        echo "<td> " . $row["Price"]. " </td>"; 
-			                	echo "<td class = 'closingDate'>   " . $row["Date"]. " </td>";
+			                	echo "<td>   " . $row["Date"]. " </td>";
 			                ?> 
 			                <td>
 			                  <a class="btn btn-warning" 
@@ -113,7 +113,12 @@
 								</select><br>
 								<h5 class="kantormainformlabel">Agent 1 (Main Agent)</h5>
 								<?php
-									$agentSQL = "SELECT agent.Name, agent.Agent_ID from agent where status=1 AND Agent_ID != 0";
+									$agentSQL = "SELECT agent.Name, agent.Agent_ID 
+													FROM agent,agent_branch_employment,branch
+													WHERE agent.status=1 
+													AND agent.Agent_ID != 0
+													AND agent_branch_employment.Branch_ID = branch.branch_id
+													AND branch.status = 1";
 								    $agentResult = mysqli_query($db, $agentSQL);
 								    if ($agentResult->num_rows > 0) {
 								    	echo "<select name='agent1ID' id='agent1Select' 
@@ -378,6 +383,17 @@
 			    				//Uplines
 			    				
 			    				if($ImmediateUplineID != null){//Upline 1
+			    					$UP2IDSQL = //Upline 2 ID and status of upline 1
+								    	"SELECT ImmediateUpline_ID,Status FROM agent WHERE Agent_ID=" . $ImmediateUplineID;
+				    				$UP2IDResult = mysqli_query($db, $UP2IDSQL);
+				    				$UP2IDRow = $UP2IDResult->fetch_assoc();
+				    				$UP2ID = $UP2IDRow["ImmediateUpline_ID"];
+
+				    				if($UP2IDRow["Status"] == 0){//Upline 1 is fired/not in employment
+				    					secondaryInvolvementInsertion(//Money goes to the company
+					    							$db, 0, $cID, $price, $p, 7, $i, 4);
+				    				}
+
 			    					if(in_array($ImmediateUplineID , $agents)){//one of the primary agents involved
 			    						if($ImmediateUplineID == $PresidentID ){//Branch President
 											secondaryInvolvementInsertion(
@@ -405,13 +421,12 @@
 					    							$db, $ImmediateUplineID, $cID, $price, $p, 7, $i, 4);
 			    					} 
 			    					//continue for 2nd upline
-			    					$UP2IDSQL = //Upline 2 ID
-								    	"SELECT ImmediateUpline_ID FROM agent WHERE Agent_ID=" . $ImmediateUplineID;
-				    				$UP2IDResult = mysqli_query($db, $UP2IDSQL);
-				    				$UP2IDRow = $UP2IDResult->fetch_assoc();
-				    				$UP2ID = $UP2IDRow["ImmediateUpline_ID"];
-
 				    				if($UP2ID != null){
+				    					$UP3IDSQL = //Upline 3 ID and Upline 2 Status
+									    	"SELECT ImmediateUpline_ID,Status FROM agent WHERE Agent_ID=" . $UP2ID;
+					    				$UP3IDResult = mysqli_query($db, $UP3IDSQL);
+					    				$UP3IDRow = $UP3IDResult->fetch_assoc();
+					    				$UP3ID = $UP3IDRow["ImmediateUpline_ID"];
 				    					if(in_array($UP2ID , $agents)){//one of the primary agents involved
 				    						if($UP2ID == $PresidentID ){//Branch President
 												secondaryInvolvementInsertion(
@@ -421,7 +436,7 @@
 							    							$db, 0, $cID, $price, $p, $cVPP, $i, 3);
 											}else{//Neither branch pres nor VP
 												secondaryInvolvementInsertion(
-						    							$db, 0, $cID, $price, $p, 2, $i, 4);
+						    							$db, 0, $cID, $price, $p, 2, $i, 5);
 											}
 
 				    					}else if($UP2ID == $PresidentID){//Branch President
@@ -436,17 +451,22 @@
 				    						&& $UP2ID != $VicePresidentID){
 				    						//Not the pres or vp and not one of the primary agents
 				    						secondaryInvolvementInsertion(
-						    							$db, $ImmediateUplineID, $cID, $price, $p, 2, $i, 4);
+						    							$db, $ImmediateUplineID, $cID, $price, $p, 2, $i, 5);
 				    					} 
 
 			    						//continue for 3rd upline if he exists
-										$UP3IDSQL = //Upline 2 ID
-									    	"SELECT ImmediateUpline_ID FROM agent WHERE Agent_ID=" . $UP2ID;
-					    				$UP3IDResult = mysqli_query($db, $UP3IDSQL);
-					    				$UP3IDRow = $UP3IDResult->fetch_assoc();
-					    				$UP3ID = $UP3IDRow["ImmediateUpline_ID"];
-
 					    				if($UP3ID != null){
+					    					$UP3StatusSQL = //Upline 3 Status
+									    		"SELECT ImmediateUpline_ID,Status FROM agent WHERE Agent_ID=" . $UP3ID;
+						    				$UP3StatusResult = mysqli_query($db, $UP3StatusSQL);
+						    				$UP3StatusRow = $UP3StatusResult->fetch_assoc();
+						    				$UP3Status = $UP3StatusRow["ImmediateUpline_ID"];
+
+						    				if($UP3IDRow["Status"] == 0){//Upline 3 is fired/not in employment
+					    					secondaryInvolvementInsertion(//Money goes to the company
+						    							$db, 0, $cID, $price, $p, 2, $i, 6);
+					    					}
+
 						    				if(in_array($UP3ID , $agents)){//one of the primary agents involved
 					    						if($UP3ID == $PresidentID ){//Branch President
 													secondaryInvolvementInsertion(
@@ -456,7 +476,7 @@
 								    							$db, 0, $cID, $price, $p, $cVPP, $i, 3);
 												}else{//Neither branch pres nor VP
 													secondaryInvolvementInsertion(
-							    							$db, 0, $cID, $price, $p, 1, $i, 4);
+							    							$db, 0, $cID, $price, $p, 1, $i, 6);
 												}
 
 					    					}else if($UP3ID == $PresidentID){//Branch President
@@ -471,7 +491,7 @@
 					    						&& $UP3ID != $VicePresidentID){
 					    						//Not the pres or vp and not one of the primary agents
 					    						secondaryInvolvementInsertion(
-							    							$db, $UP3ID, $cID, $price, $p, 1, $i, 4);
+							    							$db, $UP3ID, $cID, $price, $p, 1, $i, 6);
 					    					} 
 					    				}
 				    				}
