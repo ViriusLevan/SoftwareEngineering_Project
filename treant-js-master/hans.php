@@ -10,64 +10,126 @@
     
 </head>
 <body>
-    <div class="chart" id="basic-example"></div>
+    <div class="chart" id="agent-tree"></div>
 
     <?php
-        include('../config.php');
-        $chosenAgentId = $_GET['id'];
+    include('../config.php');
+    $chosenAgentId = $_GET['id'];
 
-        $sql = "SELECT * FROM agent where status = 1";
-        $result = mysqli_query($db,$sql);
+    $sql = "SELECT * FROM agent where status = 1";
+    $result = mysqli_query($db,$sql);
 
-        $agentInvolved = array();
-        $data = array();
-        $uplineID = -1;
-        $count = 2;
+    $agentInvolved = array();
+    $data = array();
+    $uplineID = -1;
+    $count = 2;
 
-        while($row = $result->fetch_assoc()) {
-            if ($row['Agent_ID'] == $chosenAgentId) {
-                $data['agentID'] = $row['Agent_ID'];
-                $data['agentName'] = $row['Name'];
-                $data['uplineID'] = $row['ImmediateUpline_ID'];
-                $uplineID = $row['ImmediateUpline_ID'];
-                $data['agentStatus'] = $row['Status'];
-                $data['agentPhone'] = $row['PhoneNumber'];
-                $agentInvolved[0] = $data;
-            } else if ($row['ImmediateUpline_ID'] == $chosenAgentId) {
-                $data['agentID'] = $row['Agent_ID'];
-                $data['agentName'] = $row['Name'];
-                $data['uplineID'] = $row['ImmediateUpline_ID'];
-                $data['agentStatus'] = $row['Status'];
-                $data['agentPhone'] = $row['PhoneNumber'];
-                $agentInvolved[$count] = $data;
-                $count++;
-            }
-        }
-
-        if ($uplineID!=null) {
-            $sql = "SELECT * FROM agent where Agent_ID = $uplineID AND status = 1";
-            $result = mysqli_query($db,$sql);
-            $row = $result->fetch_assoc();
-
+    while($row = $result->fetch_assoc()) {
+        if ($row['Agent_ID'] == $chosenAgentId) {
+            $data['agentID'] = $row['Agent_ID'];
+            $data['agentName'] = $row['Name'];
+            $data['uplineID'] = $row['ImmediateUpline_ID'];
+            $uplineID = $row['ImmediateUpline_ID'];
+            $data['agentStatus'] = $row['Status'];
+            $data['agentPhone'] = $row['PhoneNumber'];
+            $agentInvolved[0] = $data;
+        } else if ($row['ImmediateUpline_ID'] == $chosenAgentId) {
             $data['agentID'] = $row['Agent_ID'];
             $data['agentName'] = $row['Name'];
             $data['uplineID'] = $row['ImmediateUpline_ID'];
             $data['agentStatus'] = $row['Status'];
             $data['agentPhone'] = $row['PhoneNumber'];
-            $agentInvolved[1] = $data;
-        } else {
-            $agentInvolved[1] = null;
+            $agentInvolved[$count] = $data;
+            $count++;
         }
+    }
+
+    if ($uplineID!=null) {
+        $sql = "SELECT * FROM agent where Agent_ID = $uplineID AND status = 1";
+        $result = mysqli_query($db,$sql);
+        $row = $result->fetch_assoc();
+
+        $data['agentID'] = $row['Agent_ID'];
+        $data['agentName'] = $row['Name'];
+        $data['uplineID'] = $row['ImmediateUpline_ID'];
+        $data['agentStatus'] = $row['Status'];
+        $data['agentPhone'] = $row['PhoneNumber'];
+        $agentInvolved[1] = $data;
+    } else {
+        $agentInvolved[1] = null;
+    }
 
         // echo json_encode($agentInvolved);
-        $json_data = json_encode($agentInvolved);
-        file_put_contents('agents.json', $json_data);
+    $json_data = json_encode($agentInvolved);
+    file_put_contents('agents.json', $json_data);
+
+        // $coba = $agentInvolved[1];
+        // echo($coba['agentName']);
+        // echo(($agentInvolved[1])['uplineID']);
     ?>
 
     <script src="vendor/raphael.js"></script>
     <script src="Treant.js"></script>
     
-    <script src="es-tree.js"></script>
+    <!-- <script src="agents.json"></script> -->
+    <script type="text/javascript">
+        var chart_config = {
+            chart: {
+                container: "#agent-tree",
+
+                connectors: {
+                    type: 'step'
+                },
+                node: {
+                    HTMLclass: 'nodeExample1'
+                }
+            },
+            nodeStructure: {
+                text: {
+                    title: "Direct Upline",
+                    <?php echo 'name: "'.($agentInvolved[1])["agentName"].'"'; ?>,
+                    <?php echo 'contact: "'.($agentInvolved[1])["agentPhone"].'"'; ?>,
+                },
+                image: "examples/headshots/2.jpg",
+                link: {
+                    <?php echo 'href: "hans.php?id='.($agentInvolved[1])["uplineID"].'"'; ?>
+                },
+                children: [
+                {
+                    text:{
+                        <?php echo 'name: "'.($agentInvolved[0])["agentName"].'"'; ?>,
+                    },
+                    image: "examples/headshots/1.jpg",
+                    stackChildren: true,
+                    children: [
+                    {
+                        text:{
+                            name: "Ron Blomquist",
+                            title: "Chief Information Security Officer"
+                        },
+                        image: "examples/headshots/8.jpg",
+                        link: {
+                            href: "http://www.google.com"
+                        }
+                    },
+                    {
+                        text:{
+                            name: "Michael Rubin",
+                            title: "Chief Innovation Officer",
+                            contact: "we@aregreat.com"
+                        },
+                        image: "examples/headshots/9.jpg",
+                        link: {
+                            href: "http://www.google.com"
+                        }
+                    }
+                    ]
+                }
+                ]
+            }
+        };
+    </script>
+    <!-- <script src="es-tree.js"></script> -->
     <script>
         new Treant( chart_config );
     </script>
