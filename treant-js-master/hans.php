@@ -59,6 +59,7 @@
         $agentInvolved[1] = null;
     }
 
+    $arrayLength = sizeof($agentInvolved);
         // echo json_encode($agentInvolved);
     $json_data = json_encode($agentInvolved);
     file_put_contents('agents.json', $json_data);
@@ -73,6 +74,7 @@
     
     <!-- <script src="agents.json"></script> -->
     <script type="text/javascript">
+        var abc = <?php echo $arrayLength; ?>;
         var chart_config = {
             chart: {
                 container: "#agent-tree",
@@ -92,7 +94,7 @@
                 },
                 image: "examples/headshots/2.jpg",
                 link: {
-                    <?php echo 'href: "hans.php?id='.($agentInvolved[1])["uplineID"].'"'; ?>
+                    <?php echo 'href: "hans.php?id='.($agentInvolved[0])["uplineID"].'"'; ?>
                 },
                 children: [
                 {
@@ -102,27 +104,23 @@
                     image: "examples/headshots/1.jpg",
                     stackChildren: true,
                     children: [
-                    {
-                        text:{
-                            name: "Ron Blomquist",
-                            title: "Chief Information Security Officer"
+                    <?php 
+                    for ($i = 2; $i < $arrayLength; $i++) {
+                        ?>
+                        {
+                            text:{
+                                title: "Downline",
+                                <?php echo 'name: "'.($agentInvolved[$i])["agentName"].'"'; ?>,
+                                <?php echo 'contact: "'.($agentInvolved[$i])["agentPhone"].'"'; ?>
+                            },
+                            image: "examples/headshots/8.jpg",
+                            link: {
+                                <?php echo 'href: "hans.php?id='.($agentInvolved[$i])["agentID"].'"'; ?>
+                            }
                         },
-                        image: "examples/headshots/8.jpg",
-                        link: {
-                            href: "http://www.google.com"
-                        }
-                    },
-                    {
-                        text:{
-                            name: "Michael Rubin",
-                            title: "Chief Innovation Officer",
-                            contact: "we@aregreat.com"
-                        },
-                        image: "examples/headshots/9.jpg",
-                        link: {
-                            href: "http://www.google.com"
-                        }
+                        <?php
                     }
+                    ?>                  
                     ]
                 }
                 ]
