@@ -45,7 +45,9 @@
 					        	echo "<td> " . $IU . " </td>"; 
 					    	}?>
 					    	<td>
-					    		<a class="btn btn-warning" href='agent_details.php?id=<?php echo $row["Agent_ID"]; ?>'><?php echo $row["Agent_ID"]; ?></a> 
+					    		<a class="btn btn-warning" href='agent_details.php?id=<?php echo $row["Agent_ID"]; ?>'><?php echo $row["Agent_ID"]; ?></a>             
+					    		<button class="btn" onclick="document.getElementById('agendetail').style.display='block'">Agen A</button>
+
 					    	</td></tr>
 					    	<?php
 					    }
