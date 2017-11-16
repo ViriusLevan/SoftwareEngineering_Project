@@ -51,7 +51,7 @@
 		    	echo "0 results";
 			}
 
-			//if an agent is clicked, go to agent details, with the agent class in hand
+			//if an agent is clicked, go to agent details using id
 
         ?>
 
