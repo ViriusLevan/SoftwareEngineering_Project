@@ -13,9 +13,7 @@
 			<?php include('header.php'); ?>
 			<div class="maincontent">
 				<div class="kantormainbtn">
-					<button onclick="document.getElementById('tambah').style.display='block'" 
-						class="btn kantormaintambahbtn" data-toggle="modal" 
-						data-target="#exampleModal">TAMBAH</button>
+					<button onclick="document.getElementById('tambah').style.display='block'" class="btn kantormaintambahbtn" data-toggle="modal" data-target="#exampleModal">TAMBAH</button>
 					<a href="kantordaftar.php" class="btn kantormainprodukbtn">DAFTAR KANTOR</a>
 				</div>
 				<br>
@@ -24,14 +22,36 @@
 					<form action=<?php echo htmlspecialchars($_SERVER["PHP_SELF"]); ?> method="post">
 						<h5 class="kantormainformlabel">Tanggal&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;:</h5>
 						<input type="date" name="bfrDate"
-							id="startDate" class="form-control kantormainselect">
+						id="startDate" onchange="closingFilter()" class="form-control kantormainselect">
 						<h5 class="kantormainformlabel">s/d</h5>
 						<input type="date" name="aftDate"
-							id="endDate" class="form-control kantormainselect">
- 						<input type="submit" name="submit" class="btn kantormainfiltersubmit">
-					</form>
+						id="endDate" onchange="closingFilter()" class="form-control kantormainselect">
+<!-- 						<input type="submit" name="submit" class="btn kantormainfiltersubmit">
+ -->					</form>
 				</div>
-
+				<script>
+							function closingFilter() {
+								// window.alert("shit");
+							var startDt = document.getElementById("startDate").value;
+							var endDt = document.getElementById("endDate").value;
+							// Declare variables
+							var table, td, i;
+							table = document.getElementById("produktable");
+							var numRows = table.rows.length;
+							dt1 = new Date(startDt).getTime();
+							dt2 = new Date(endDt).getTime();
+								for (var i = 1; i < numRows; i++) {
+								var cells = table.rows[i].getElementsByTagName('td');
+								console.log(cells[2].innerHTML);
+								dtTD = (new Date(cells[2].innerHTML)).getTime();
+							if (dtTD>dt1 && dtTD<dt2) {
+								table.rows[i].style.display = "";
+							}else{
+									table.rows[i].style.display = "none";
+							}
+								}
+							}
+						</script>
 				<br>
 				<div class="kantormaintabel">
 					<div class="kantormaintabelheader"><h4>Hasil Produktivitas Kantor</h4></div>
@@ -45,61 +65,46 @@
 							if (isset($_POST["bfrDate"]) && isset($_POST["aftDate"])){//filter still doesnt work
 								$bfrDate = $_POST["bfrDate"];
 								$aftDate = $_POST["aftDate"];
-								$bfrDate =  str_replace("-","", $bfrDate); //remove "-" from date
-								$aftDate =  str_replace("-","", $aftDate);
-								$branchSQL = "SELECT branch.Name AS name, Productivity, Earnings FROM branch 
-												LEFT OUTER JOIN
-												    (SELECT branch.Name, branch.branch_id,
-												        COUNT(DISTINCT agent_involved_in_closing.Closing_ID) AS Productivity,
-												        SUM(agent_involved_in_closing.earning) AS Earnings
-												        FROM agent_involved_in_closing, branch, agent,
-												                Agent_Branch_Employment
-												        WHERE agent_involved_in_closing.workedAs IN (1,7,13,19)
-												            AND agent_involved_in_closing.Agent_ID = agent.Agent_ID
-												            AND agent.Agent_ID = Agent_Branch_Employment.Agent_ID
-												            AND Agent_Branch_Employment.Branch_ID = branch.Branch_ID
-												            AND agent_branch_employment.End IS NULL
-												            AND Agent.Agent_ID != 0
-												            AND closing.Date >=$bfrDate
-															AND closing.Date <=$aftDate
-												            GROUP BY branch.branch_id) pro
-											    ON pro.branch_id = branch.branch_id
-											    WHERE status = 1";
+								$branchSQL = "SELECT branch.Name,
+												COUNT(DISTINCT agent_involved_in_closing.Closing_ID) AS Productivity,
+												SUM(agent_involved_in_closing.earning) AS Earnings
+												FROM agent_involved_in_closing, branch, agent,
+													Agent_Branch_Employment, closing
+												WHERE agent_involved_in_closing.workedAs IN (1,7,13,19)
+													AND agent_involved_in_closing.Agent_ID = agent.Agent_ID
+												AND agent.Agent_ID = Agent_Branch_Employment.Agent_ID
+												AND Agent_Branch_Employment.Branch_ID = branch.Branch_ID
+												AND agent_branch_employment.End IS NULL
+													AND Agent.Agent_ID != 0
+													AND agent_involved_in_closing.Closing_ID = closing.closing_ID
+													AND closing.Date >=$bfrDate
+													AND closing.Date <=$aftDate
+													GROUP BY branch.branch_id";
 							}else{
-								$branchSQL = "SELECT branch.Name AS Name, Productivity, Earnings FROM branch 
-												LEFT OUTER JOIN
-												    (SELECT branch.Name, branch.branch_id,
-												        COUNT(DISTINCT agent_involved_in_closing.Closing_ID) AS Productivity,
-												        SUM(agent_involved_in_closing.earning) AS Earnings
-												        FROM agent_involved_in_closing, branch, agent,
-												                Agent_Branch_Employment
-												        WHERE agent_involved_in_closing.workedAs IN (1,7,13,19)
-												            AND agent_involved_in_closing.Agent_ID = agent.Agent_ID
-												            AND agent.Agent_ID = Agent_Branch_Employment.Agent_ID
-												            AND Agent_Branch_Employment.Branch_ID = branch.Branch_ID
-												            AND agent_branch_employment.End IS NULL
-												            AND Agent.Agent_ID != 0
-												            GROUP BY branch.branch_id) pro
-											    ON pro.branch_id = branch.branch_id
-											    WHERE status = 1";
+								$branchSQL = "SELECT branch.Name,
+												COUNT(DISTINCT agent_involved_in_closing.Closing_ID) AS Productivity,
+												SUM(agent_involved_in_closing.earning) AS Earnings
+												FROM agent_involved_in_closing, branch, agent,
+														Agent_Branch_Employment
+												WHERE agent_involved_in_closing.workedAs IN (1,7,13,19)
+													AND agent_involved_in_closing.Agent_ID = agent.Agent_ID
+												AND agent.Agent_ID = Agent_Branch_Employment.Agent_ID
+												AND Agent_Branch_Employment.Branch_ID = branch.Branch_ID
+												AND agent_branch_employment.End IS NULL
+													AND Agent.Agent_ID != 0
+													GROUP BY branch.branch_id";
 							}
-							$result = mysqli_query($db,$branchSQL);
-							if ($result->num_rows > 0) {//Table data printing
-								while($row = $result->fetch_assoc()) {
-									echo "<tr>";
-										echo "<td>". $row["Name"] ."</td>";
-										if($row["Productivity"] == NULL)//Turning null values to 0 on display
-											echo "<td> 0 </td>";
-										else
-											echo "<td>". $row["Productivity"] ."</td>";
-										if($row["Earnings"] == NULL)
-											echo "<td> 0 </td>";
-										else
-											echo "<td>". $row["Earnings"] ."</td>";
-									echo "</tr>";
-								}
+						$result = mysqli_query($db,$branchSQL);
+						if ($result->num_rows > 0) {
+							while($row = $result->fetch_assoc()) {
+								echo "<tr>";
+									echo "<td>". $row["Name"] ."</td>";
+									echo "<td>". $row["Productivity"] ."</td>";
+									echo "<td>". $row["Earnings"] ."</td>";
+							echo "</tr>";
+							}
 							} else {
-								echo "0 results";
+							echo "0 results";
 							}
 						?>
 					</table>
@@ -132,32 +137,35 @@
 													WHERE agent.Agent_ID != 0";
 										$result = mysqli_query($db, $sql);
 										if ($result->num_rows > 0) {
-												echo "<select name='PresidentID' class='form-control kantormainselectvpv'>";
+											echo "<select name='PresidentID' class='form-control kantormainselectvpv'>";
 												echo "<option value='empty'> Noone </option>";
 												while($row = $result->fetch_assoc()) {
-													echo "<option value=".$row["Agent_ID"]."> ". $row["Name"] ." </option>";
+												echo "<option value=".$row["Agent_ID"]."> ". $row["Name"] ." </option>";
 												}
-												echo "</select> <br>";
+											echo "</select> <br>";
 											}
 											else {
-												echo "No agents available for assignment <br>";
+											echo "No agents available for assignment <br>";
 											}
 										?>
 									</div>
 									<div class="col">
 										<h5 class="kantormainformlabel">Vice President</h5>
+										<!-- <select name="kantor" class="form-control kantormainselectvpv">
+												<option value="id">Nama Vice President</option>
+										</select> -->
 										<?php
 											$result = mysqli_query($db, $sql);
 											if ($result->num_rows > 0) {
-												echo "<select name='VicePresidentID' class='form-control kantormainselectvpv'>";
+											echo "<select name='VicePresidentID' class='form-control kantormainselectvpv'>";
 												echo "<option value='empty'> Noone </option>";
 												while($row = $result->fetch_assoc()) {
-													echo "<option value=".$row["Agent_ID"]."> ". $row["Name"] ." </option>";
+												echo "<option value=".$row["Agent_ID"]."> ". $row["Name"] ." </option>";
 												}
-												echo "</select>";
+											echo "</select>";
 											}
 											else {
-												echo "No agents available for assignment <br>";
+											echo "No agents available for assignment <br>";
 											}
 										?>
 									</div>
@@ -179,26 +187,21 @@
 				$name = test_input($_POST["name"]);
 				$PresidentID = test_input($_POST["PresidentID"]);
 				$VicePresidentID = test_input($_POST["VicePresidentID"]);
-
 				echo "<h2>Your Input:</h2>";
 				if(isset($name))echo $name. "<br>";
 				if(isset($PresidentID))echo $PresidentID. "<br>";
 				if(isset($VicePresidentID))echo $VicePresidentID. "<br>";
 				echo "<br>";
-
 				$check = $db->prepare("SELECT Branch_ID FROM branch where status = 1 AND name = ?");
 				$check->bind_param('s', $field1);
 				$field1 = $name;
 				$check->execute();
 				$lines = $check->num_rows;
-				$check->close();
-		
 				$duplicate = false;
 				$samePerson = false;
 				$vpBastard = false;
 				if ($PresidentID == "empty") {$PresidentID = null;}
 				if ($VicePresidentID == "empty") {$VicePresidentID = null;}
-
 		//ERROR CHECKS
 				if($PresidentID == NULL && $VicePresidentID != NULL){
 					$vpBastard=true;
@@ -212,35 +215,33 @@
 					$samePerson = true;
 					echo "President and Vice President cannot be the same person <br>";
 				}
-		//		
+				$check->close();
 				if(!$samePerson && !$duplicate && !$vpBastard){
 					if (!$db) {
-						die("Connection failed: " . mysqli_connect_error());
+					die("Connection failed: " . mysqli_connect_error());
 					}
 					else{
-						$stmt = $db->prepare("INSERT INTO branch (President_ID, VicePresident_ID, Name, status)
-								VALUES (?, ?, ?, 1)");
-						$stmt->bind_param('iis', $field1, $field2, $field3);
-						$field1 = $PresidentID;
-						$field2 = $VicePresidentID;
-						$field3 = $name;
-
+							$stmt = $db->prepare("INSERT INTO branch (President_ID, VicePresident_ID, Name, status)
+									VALUES (?, ?, ?, 1)");
+							$stmt->bind_param('iis', $field1, $field2, $field3);
+							$field1 = $PresidentID;
+							$field2 = $VicePresidentID;
+							$field3 = $name;
 						if ($stmt->execute()) {
 							$stmt->close();
-							echo "New branch created successfully";
+						echo "New branch created successfully";
 						} else {
 							$stmt->close();
-							echo "Error: <br>" . mysqli_error($db);
+						echo "Error: <br>" . mysqli_error($db);
 						}
 					}
 				}
 			}
-
 			function test_input($data) {
-				$data = trim($data);
-				$data = stripslashes($data);
-				$data = htmlspecialchars($data);
-				return $data;
+			$data = trim($data);
+			$data = stripslashes($data);
+			$data = htmlspecialchars($data);
+			return $data;
 			}
 		?>
 	</body>

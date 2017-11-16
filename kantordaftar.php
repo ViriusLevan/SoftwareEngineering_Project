@@ -29,7 +29,7 @@
 						</tr>
 						<?php 
 						$sql = "SELECT * FROM branch where status = 1";
-					   	$result = mysqli_query($db,$sql);
+					   $result = mysqli_query($db,$sql);
 					   if ($result->num_rows > 0) {
 					    // output data of each row
 						    while($row = $result->fetch_assoc()) {
