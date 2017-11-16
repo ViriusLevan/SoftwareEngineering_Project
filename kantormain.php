@@ -22,36 +22,13 @@
 					<form action=<?php echo htmlspecialchars($_SERVER["PHP_SELF"]); ?> method="post">
 						<h5 class="kantormainformlabel">Tanggal&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;:</h5>
 						<input type="date" name="bfrDate"
-						id="startDate" class="form-control kantormainselect">
+							id="startDate" class="form-control kantormainselect">
 						<h5 class="kantormainformlabel">s/d</h5>
 						<input type="date" name="aftDate"
-						id="endDate" class="form-control kantormainselect">
+							id="endDate" class="form-control kantormainselect">
 						<input type="submit" name="submit" class="btn kantormainfiltersubmit">
 					</form>
 				</div>
-				<script>
-							function closingFilter() {
-								// window.alert("shit");
-							var startDt = document.getElementById("startDate").value;
-							var endDt = document.getElementById("endDate").value;
-							// Declare variables
-							var table, td, i;
-							table = document.getElementById("produktable");
-							var numRows = table.rows.length;
-							dt1 = new Date(startDt).getTime();
-							dt2 = new Date(endDt).getTime();
-								for (var i = 1; i < numRows; i++) {
-								var cells = table.rows[i].getElementsByTagName('td');
-								console.log(cells[2].innerHTML);
-								dtTD = (new Date(cells[2].innerHTML)).getTime();
-							if (dtTD>dt1 && dtTD<dt2) {
-								table.rows[i].style.display = "";
-							}else{
-									table.rows[i].style.display = "none";
-							}
-								}
-							}
-						</script>
 				<br>
 				<div class="kantormaintabel">
 					<div class="kantormaintabelheader"><h4>Hasil Produktivitas Kantor</h4></div>
@@ -62,7 +39,8 @@
 							<th>Pendapatan cabang dari Closing (Rp)</th>
 						</tr>
 						<?php
-							if (isset($_POST["bfrDate"]) && isset($_POST["aftDate"])){//filter still doesnt work
+							if (isset($_POST["bfrDate"]) && isset($_POST["aftDate"]) 
+								&&($_POST["bfrDate"]!= NULL && ($_POST["aftDate"]!= NULL)){//filter still doesnt work
 								$bfrDate = $_POST["bfrDate"];
 								$aftDate = $_POST["aftDate"];
 								$bfrDate =  str_replace("-","", $bfrDate); //remove "-" from date
@@ -73,8 +51,9 @@
 												        COUNT(DISTINCT agent_involved_in_closing.Closing_ID) AS Productivity,
 												        SUM(agent_involved_in_closing.earning) AS Earnings
 												        FROM agent_involved_in_closing, branch, agent,
-												                Agent_Branch_Employment
+												                Agent_Branch_Employment, closing
 												        WHERE agent_involved_in_closing.workedAs IN (1,7,13,19)
+												        	AND closing.closing_ID = agent_involved_in_closing.Closing_ID
 												            AND agent_involved_in_closing.Agent_ID = agent.Agent_ID
 												            AND agent.Agent_ID = Agent_Branch_Employment.Agent_ID
 												            AND Agent_Branch_Employment.Branch_ID = branch.Branch_ID
