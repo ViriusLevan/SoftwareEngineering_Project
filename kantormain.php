@@ -39,7 +39,6 @@
 							<th>Pendapatan cabang dari Closing (Rp)</th>
 						</tr>
 						<?php
-<<<<<<< HEAD
 							if (isset($_POST["bfrDate"]) && isset($_POST["aftDate"])) {
 								if($_POST["bfrDate"]!= NULL && $_POST["aftDate"]!= NULL){//filter still doesnt work
 								$bfrDate = $_POST["bfrDate"];
@@ -65,35 +64,7 @@
 												            GROUP BY branch.branch_id) pro
 											    ON pro.branch_id = branch.branch_id
 											    WHERE status = 1";
-											}
-=======
-							if (isset($_POST["bfrDate"]) && isset($_POST["aftDate"])){//filter still doesnt work
-								if($_POST["bfrDate"]!= NULL && $_POST["aftDate"]!= NULL){
-									$bfrDate = $_POST["bfrDate"];
-									$aftDate = $_POST["aftDate"];
-									$bfrDate =  str_replace("-","", $bfrDate); //remove "-" from date
-									$aftDate =  str_replace("-","", $aftDate);
-									$branchSQL = "SELECT branch.Name AS name, Productivity, Earnings FROM branch 
-													LEFT OUTER JOIN
-													    (SELECT branch.Name, branch.branch_id,
-													        COUNT(DISTINCT agent_involved_in_closing.Closing_ID) AS Productivity,
-													        SUM(agent_involved_in_closing.earning) AS Earnings
-													        FROM agent_involved_in_closing, branch, agent,
-													                Agent_Branch_Employment, closing
-													        WHERE agent_involved_in_closing.workedAs IN (1,7,13,19)
-													        	AND closing.closing_ID = agent_involved_in_closing.Closing_ID
-													            AND agent_involved_in_closing.Agent_ID = agent.Agent_ID
-													            AND agent.Agent_ID = Agent_Branch_Employment.Agent_ID
-													            AND Agent_Branch_Employment.Branch_ID = branch.Branch_ID
-													            AND agent_branch_employment.End IS NULL
-													            AND Agent.Agent_ID != 0
-													            AND closing.Date >=$bfrDate
-																AND closing.Date <=$aftDate
-													            GROUP BY branch.branch_id) pro
-												    ON pro.branch_id = branch.branch_id
-												    WHERE status = 1";
-								}
->>>>>>> a3cd7f1f242bf05a0967dc3ddce05475c81b2361
+											}							
 							}else{
 								$branchSQL = "SELECT branch.Name AS Name, Productivity, Earnings FROM branch 
 												LEFT OUTER JOIN

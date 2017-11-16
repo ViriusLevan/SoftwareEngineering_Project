@@ -46,6 +46,7 @@
 						        	echo "<td> " . $row["VicePresident_ID"]. "</td>";
 						    	}?><td>
 						    	<button type="submit" class="btn kantordaftarubah" onclick="document.getElementById('tambah').style.display='block'">UBAH</button>
+						    	<button type="submit" class="btn kantordaftartransfer" onclick="document.getElementById('transfer').style.display='block'">TRANSFER</button>
 						    	<?php 
 						    }
 						} else {
@@ -89,6 +90,23 @@
 									<button type="submit" class="btn modalrightbtn">SIMPAN</button>
 								</div>
 							</form>
+						</div>
+					</div>
+				</div>
+				<div id="transfer" class="w3-modal" data-backdrop="">
+					<div class="w3-modal-content w3-animate-top w3-card-4">
+						<header class="w3-container modalheader">
+							<span onclick="document.getElementById('transfer').style.display='none'"
+							class="w3-button w3-display-topright">&times;</span>
+							<h2>TRANSFER KANTOR</h2>
+						</header>
+						<div class="w3-container">
+							INSERT CODE HERE
+							<br>
+							<div class="modalfooter">
+								<button type="submit" class="btn modalleftbtn" onclick="document.getElementById('transfer').style.display='none'">BATAL</button>
+								<button type="submit" class="btn modalrightbtn">SIMPAN</button>
+							</div>
 						</div>
 					</div>
 				</div>
