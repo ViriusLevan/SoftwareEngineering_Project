@@ -256,16 +256,6 @@ td{
 	vertical-align: middle !important;
 }
 
-.kantordaftartransfer{
-	width: 47%;
-	display: inline-block;
-	border-radius: 0;
-	height: 35px;
-	background-color: #183A56;
-	color: #fff;
-	padding-top: 6px;
-}
-
 .kantordaftarubah{
 	width: 47%;
 	display: inline-block;
@@ -351,6 +341,16 @@ td{
 	color: #fff;
 	padding-top: 6px;
 	margin-bottom: 5%;
+}
+
+.agentransfer{
+	width: 47%;
+	display: inline-block;
+	border-radius: 0;
+	height: 35px;
+	background-color: #183A56;
+	color: #fff;
+	padding-top: 6px;
 }
 
 /*************************************/

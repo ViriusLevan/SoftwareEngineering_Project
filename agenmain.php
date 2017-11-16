@@ -47,6 +47,7 @@
 					    	<td>
 					    		<a class="btn btn-warning" href='agent_details.php?id=<?php echo $row["Agent_ID"]; ?>'><?php echo $row["Agent_ID"]; ?></a>             
 					    		<button class="btn" onclick="document.getElementById('agendetail').style.display='block'">Agen A</button>
+						    	<button type="submit" class="btn agentransfer" onclick="document.getElementById('transfer').style.display='block'">TRANSFER</button>
 
 					    	</td></tr>
 					    	<?php
@@ -173,6 +174,23 @@
 							<div class="modalfooter">
 								<button type="submit" class="btn modalleftbtn" onclick="document.getElementById('hapus').style.display='none'">TIDAK</button>
 								<button type="submit" class="btn modalrightbtn">IYA</button>
+							</div>
+						</div>
+					</div>
+				</div>
+				<div id="transfer" class="w3-modal" data-backdrop="">
+					<div class="w3-modal-content w3-animate-top w3-card-4">
+						<header class="w3-container modalheader">
+							<span onclick="document.getElementById('transfer').style.display='none'"
+							class="w3-button w3-display-topright">&times;</span>
+							<h2>TRANSFER KANTOR</h2>
+						</header>
+						<div class="w3-container">
+							INSERT CODE HERE
+							<br>
+							<div class="modalfooter">
+								<button type="submit" class="btn modalleftbtn" onclick="document.getElementById('transfer').style.display='none'">BATAL</button>
+								<button type="submit" class="btn modalrightbtn">SIMPAN</button>
 							</div>
 						</div>
 					</div>
