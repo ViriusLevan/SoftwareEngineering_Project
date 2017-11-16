@@ -39,8 +39,8 @@
 							<th>Pendapatan cabang dari Closing (Rp)</th>
 						</tr>
 						<?php
-							if (isset($_POST["bfrDate"]) && isset($_POST["aftDate"]) ){//filter still doesnt work
-								if($_POST["bfrDate"]!= NULL && $_POST["aftDate"]!= NULL)(
+							if (isset($_POST["bfrDate"]) && isset($_POST["aftDate"])){//filter still doesnt work
+								if($_POST["bfrDate"]!= NULL && $_POST["aftDate"]!= NULL){
 									$bfrDate = $_POST["bfrDate"];
 									$aftDate = $_POST["aftDate"];
 									$bfrDate =  str_replace("-","", $bfrDate); //remove "-" from date
@@ -64,7 +64,7 @@
 													            GROUP BY branch.branch_id) pro
 												    ON pro.branch_id = branch.branch_id
 												    WHERE status = 1";
-								)
+								}
 							}else{
 								$branchSQL = "SELECT branch.Name AS Name, Productivity, Earnings FROM branch 
 												LEFT OUTER JOIN
