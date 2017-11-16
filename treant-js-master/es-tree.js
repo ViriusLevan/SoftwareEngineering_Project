@@ -117,7 +117,6 @@
     // Antoher approach, same result
     // JSON approach
 
-
     var chart_config = {
         chart: {
             container: "#basic-example",
