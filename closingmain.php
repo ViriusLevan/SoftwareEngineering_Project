@@ -573,17 +573,17 @@
 										}
 								}else if($UP2ID == $PresidentID){//Branch President
 									secondaryInvolvementInsertion(
-												$db, $ImmediateUplineID, $cID, $price, $p, $cPresP, $i, 2);
+												$db, $UP2ID, $cID, $price, $p, $cPresP, $i, 2);
 								}
 								else if($UP2ID == $VicePresidentID){//Branch VP
 									secondaryInvolvementInsertion(
-												$db, $ImmediateUplineID, $cID, $price, $p, $cVPP, $i, 3);
+												$db, $UP2ID, $cID, $price, $p, $cVPP, $i, 3);
 								}
 								else if($UP2ID != $PresidentID
 									&& $UP2ID != $VicePresidentID){
 									//Not the pres or vp and not one of the primary agents
 									secondaryInvolvementInsertion(
-												$db, $ImmediateUplineID, $cID, $price, $p, 2, $i, 5);
+												$db, $UP2ID, $cID, $price, $p, 2, $i, 5);
 								}
 								//continue for 3rd upline if he exists
 								if($UP3ID != null){
