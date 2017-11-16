@@ -60,9 +60,9 @@
 					<div class="kantormaintabelheader"><h4>Hasil Closing</h4></div>
 					<table class="table" id="closingTable">
 						<tr>
-							<th>Alamat</th>
-							<th>Harga (Rp)</th>
-							<th>Tanggal</th>
+							<th onclick="sortTable(0)">Alamat</th>
+							<th onclick="sortTable(1)">Harga (Rp)</th>
+							<th onclick="sortTable(2)">Tanggal</th>
 							<th>Opsi</th>
 						</tr>
 						<?php
@@ -76,7 +76,8 @@
 						echo "<td>   " . $row["Date"]. " </td>";
 						?>
 						<td>
-							<a href='closing_agents.php?id=<?php echo $row["closing_ID"]; ?>' class="btn kantordaftarubah">DETAIL</a>
+							<button onclick="document.getElementById('detail').style.display='block' <?php $idKolom = $row["closing_ID"]; ?>" class="btn kantordaftarubah">DETAIL</button>							
+							<!-- <a href='closing_agents.php?id=<?php echo $row["closing_ID"]; ?>' class="btn kantordaftarubah">DETAIL</a> -->
 						</td>
 					</tr>
 					<?php
@@ -87,6 +88,52 @@
 					?>
 				</table>
 			</div>
+			<script>
+			function sortTable(n) {
+			  var table, rows, switching, i,a, b, x, y, shouldSwitch, dir, switchcount = 0;
+			  table = document.getElementById("closingTable");
+			  switching = true;
+			  dir = "asc"; 
+			  while (switching) {
+			    switching = false;
+			    rows = table.getElementsByTagName("TR");
+			    for (i = 1; i < (rows.length - 1); i++) {
+			      shouldSwitch = false;
+			      x = rows[i].getElementsByTagName("TD")[n];
+			      y = rows[i + 1].getElementsByTagName("TD")[n];
+			      if (n==0) {
+					a=x.innerHTML;
+					b=y.innerHTML;
+			      } else{
+			      	a = parseInt(x.innerHTML);
+			      	b = parseInt(y.innerHTML);
+			      }
+			      
+			      if (dir == "asc") {
+			        if (a> b) {
+			          shouldSwitch= true;
+			          break;
+			        }
+			      } else if (dir == "desc") {
+			        if (a< b) {
+			          shouldSwitch= true;
+			          break;
+			        }
+			      }
+			    }
+			    if (shouldSwitch) {
+			      rows[i].parentNode.insertBefore(rows[i + 1], rows[i]);
+			      switching = true;
+			      switchcount ++; 
+			    } else {
+			      if (switchcount == 0 && dir == "asc") {
+			        dir = "desc";
+			        switching = true;
+			      }
+			    }
+			  }
+			}
+			</script>
 			<div id="tambah" class="w3-modal" data-backdrop="">
 				<div class="w3-modal-content w3-animate-top w3-card-4">
 					<header class="w3-container modalheader">
@@ -250,6 +297,94 @@
 								}
 							}
 						</script>
+					</div>
+				</div>
+			</div>
+			<div id="detail" class="w3-modal" data-backdrop="">
+					<div class="w3-modal-content w3-animate-top w3-card-4">
+						<header class="w3-container modalheader">
+							<span onclick="document.getElementById('detail').style.display='none'"
+							class="w3-button w3-display-topright">&times;</span>
+							<h2>TAMBAH KANTOR BARU</h2>
+						</header>
+						<div class="w3-container">
+							<p>
+					        <?php
+					          $row = $idKolom;
+					          $idSQL = "SELECT Agent.Agent_ID, Agent.Name, agent_involved_in_closing.earning, 
+					                      agent_involved_in_closing.workedAs, PhoneNumber 
+					                    from Agent_involved_in_closing, Agent 
+					                    where Agent.Agent_ID = agent_involved_in_closing.Agent_ID
+					                    AND agent.Agent_ID != 0
+					                    AND Closing_ID = ". $row;
+					          $idResults = mysqli_query($db, $idSQL);
+
+					          if ($idResults->num_rows > 0) {
+					            echo "<table>";
+					            echo "<tr> <th>Name</th> <th>Earned</th> <th>Worked as</th> 
+					                <th>Phone Number</th> <th>Agent Details</th> </tr>";
+					            while($agentRow = $idResults->fetch_assoc()) { 
+					              $workedAs = "";
+					              $workedAs = setWorkedAs($agentRow["workedAs"]);
+
+					              // output data of each row
+					              echo "<tr><td> " . $agentRow["Name"]. " </td>"; 
+					              echo "<td> " . $agentRow["earning"]. " </td>"; 
+					              echo "<td> " .  $workedAs . " </td>";
+					              echo "<td> " . $agentRow["PhoneNumber"]. " </td>";
+					              
+					              ?> 
+					                <td>
+					                  <a class="btn btn-warning" href='agent_details.php?id=<?php echo $agentRow["Agent_ID"]; ?>'>Click</a> 
+					                </td></tr>
+					              <?php
+
+					            }
+					          } else {
+					            //SHOULD NEVER HAPPEN
+					            echo "No agents found";
+					          }
+					              
+					        ?>
+					      </p>
+					    </body>
+
+					    <?php 
+					      function setWorkedAs($code){
+					        $workedAs = "";
+					        if($code>18){
+					          $workedAs = "Agent 4";
+					        }else if($code>12){
+					          $workedAs = "Agent 3";
+					        }else if($code>6){
+					          $workedAs = "Agent 2";
+					        }else{
+					          $workedAs = "Agent 1";
+					        }
+
+					        if($code%6==0){
+					          $workedAs .= "'s 3rd upline";
+					        }else if($code%6==1){
+					          //The actual agent
+					        }else if($code%6==2){
+					          $workedAs .= "'s Branch President";
+					        }else if($code%6==3){
+					          $workedAs .= "'s Vice President";
+					        }else if($code%6==4){
+					          $workedAs .= "'s 1st upline";
+					        }else {
+					          $workedAs .= "'s 2nd upline";
+					        }
+
+					        return $workedAs;
+					      }
+					    ?>
+							<br>
+							<div class="modalfooter">
+								<button type="submit" class="btn modalleftbtn" onclick="document.getElementById('detail').style.display='none'">BATAL</button>
+								<button type="submit" class="btn modalrightbtn">SIMPAN</button>
+							</div>
+						</div>
 					</div>
 				</div>
 			</div>
