@@ -74,10 +74,11 @@
 									echo "<tr><td> " . $row["Address"]. " </td>";
 									echo "<td> " . $row["Price"]. " </td>";
 									echo "<td>   " . $row["Date"]. " </td>";
+									$asd = $row["closing_ID"];
 						?>
 						<td>
-							<button onclick="document.getElementById('detail').style.display='block' <?php $idKolom = $row["closing_ID"]; ?>" class="btn kantordaftarubah">DETAIL</button>							
-							<!-- <a href='closing_agents.php?id=<?php echo $row["closing_ID"]; ?>' class="btn kantordaftarubah">DETAIL</a> -->
+							<!-- <button onclick="document.getElementById('detail').style.display='block'" <?php $idKolom = $asd; ?> class="btn kantordaftarubah">DETAIL</button>							 -->
+							<a href='closing_agents.php?id=<?php echo $row["closing_ID"]; ?>' class="btn kantordaftarubah">DETAIL</a>
 						</td>
 					</tr>
 					<?php
@@ -310,12 +311,12 @@
 						<header class="w3-container modalheader">
 							<span onclick="document.getElementById('detail').style.display='none'"
 							class="w3-button w3-display-topright">&times;</span>
-							<h2>TAMBAH KANTOR BARU</h2>
+							<h2>DETAIL HASIL CLOSING</h2>
 						</header>
 						<div class="w3-container">
-							<p>
 					        <?php
 					          $row = $idKolom;
+					          echo $row;
 					          $idSQL = "SELECT Agent.Agent_ID, Agent.Name, agent_involved_in_closing.earning, 
 					                      agent_involved_in_closing.workedAs, PhoneNumber 
 					                    from Agent_involved_in_closing, Agent 
@@ -325,7 +326,7 @@
 					          $idResults = mysqli_query($db, $idSQL);
 
 					          if ($idResults->num_rows > 0) {
-					            echo "<table>";
+					            echo '<table class="table">';
 					            echo "<tr> <th>Name</th> <th>Earned</th> <th>Worked as</th> 
 					                <th>Phone Number</th> <th>Agent Details</th> </tr>";
 					            while($agentRow = $idResults->fetch_assoc()) { 
@@ -351,8 +352,6 @@
 					          }
 					              
 					        ?>
-					      </p>
-					    </body>
 
 					    <?php 
 					      function setWorkedAs($code){
@@ -385,10 +384,10 @@
 					      }
 					    ?>
 							<br>
-							<div class="modalfooter">
+							<!-- <div class="modalfooter">
 								<button type="submit" class="btn modalleftbtn" onclick="document.getElementById('detail').style.display='none'">BATAL</button>
 								<button type="submit" class="btn modalrightbtn">SIMPAN</button>
-							</div>
+							</div> -->
 						</div>
 					</div>
 				</div>
@@ -466,7 +465,7 @@
 					
 					$f1 = $agents[$i];
 						$f2 = $cID;
-					if($nAgents == 3){
+					if($nAgents == 3){//
 						if($i == 0){
 							$p == 50;
 						}else{
@@ -573,17 +572,17 @@
 										}
 								}else if($UP2ID == $PresidentID){//Branch President
 									secondaryInvolvementInsertion(
-												$db, $ImmediateUplineID, $cID, $price, $p, $cPresP, $i, 2);
+												$db, $UP2ID, $cID, $price, $p, $cPresP, $i, 2);
 								}
 								else if($UP2ID == $VicePresidentID){//Branch VP
 									secondaryInvolvementInsertion(
-												$db, $ImmediateUplineID, $cID, $price, $p, $cVPP, $i, 3);
+												$db, $UP2ID, $cID, $price, $p, $cVPP, $i, 3);
 								}
 								else if($UP2ID != $PresidentID
 									&& $UP2ID != $VicePresidentID){
 									//Not the pres or vp and not one of the primary agents
 									secondaryInvolvementInsertion(
-												$db, $ImmediateUplineID, $cID, $price, $p, 2, $i, 5);
+												$db, $UP2ID, $cID, $price, $p, 2, $i, 5);
 								}
 								//continue for 3rd upline if he exists
 								if($UP3ID != null){
