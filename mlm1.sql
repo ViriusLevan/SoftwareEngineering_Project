@@ -304,7 +304,7 @@ ALTER TABLE `agent_has_downline`
 --
 ALTER TABLE `agent_involved_in_closing`
   ADD CONSTRAINT `fk_Agent_Has_Closing_Agent_ID` FOREIGN KEY (`Agent_ID`) REFERENCES `agent` (`Agent_ID`),
-  ADD CONSTRAINT `fk_Agent_Has_Closing_Closing_ID` FOREIGN KEY (`Closing_ID`) REFERENCES `closing` (`closing_ID`);
+  ADD CONSTRAINT `fk_Agent_Has_Closing_Closing_ID` FOREIGN KEY (`Closing_ID`) REFERENCES `closing` (`closing_ID`) ON DELETE CASCADE;
 
 --
 -- Constraints for table `branch`

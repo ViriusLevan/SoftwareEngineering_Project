@@ -14,7 +14,7 @@
                       agent_involved_in_closing.workedAs, PhoneNumber 
                     from Agent_involved_in_closing, Agent 
                     where Agent.Agent_ID = agent_involved_in_closing.Agent_ID
-                    AND Agent_ID != 0
+                    AND agent.Agent_ID != 0
                     AND Closing_ID = ". $row;
           $idResults = mysqli_query($db, $idSQL);
 
