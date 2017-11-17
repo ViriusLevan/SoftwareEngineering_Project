@@ -13,7 +13,13 @@
           $row = $_GET["id"];
 
           $AgentSQL =
-                "SELECT * FROM agent WHERE Agent_ID=" . $row;
+                "SELECT agent.Agent_ID, agent.Name, agent.PhoneNumber, 
+                  agent.ImmediateUpline_ID, agent.Status,branch.branch_id,branch.Name 
+                  FROM agent,branch,agent_branch_employment 
+                  WHERE agent.Agent_ID = agent_branch_employment.Agent_ID
+                  AND agent_branch_employment.Branch_ID = branch.branch_id
+                  AND agent_branch_employment.End IS NULL
+                  AND agent.Agent_ID = " . $row;
           $AgentResult = mysqli_query($db, $AgentSQL);
           $AgentRow = $AgentResult->fetch_assoc();
 

@@ -13,7 +13,7 @@
 
 
         $sql = "SELECT agent.Agent_ID, agent.Name, agent.PhoneNumber,agent.ImmediateUpline_ID,
-        			branch.status AS bStatus
+        			branch.status AS bStatus, branch.name as bName
         			FROM `agent`,agent_branch_employment,branch
 					WHERE agent.Agent_ID = agent_branch_employment.Agent_ID
 					AND agent_branch_employment.Branch_ID = branch.branch_id
@@ -21,7 +21,7 @@
 		    $result = mysqli_query($db,$sql);
 		    if ($result->num_rows > 0) {
 		    	echo "<table>";
-		    	echo "<tr> <th>ID</th> <th>Name</th> <th>Phone</th> 
+		    	echo "<tr> <th>ID</th> <th>Name</th> <th>Branch Name</th> <th>Phone</th> 
 		    				<th>Upline</th> <th>Details</th> </tr>";
 			    while($row = $result->fetch_assoc()) {//Output data
 			    	if($row["bStatus"] == 0)
@@ -30,6 +30,7 @@
 			    		echo "<tr>";
 			        echo "<td> " . $row["Agent_ID"]. " </td>"; 
               		echo "<td> " . $row["Name"]. " </td>"; 
+              		echo "<td> " . $row["bName"]. " </td>"; 
 			        echo "<td> " . $row["PhoneNumber"]. " </td>";
 			        if($row["ImmediateUpline_ID"] == null){
 			        	echo "<td>  Noone </td>"; 

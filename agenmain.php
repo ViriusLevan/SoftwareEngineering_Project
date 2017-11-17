@@ -7,7 +7,92 @@
 		<?php include('htmlhead.php'); ?>
 		<title>Agen</title>
 	</head>
-	<body class="mainbody">
+	<body class="mainbody" 
+		<?php 
+			if(isset($_GET["id"])){
+				echo "onload='showAgentDetails()'";
+			}
+			if ($_SERVER["REQUEST_METHOD"] == "POST"){
+				if(isset($_POST["editAID"]) && isset($_POST["editName"]) 
+					&& isset($_POST["editPhone"]) && isset($_POST["editBID"])){
+					//check if edit Variables are set, redundant
+					//SQL to get data of agent being edited
+					$AgentVerifSQL = "SELECT agent.Agent_ID, agent.Name AS aName, 
+						agent.PhoneNumber AS aPhone,branch.branch_id AS bID
+					 	FROM `agent`,agent_branch_employment,branch 
+						WHERE branch.branch_id = agent_branch_employment.Branch_ID
+						AND agent_branch_employment.Agent_ID = agent.Agent_ID
+						AND agent_branch_employment.End IS NULL
+						AND agent.Agent_ID = " . $_POST["editAID"];
+					$AgentVerifResult = mysqli_query($db, $AgentVerifSQL);
+          			$AgentVerifRow = $AgentVerifResult->fetch_assoc();
+
+          			if($_POST["editName"] != $AgentVerifRow["aName"]
+          				|| $_POST["editPhone"] != $AgentVerifRow["aPhone"]){
+          				//Update agent entry if name or phone data is verified to be different
+          				$stmt = $db->prepare("UPDATE `agent` 
+          					SET `Name`= ?,`PhoneNumber`=? 
+          					WHERE agent.Agent_ID = ?");
+						$stmt->bind_param('ssi', $field1, $field2, $field3);
+						$field1 = $_POST["editName"];
+						$field2 = $_POST["editPhone"];
+						$field3 = $_POST["editAID"];
+						if ($stmt->execute()) {
+							$stmt->close();
+						    echo "New agent created successfully <br>";
+						}else{
+							$stmt->close();
+			    			echo "Error: <br>" . mysqli_error($db);
+						}
+          			}
+
+          			if($_POST["editBID"] != $AgentVerifRow["bID"] 
+					 && isset($_POST["editTDate"])){//check if branch is different
+						$bUpdateSQL = $db->prepare("UPDATE `agent_branch_employment` 
+											SET `End`= ?  
+											WHERE Agent_ID = ?
+											AND Branch_ID = ?
+											AND End IS NULL");
+						$bUpdateSQL->bind_param('sii',$fu1,$fu2,$fu3);
+						$transferDate = $_POST["editTDate"];
+						$transferDate = str_replace("-","", $transferDate);
+						$fu1 = $transferDate;
+						$fu2 = $_POST["editAID"];
+						$fu3 = $AgentVerifRow["bID"];
+
+						if ($bUpdateSQL->execute()) {
+							$bUpdateSQL->close();
+	    					echo "Employment Record updated successfully";
+						    $newDate = new Datetime($_POST["editTDate"]);
+						    $newDate->modify('+1 day');
+						    $newDateStr = $newDate->format('Ymd');
+						    var_dump($newDateStr);
+							$newEmployment = $db->prepare("INSERT INTO `agent_branch_employment`
+								(`Agent_ID`, `Branch_ID`, `Started`, `End`) 
+								VALUES (?,?,?,NULL)");
+							$newEmployment->bind_param('iis',$f1,$f2,$f3);
+							$f1 = $_POST["editAID"];
+							$f2 = $_POST["editBID"];
+							$f3 = $newDateStr;
+							if ($newEmployment->execute()) {
+								$newEmployment->close();
+							    echo "New Employment created successfully <br>";
+							}else{
+								$newEmployment->close();
+				    			echo "Error: <br>" . mysqli_error($db);
+							}
+						} else {
+							$bUpdateSQL->close();
+	    					echo "Error updating record: " . mysqli_error($db);
+						}
+
+					}
+
+				}
+				
+			}
+		?>
+	>
 		<?php include('sidebar.php'); ?>
 		<div class="content">
 			<?php include('header.php'); ?>
@@ -16,16 +101,18 @@
 
 
 			        $sql = "SELECT agent.Agent_ID, agent.Name, agent.PhoneNumber,agent.ImmediateUpline_ID,
-			        			branch.status AS bStatus
+			        			branch.status AS bStatus, branch.name as bName
 			        			FROM `agent`,agent_branch_employment,branch
 								WHERE agent.Agent_ID = agent_branch_employment.Agent_ID
 								AND agent_branch_employment.Branch_ID = branch.branch_id
-								AND agent.status = 1";
+								AND agent.status = 1
+								AND agent.Agent_ID != 0
+								AND agent_branch_employment.End IS NULL";
 				    $result = mysqli_query($db,$sql);
 				    if ($result->num_rows > 0) {
 				    	echo "<table>";
-				    	echo "<tr> <th>ID</th> <th>Name</th> <th>Phone</th> 
-				    				<th>Upline</th> <th>Details</th> </tr>";
+				    	echo "<tr> <th>ID</th> <th>Name</th> <th>Branch Name</th> 
+				    			<th>Phone</th> <th>Upline</th> <th>Details</th> </tr>";
 					    while($row = $result->fetch_assoc()) {//Output data
 					    	if($row["bStatus"] == 0)
 					    		echo"<tr class = 'Unstationed'>";
@@ -33,6 +120,7 @@
 					    		echo "<tr>";
 					        echo "<td> " . $row["Agent_ID"]. " </td>"; 
 		              		echo "<td> " . $row["Name"]. " </td>"; 
+					        echo "<td> " . $row["bName"]. " </td>";
 					        echo "<td> " . $row["PhoneNumber"]. " </td>";
 					        if($row["ImmediateUpline_ID"] == null){
 					        	echo "<td>  Noone </td>"; 
@@ -46,8 +134,10 @@
 					    	}?>
 					    	<td>
 					    		<a class="btn btn-warning" href='agent_details.php?id=<?php echo $row["Agent_ID"]; ?>'><?php echo $row["Agent_ID"]; ?></a>             
-					    		<button class="btn" onclick="document.getElementById('agendetail').style.display='block'">Agen A</button>
-						    	<button type="submit" class="btn agentransfer" onclick="document.getElementById('transfer').style.display='block'">TRANSFER</button>
+						    		<a href='agenmain.php?id=<?php echo $row["Agent_ID"]; ?>'
+						    			class="btn">Details</a>
+							    	<!-- <button type="submit" class="btn agentransfer" 
+							    		onclick="document.getElementById('transfer').style.display='block'">Transfer</button> -->
 
 					    	</td></tr>
 					    	<?php
@@ -58,8 +148,12 @@
 					}
 
 					//if an agent is clicked, go to agent details with agent id
-
         ?>
+        	<script type="text/javascript">
+        		function showAgentDetails(){
+        			document.getElementById('agendetail').style.display='block';
+        		}
+        	</script>
 			</div>
 			<div class="agenfooter">
 				<button class="btn agentambahbtn" onclick="document.getElementById('tambah').style.display='block'">Tambah Agen</button>
@@ -138,31 +232,80 @@
 					<header class="w3-container modalheader">
 						<span onclick="document.getElementById('agendetail').style.display='none'"
 						class="w3-button w3-display-topright">&times;</span>
-						<h1>AGEN A</h1>
+						<h1>Details</h1>
 					</header>
+					<form method="post" action="<?php echo htmlspecialchars($_SERVER['PHP_SELF']);?>">
 					<div class="w3-container agencontainer">
 						<div class="container">
 							<div class="row">
 								<div class="col">
 									<h2>ID</h2>
-									<h2>Kantor</h2>
-									<h2>Upline</h2>
+									<h2>Nama</h2>
 									<h2>No. Telepon</h2>
+									<h2>Upline</h2>
+									<h2>Kantor</h2>
 								</div>
 								<div class="col-8">
-									<h2>: A-123</h2>
-									<h2>: Kantor A</h2>
-									<h2>: Agen X</h2>
-									<h2>: 0812345696969</h2>
+									<?php
+										if(isset($_GET["id"])){
+											$row = $_GET["id"];
+											
+											$AgentSQL =
+								                "SELECT agent.Agent_ID, agent.Name, agent.PhoneNumber, 
+								                  agent.ImmediateUpline_ID, agent.Status,
+								                  branch.branch_id as bID,branch.Name as bName, 
+								                  agent_branch_employment.Started
+								                  FROM agent,branch,agent_branch_employment 
+								                  WHERE agent.Agent_ID = agent_branch_employment.Agent_ID
+								                  AND agent_branch_employment.Branch_ID = branch.branch_id
+								                  AND agent_branch_employment.End IS NULL
+								                  AND agent.Agent_ID = " . $row;
+									        $AgentResult = mysqli_query($db, $AgentSQL);
+									        $AgentRow = $AgentResult->fetch_assoc();
+									        echo "<input type='hidden' name='editAID' 
+									        	value=". $AgentRow["Agent_ID"] .">";
+									        echo "<h2>". $AgentRow["Agent_ID"] ."</h2>";
+									        echo "<input type='text' name='editName'
+									         value=". $AgentRow["Name"] ." required> <br>";
+									        echo "<input  type='tel' name='editPhone' 
+									         pattern='[0-9]+' value=". $AgentRow["PhoneNumber"] ." required>";
+									        if($AgentRow["ImmediateUpline_ID"] == null)
+									         echo "<h2> Noone </h2>";
+									        else
+									         echo "<h2>". $AgentRow["ImmediateUpline_ID"] ."</h2>";
+									        echo "<h2>". $AgentRow["bName"] ."</h2>";
+
+									        $branchSQL = "SELECT branch_id,Name FROM `branch` where status=1";
+											$branchResult = mysqli_query($db, $branchSQL);
+
+									    	echo "<select name='editBID' class='form-control kantormainselectvpv'>";
+										    while($row = $branchResult->fetch_assoc()) {
+										    	if($row["branch_id"] == $AgentRow["bID"])
+										    		echo "<option selected='selected' 
+										    			value=".$row["branch_id"]."> ". $row["Name"] ." </option>";
+										    	else
+										        	echo "<option value=".$row["branch_id"]."> ". $row["Name"] ." </option>"; 
+										    }
+										    echo "</select> <br>";
+										    $dateMin = new Datetime($AgentRow["Started"]);
+										    $dateMin->modify('+1 day');
+										    $dateMinStr = $dateMin->format('Y-m-d');
+										    echo "<input type='date' min=". $dateMinStr ." 
+										    	name='editTDate' value=". $dateMinStr ."
+										    	pattern='[0-9]{4}-[0-9]{2}-[0-9]{2}'>";
+										}
+									?>
 								</div>
+								
 							</div>
 						</div>
 					</div>
 					<div class="agenkembalihapusubah">
 						<button type="submit" class="btn agenkembali" onclick="document.getElementById('agendetail').style.display='none'">KEMBALI</button>
-						<button type="submit" class="btn agenhapus" onclick="document.getElementById('hapus').style.display='block'">HAPUS</button>
+						<button type="submit" class="btn agenhapus" onclick="document.getElementById('hapus').style.display='block'">DISMISS</button>
 						<button type="submit" class="btn agenubah">UBAH</button>
 					</div>
+					</form>
 				</div>
 			</div>
 			<div id="hapus" class="w3-modal" data-backdrop="">
