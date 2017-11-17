@@ -9,11 +9,28 @@
 	</head>
 	<body class="mainbody" 
 		<?php 
-			if(isset($_GET["id"])){
+			
+
+			if(isset($_GET["editID"])){
 				echo "onload='showAgentDetails()'";
 			}
-			if ($_SERVER["REQUEST_METHOD"] == "POST"){
+			else if(isset($_GET["dismissalID"])){
+				echo "onload='showAgentDismissal()'";
+				$minDismissalSQL = "SELECT closing.Date AS cDate
+					FROM closing,`agent_involved_in_closing` 
+					WHERE agent_involved_in_closing.Closing_ID = closing.closing_ID
+					AND agent_involved_in_closing.Agent_ID = 1
+					ORDER BY closing.Date DESC LIMIT 1";
+				$minDismissalResult = mysqli_query($db, $minDismissalSQL);
+          		$minDismissalRow = $minDismissalResult->fetch_assoc();
+          		$minDismissal = new Datetime($minDismissalRow["cDate"]);
+			    $minDismissal->modify('+1 day');
+			    $minDismissalDate = $minDismissal->format('Y-m-d');
+
+			}
+			else if ($_SERVER["REQUEST_METHOD"] == "POST"){
 				if(isset($_POST["editAID"]) && isset($_POST["editName"]) 
+			//POST for agent update/agent transfer
 					&& isset($_POST["editPhone"]) && isset($_POST["editBID"])){
 					//check if edit Variables are set, redundant
 					//SQL to get data of agent being edited
@@ -88,9 +105,133 @@
 
 					}
 
+				}else if(isset($_POST["name"]) && isset($_POST["phone"]) 
+					&& isset($_POST["UplineID"]) && isset($_POST["BranchID"])){
+				//POST for new Agent
+					$name = $phone = $UplineID = $BranchID = "";
+					$password = $passwordCon = "";
+					$name = test_input($_POST["name"]);
+					$phone = $_POST["phone"];
+					$UplineID = test_input($_POST["UplineID"]);
+					$BranchID = test_input($_POST["BranchID"]);
+
+					// echo "<h2>Your Input:</h2>";
+					// if(isset($name))echo $name. "<br>";  
+					// if(isset($phone))echo $phone. "<br>";  
+					// if(isset($UplineID))echo $UplineID. "<br>";  
+					// if(isset($BranchID))echo $BranchID. "<br>";
+					// echo "<br>";
+
+				  	if ($UplineID == "empty") {$UplineID = null;}
+
+				  	if (!$db) {
+				    	die("Connection failed: " . mysqli_connect_error());
+					}else{
+							$stmt = $db->prepare("
+								INSERT INTO agent (Name, ImmediateUpline_ID, Status, PhoneNumber) 
+								VALUES (?,?,1,?)");
+							$stmt->bind_param('sis', $field2, $field3, $field4);
+
+							$field2 = $name;
+							$field3 = $UplineID;
+							$field4 = $phone;
+
+						if ($stmt->execute()) {
+							$stmt->close();
+						    echo "New agent created successfully <br>";
+							
+							$agentID =  mysqli_insert_id($db);//get last inserted AUTO_INCREMENT (which is agent ID)
+							//Branch Employment Insertion
+							$employmentSTMT = $db->prepare("
+						    		INSERT INTO `agent_branch_employment`(`Agent_ID`, `Branch_ID`, `Started`, `End`) 
+						    		VALUES (?,?,?,NULL)");
+							$employmentSTMT->bind_param('iis', $f1, $f2, $f3);
+							$f1 = $agentID;
+							$f2 = $BranchID;
+							$f3 = date("Y-m-d");
+							if($employmentSTMT->execute()){
+					    		$employmentSTMT->close();
+					    		echo "Employment entry created successfully <br>";
+					    	}else{
+					    		$employmentSTMT->close();
+					    		echo "Error: <br>" . mysqli_error($db);
+					    	}
+
+							//Recursive Insertion for downline relation
+						    while($UplineID != NULL){
+						    	$upSTMT = $db->prepare("
+						    		INSERT INTO `agent_has_downline`(`Agent_ID`, `Downline_ID`) 
+						    		VALUES (?,?)");
+						    	$upSTMT->bind_param('ii' ,$Up, $Down);
+						    	$Up = $UplineID;
+						    	$Down = $agentID;
+
+						    	
+						    	if($upSTMT->execute()){
+						    		$upSTMT->close();
+						    		echo "Downline relation created successfully <br>";
+						    	}else{
+						    		$upSTMT->close();
+						    		echo "Error: <br>" . mysqli_error($db);
+						    	}
+
+						    	$cAgentSQL = 
+									    "SELECT agent.ImmediateUpline_ID FROM agent 
+											WHERE agent.Agent_ID = " . $UplineID;
+				    			$cAgentResult = mysqli_query($db, $cAgentSQL);
+				    			$cAgentRow = $cAgentResult->fetch_assoc();
+				    			$UplineID = $cAgentRow["ImmediateUpline_ID"];
+						    }
+
+						} else {
+							$stmt->close();
+						    echo "Error: <br>" . mysqli_error($db);
+						}
+					}
+				}else if(isset($_POST["dismissalDate"]) && isset($_POST["dismissalID"])
+							&& isset($_POST["dismissalBranch"])){
+					$dismissalDate = $_POST["dismissalDate"];
+					$dismissalDate = str_replace("-","", $dismissalDate);
+					$dismissalSQL = $db->prepare("UPDATE `agent` 
+						SET `Status`=0 WHERE Agent_ID = ?");
+					$dismissalSQL->bind_param('i',$f1);
+					$f1 = $_POST["dismissalID"];
+					
+					if($dismissalSQL->execute()){
+						$dismissalSQL->close();
+						echo "Agent Dismissed Successfully";
+						$employmentSQL = $db->prepare("UPDATE `agent_branch_employment` 
+											SET `End`= ?  
+											WHERE Agent_ID = ?
+											AND Branch_ID = ?
+											AND End IS NULL");
+						$employmentSQL->bind_param('sii',$e1, $e2, $e3);
+						$e1 = $dismissalDate;
+						$e2 = $_POST["dismissalID"];
+						$e3 = $_POST["dismissalBranch"];
+
+						if($employmentSQL->execute()){
+							$employmentSQL->close();
+							echo "Employment Successfully Ended";
+						}else{
+							$employmentSQL->close();
+							echo "Error: <br>" . mysqli_error($db);
+						}
+
+					}else{
+						$dismissalSQL->close();
+						echo "Error: <br>" . mysqli_error($db);
+					}
 				}
 				
 			}
+
+			function test_input($data) {
+			  $data = trim($data);
+			  $data = stripslashes($data);
+			  $data = htmlspecialchars($data);
+			  return $data;
+			} 
 		?>
 	>
 		<?php include('sidebar.php'); ?>
@@ -134,7 +275,7 @@
 					    	}?>
 					    	<td>
 					    		<a class="btn btn-warning" href='agent_details.php?id=<?php echo $row["Agent_ID"]; ?>'><?php echo $row["Agent_ID"]; ?></a>             
-						    		<a href='agenmain.php?id=<?php echo $row["Agent_ID"]; ?>'
+						    		<a href='agenmain.php?editID=<?php echo $row["Agent_ID"]; ?>'
 						    			class="btn">Details</a>
 							    	<!-- <button type="submit" class="btn agentransfer" 
 							    		onclick="document.getElementById('transfer').style.display='block'">Transfer</button> -->
@@ -166,7 +307,7 @@
 							<h2>TAMBAH AGEN BARU</h2><!--Agent_add.php -->
 						</header>
 						<div class="w3-container">
-							<form action="">
+							<form action="<?php echo htmlspecialchars($_SERVER['PHP_SELF']);?>">
 								<h5 class="kantormainformlabel">Nama Agen</h5>
 								<input class="form-control" type="text" placeholder="Masukkan nama agen"
 									name="name" required>
@@ -247,8 +388,8 @@
 								</div>
 								<div class="col-8">
 									<?php
-										if(isset($_GET["id"])){
-											$row = $_GET["id"];
+										if(isset($_GET["editID"])){
+											$row = $_GET["editID"];
 											
 											$AgentSQL =
 								                "SELECT agent.Agent_ID, agent.Name, agent.PhoneNumber, 
@@ -288,7 +429,7 @@
 										    }
 										    echo "</select> <br>";
 										    $dateMin = new Datetime($AgentRow["Started"]);
-										    $dateMin->modify('+1 day');
+										    //$dateMin->modify('+1 day');
 										    $dateMinStr = $dateMin->format('Y-m-d');
 										    echo "<input type='date' min=". $dateMinStr ." 
 										    	name='editTDate' value=". $dateMinStr ."
@@ -301,8 +442,13 @@
 						</div>
 					</div>
 					<div class="agenkembalihapusubah">
-						<button type="submit" class="btn agenkembali" onclick="document.getElementById('agendetail').style.display='none'">KEMBALI</button>
-						<button type="submit" class="btn agenhapus" onclick="document.getElementById('hapus').style.display='block'">DISMISS</button>
+						<button type="submit" class="btn agenkembali" 
+							onclick="document.getElementById('agendetail').style.display='none'">
+							KEMBALI</button>
+						<a href="agenmain.php?dismissalID=<?php echo $AgentRow["Agent_ID"];?>
+							&dismissalName=<?php echo $AgentRow["Name"];?>
+							&dismissalBranch=<?php echo $AgentRow["bID"];?>" 
+							class="btn agenhapus">DISMISS</a>
 						<button type="submit" class="btn agenubah">UBAH</button>
 					</div>
 					</form>
@@ -311,17 +457,33 @@
 			<div id="hapus" class="w3-modal" data-backdrop="">
 					<div class="w3-modal-content w3-animate-top w3-card-4">
 						<header class="w3-container">
-							<h2>Apakah anda yakin ingin menghapus item ini?</h2>
+							<h2>Agent <?php echo $_GET["dismissalName"];?> DISMISSAL</h2>
 						</header>
-						<div class="w3-container">							
-							<div class="modalfooter">
-								<button type="submit" class="btn modalleftbtn" onclick="document.getElementById('hapus').style.display='none'">TIDAK</button>
-								<button type="submit" class="btn modalrightbtn">IYA</button>
+						<form method="POST" action="<?php echo htmlspecialchars($_SERVER['PHP_SELF']);?>">
+							<div class="w3-container">
+								<input type='hidden' name='dismissalID' 
+									value=<?php echo $_GET["dismissalID"];?> >
+								<input type='hidden' name='dismissalBranch' 
+									value=<?php echo $_GET["dismissalBranch"];?> >
+								Dismissal Date<input type="date" name="dismissalDate" 
+									min=<?php echo $minDismissalDate;?>
+									value=<?php echo $minDismissalDate;?>
+									pattern='[0-9]{4}-[0-9]{2}-[0-9]{2}'>						
+								<div class="modalfooter">
+									<button type="submit" class="btn modalleftbtn" 
+										onclick="document.getElementById('hapus').style.display='none'">TIDAK</button>
+									<button type="submit" class="btn modalrightbtn">IYA</button>
+								</div>
+								<script type="text/javascript">
+									function showAgentDismissal(){
+										document.getElementById('hapus').style.display='block';
+									}
+								</script>
 							</div>
-						</div>
+						</form>
 					</div>
 				</div>
-				<div id="transfer" class="w3-modal" data-backdrop="">
+				<!-- <div id="transfer" class="w3-modal" data-backdrop="">
 					<div class="w3-modal-content w3-animate-top w3-card-4">
 						<header class="w3-container modalheader">
 							<span onclick="document.getElementById('transfer').style.display='none'"
@@ -337,101 +499,8 @@
 							</div>
 						</div>
 					</div>
-				</div>
+				</div> -->
 		</div>
-		<?php
-			$name = $phone = $UplineID = $BranchID = "";
-			$password = $passwordCon = "";
-			if ($_SERVER["REQUEST_METHOD"] == "POST") {
-				$name = test_input($_POST["name"]);
-				$phone = $_POST["phone"];
-				$UplineID = test_input($_POST["UplineID"]);
-				$BranchID = test_input($_POST["BranchID"]);
-
-				echo "<h2>Your Input:</h2>";
-				if(isset($name))echo $name. "<br>";  
-				if(isset($phone))echo $phone. "<br>";  
-				if(isset($UplineID))echo $UplineID. "<br>";  
-				if(isset($BranchID))echo $BranchID. "<br>";
-				echo "<br>";
-
-			  	if ($UplineID == "empty") {$UplineID = null;}
-
-			  	if (!$db) {
-			    	die("Connection failed: " . mysqli_connect_error());
-				}
-				else{
-						$stmt = $db->prepare("
-							INSERT INTO agent (Name, ImmediateUpline_ID, Status, PhoneNumber) 
-							VALUES (?,?,1,?)");
-						$stmt->bind_param('sis', $field2, $field3, $field4);
-
-						$field2 = $name;
-						$field3 = $UplineID;
-						$field4 = $phone;
-
-					if ($stmt->execute()) {
-						$stmt->close();
-					    echo "New agent created successfully <br>";
-						
-						$agentID =  mysqli_insert_id($db);//get last inserted AUTO_INCREMENT (which is agent ID)
-						//Branch Employment Insertion
-						$employmentSTMT = $db->prepare("
-					    		INSERT INTO `agent_branch_employment`(`Agent_ID`, `Branch_ID`, `Started`, `End`) 
-					    		VALUES (?,?,?,NULL)");
-						$employmentSTMT->bind_param('iis', $f1, $f2, $f3);
-						$f1 = $agentID;
-						$f2 = $BranchID;
-						$f3 = date("Y-m-d");
-						if($employmentSTMT->execute()){
-					    		$employmentSTMT->close();
-					    		echo "Employment entry created successfully <br>";
-				    	}else{
-				    		$employmentSTMT->close();
-				    		echo "Error: <br>" . mysqli_error($db);
-				    	}
-
-						//Recursive Insertion for downline relation
-					    while($UplineID != NULL){
-					    	$upSTMT = $db->prepare("
-					    		INSERT INTO `agent_has_downline`(`Agent_ID`, `Downline_ID`) 
-					    		VALUES (?,?)");
-					    	$upSTMT->bind_param('ii' ,$Up, $Down);
-					    	$Up = $UplineID;
-					    	$Down = $agentID;
-
-					    	
-					    	if($upSTMT->execute()){
-					    		$upSTMT->close();
-					    		echo "Downline relation created successfully <br>";
-					    	}else{
-					    		$upSTMT->close();
-					    		echo "Error: <br>" . mysqli_error($db);
-					    	}
-
-					    	$cAgentSQL = 
-								    "SELECT agent.ImmediateUpline_ID FROM agent 
-										WHERE agent.Agent_ID = " . $UplineID;
-			    			$cAgentResult = mysqli_query($db, $cAgentSQL);
-			    			$cAgentRow = $cAgentResult->fetch_assoc();
-			    			$UplineID = $cAgentRow["ImmediateUpline_ID"];
-					    }
-
-					} else {
-						$stmt->close();
-					    echo "Error: <br>" . mysqli_error($db);
-					}
-				}
-
-			}
-
-			function test_input($data) {
-			  $data = trim($data);
-			  $data = stripslashes($data);
-			  $data = htmlspecialchars($data);
-			  return $data;
-			} 
-		?>
 	</body>
 
 </html>
