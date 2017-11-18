@@ -35,6 +35,7 @@
 					<table class="table" id="produktable">
 						<tr>
 							<th>Nama Kantor/Branch</th>
+							<th>Unit</th>
 							<th>Total Closing</th>
 							<th>Pendapatan cabang dari Closing (Rp)</th>
 						</tr>
@@ -45,7 +46,8 @@
 								$aftDate = $_POST["aftDate"];
 								$bfrDate =  str_replace("-","", $bfrDate); //remove "-" from date
 								$aftDate =  str_replace("-","", $aftDate);
-								$branchSQL = "SELECT branch.Name AS Name, UNIT, Productivity, Earnings 
+								$branchSQL = "SELECT branch.Name AS Name, IFNULL(UNIT,0) AS Unit, 
+												IFNULL(Productivity,0) AS Productivity, IFNULL(Earnings,0) AS Earnings
 												FROM branch LEFT OUTER JOIN
 													(SELECT branch.Name, branch.branch_id,
 														SUM(CASE 
@@ -60,7 +62,7 @@
 														COUNT(DISTINCT agent_involved_in_closing.Closing_ID) AS Productivity,
 														SUM(agent_involved_in_closing.earning) AS Earnings
 														FROM agent_involved_in_closing, branch, agent,
-																Agent_Branch_Employment, 
+																Agent_Branch_Employment, closing,
 											                    (
 											                    	SELECT closing.closing_ID AS cID, 
 											                        	COUNT(agent_involved_in_closing.Agent_ID) AS nAgents
@@ -73,6 +75,8 @@
 															AND agent_involved_in_closing.Agent_ID = agent.Agent_ID
 															AND agent.Agent_ID = Agent_Branch_Employment.Agent_ID
 															AND Agent_Branch_Employment.Branch_ID = branch.Branch_ID
+															AND agent_involved_in_closing.Closing_ID = closing.closing_ID
+         		AND (agent_branch_employment.End IS NULL OR agent_branch_employment.End >= closing.Date)
 															AND Agent.Agent_ID != 0
 															AND aCount.cID = agent_involved_in_closing.Closing_ID
 															AND closing.Date >=$bfrDate
@@ -82,7 +86,8 @@
 												WHERE branch.status = 1";
 											}							
 							}else{
-								$branchSQL = "SELECT branch.Name AS Name, UNIT, Productivity, Earnings 
+								$branchSQL = "SELECT branch.Name AS Name, IFNULL(UNIT,0) AS Unit, 
+												IFNULL(Productivity,0) AS Productivity, IFNULL(Earnings,0) AS Earnings
 												FROM branch LEFT OUTER JOIN
 													(SELECT branch.Name, branch.branch_id,
 														SUM(CASE 
@@ -97,7 +102,7 @@
 														COUNT(DISTINCT agent_involved_in_closing.Closing_ID) AS Productivity,
 														SUM(agent_involved_in_closing.earning) AS Earnings
 														FROM agent_involved_in_closing, branch, agent,
-																Agent_Branch_Employment, 
+																Agent_Branch_Employment, closing,
 											                    (
 											                    	SELECT closing.closing_ID AS cID, 
 											                        	COUNT(agent_involved_in_closing.Agent_ID) AS nAgents
@@ -110,6 +115,8 @@
 															AND agent_involved_in_closing.Agent_ID = agent.Agent_ID
 															AND agent.Agent_ID = Agent_Branch_Employment.Agent_ID
 															AND Agent_Branch_Employment.Branch_ID = branch.Branch_ID
+															AND agent_involved_in_closing.Closing_ID = closing.closing_ID
+         		AND (agent_branch_employment.End IS NULL OR agent_branch_employment.End >= closing.Date)
 															AND Agent.Agent_ID != 0
 															AND aCount.cID = agent_involved_in_closing.Closing_ID
 															GROUP BY branch.branch_id) pro
@@ -121,14 +128,9 @@
 								while($row = $result->fetch_assoc()) {
 									echo "<tr>";
 										echo "<td>". $row["Name"] ."</td>";
-										if($row["Productivity"] == NULL)//Turning null values to 0 on display
-											echo "<td> 0 </td>";
-										else
-											echo "<td>". $row["Productivity"] ."</td>";
-										if($row["Earnings"] == NULL)
-											echo "<td> 0 </td>";
-										else
-											echo "<td>". $row["Earnings"] ."</td>";
+										echo "<td>". $row["Unit"] ."</td>";
+										echo "<td>". $row["Productivity"] ."</td>";
+										echo "<td>". $row["Earnings"] ."</td>";
 									echo "</tr>";
 								}
 							} else {

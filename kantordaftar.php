@@ -28,24 +28,32 @@
 							<th>Opsi</th>
 						</tr>
 						<?php 
-						$sql = "SELECT * FROM branch where status = 1";
+						$sql = "SELECT  branch.branch_id AS bID, branch.Name, branch.address, 
+									branch.President_ID AS pID, branch.VicePresident_ID AS vpID,
+									IFNULL(pGet.President, 'Noone') AS President, 
+									IFNULL(vpGet.VP, 'Noone') AS VicePresident
+									FROM branch LEFT JOIN
+                                    (SELECT agent.Name as President, branch.branch_id FROM agent, 
+                                     branch WHERE agent.Agent_ID = branch.President_ID)pGet  
+                                    ON pGet.branch_id = branch.branch_id
+                                    LEFT JOIN
+                                    (SELECT agent.Name as VP, branch.branch_id FROM agent, 
+                                     branch WHERE agent.Agent_ID = branch.President_ID)vpGet  
+                                    ON vpGet.branch_id = branch.branch_id
+                                    where branch.status = 1";
 					   $result = mysqli_query($db,$sql);
 					   if ($result->num_rows > 0) {
 					    // output data of each row
 						    while($row = $result->fetch_assoc()) {
 						        echo "<tr> <td>". $row["Name"] . "</td>";
 						        echo "<td>". $row["address"] ."</td>"; 
-						        if($row["President_ID"] == null){
-						        	echo "<td> Noone </td>"; 
-						        }else{
-						        	echo "<td> " . $row["President_ID"]. "</td>"; 
-						    	}
-						    	if($row["VicePresident_ID"] == null){
-						        	echo "<td> Noone </td>";
-						        }else{
-						        	echo "<td> " . $row["VicePresident_ID"]. "</td>";
-						    	}?><td>
-						    	<button type="submit" class="btn kantordaftarubah" onclick="document.getElementById('tambah').style.display='block'">UBAH</button>
+					        	echo "<td> " . $row["President"]. "</td>"; 
+					        	echo "<td> " . $row["VicePresident"]. "</td>";
+						    	?><td>
+						    	<a href="kantordaftar.php?editBID=<?php echo $row["bID"];?>
+									&editPID=<?php echo $row["pID"];?>
+									&editVPID=<?php echo $$row["vpID"];?>"
+								class="btn kantordaftarubah" onclick="document.getElementById('tambah').style.display='block'">UBAH</a>
 						    	<?php 
 						    }
 						} else {
