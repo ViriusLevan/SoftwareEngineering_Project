@@ -7,7 +7,272 @@
 		<?php include('htmlhead.php'); ?>
 		<title>Closing</title>
 	</head>
-	<body class="mainbody" onload="agentOptions(1)">
+	<body class="mainbody" 
+		<?php
+			if(isset($_GET["id"])){
+				echo "onload ='agentOptions(1);showDelete();'";
+			}else{
+				echo "onload ='agentOptions(1)'";
+			}
+
+			if ($_SERVER["REQUEST_METHOD"] == "POST") {
+				if (isset($_POST["cID"])) {
+					$deletionSQL = $db->prepare("DELETE FROM `closing` WHERE closing_ID = ?");
+					$deletionSQL->bind_param('i',$f1);
+					$f1 = $_POST["cID"];
+
+					if($deletionSQL->execute()){
+						$deletionSQL->close();
+						echo "Closing successfully deleted";
+					}else{
+						$deletionSQL->close();
+						echo "Error: <br>" . mysqli_error($db);
+					}
+
+				}
+				else if(isset($_POST["address"])){
+					$address = $date = $price = $nAgents = $agent1ID = "";
+					$password = $passwordCon = "";
+
+					$address = test_input($_POST["address"]);
+					$date = $_POST["date"];
+					$price = test_input($_POST["price"]);
+					$nAgents = test_input($_POST["nAgents"]);
+					$agent1ID = test_input($_POST["agent1ID"]);
+
+					if($nAgents>1)$agent2ID = test_input($_POST["agent2ID"]);
+					if($nAgents>2)$agent3ID = test_input($_POST["agent3ID"]);
+					if($nAgents>3)$agent4ID = test_input($_POST["agent4ID"]);
+					$agents = [];
+					echo "<h2>Your Input:</h2>";
+
+					if(isset($address))echo $address. "<br>";
+					if(isset($date))echo $date. "<br>";
+					if(isset($price))echo $price. "<br>";
+					if(isset($nAgents))echo $nAgents. "<br>";
+					if(isset($agent1ID)){
+						echo $agent1ID. "<br>";
+						$agents[] = $agent1ID;
+					}
+					if(isset($agent2ID)){
+						echo $agent2ID. "<br>";
+						$agents[] = $agent2ID;
+					}
+					if(isset($agent3ID)){
+						echo $agent3ID. "<br>";
+						$agents[] = $agent3ID;
+					}
+					if(isset($agent4ID)){
+						echo $agent4ID. "<br>";
+						$agents[] = $agent4ID;
+					}
+					echo "<br>";
+
+					if (!$db) {
+						die("Connection failed: " . mysqli_connect_error());
+					}
+					else{
+						$stmt = $db->prepare("INSERT INTO closing (`Date`, `Price`, `Address`)
+												VALUES (?,?,?)");
+						$stmt->bind_param('sis', $field1, $field2, $field3);
+						$field1 = $date;
+						$field2 = $price;
+						$field3 = $address;
+						if ($stmt->execute()) {//Closing Creation
+							$stmt->close();
+							echo "New closing created successfully <br>";
+							//sql to get closing_id
+							$lselect = "SELECT LAST_INSERT_ID()";
+							$cID =  mysqli_insert_id($db);
+							$p = 0;
+							if($nAgents == 1){
+								$p = 100;
+							}else if($nAgents == 2){
+								$p = 50;
+							}else{//3 & 4 agents
+								$p = 25;
+							}
+							for ($i = 0; $i < $nAgents; $i++) {//Primary involvement insertion
+								$stmti = $db->prepare("
+								INSERT INTO `agent_involved_in_closing`(`Agent_ID`, `Closing_ID`, `earning`, `workedAs`)
+								VALUES (?,?,?,?)");
+								$stmti->bind_param('iidi', $f1, $f2, $f3, $f4);
+								
+								$f1 = $agents[$i];
+								$f2 = $cID;
+								if($nAgents == 3){//
+									if($i == 0){
+										$p = 50;
+									}else{
+										$p = 25;
+									}
+								}
+								$f3 = $p*$price/100;
+								$f4 = 6*$i + 1;
+								if($stmti->execute()){
+									$stmti->close();
+									echo "Primary Agent Involvement created successfully <br>";
+					////////////
+									//Secondary involvement insertion
+									$cAgentSQL =
+										"SELECT branch.President_ID,branch.VicePresident_ID, agent.ImmediateUpline_ID
+												FROM branch,agent,agent_branch_employment
+												WHERE branch.branch_id = agent_branch_employment.Branch_ID
+													AND agent_branch_employment.Agent_ID = agent.Agent_ID
+													AND agent_branch_employment.End IS NULL
+													AND agent.Agent_ID = " . $agents[$i];
+									$cAgentResult = mysqli_query($db, $cAgentSQL);
+									$cAgentRow = $cAgentResult->fetch_assoc();
+									//President & Vice President
+									$PresidentID  = $cAgentRow["President_ID"];
+									$VicePresidentID  = $cAgentRow["VicePresident_ID"];
+									$ImmediateUplineID = $cAgentRow["ImmediateUpline_ID"];
+									$cPresP = $cVPP = "";
+									//If there is a president and he's not the primary agent
+									if($PresidentID != null && $PresidentID != $agents[$i]){
+										$cPresPSQL = //Current President Percentage
+										"SELECT Percentage FROM `paypercentages`
+											WHERE JobName = 'President' AND ValidityEnd IS NULL";
+										$cPresPResult = mysqli_query($db, $cPresPSQL);
+										$cPresPRow = $cPresPResult->fetch_assoc();
+										$cPresP = $cPresPRow["Percentage"];
+										secondaryInvolvementInsertion(
+														$db, $PresidentID, $cID, $price, $p, $cPresP, $i, 2);
+									}
+									//If there is a vice president and he's not the primary agent
+									if($VicePresidentID != null && $VicePresidentID != $agents[$i]){
+										$cVPPSQL = //Current Vice President Percentage
+											"SELECT Percentage FROM `paypercentages`
+												WHERE JobName = 'Vice President' AND ValidityEnd IS NULL";
+										$cVPPResult = mysqli_query($db, $cVPPSQL);
+										$cVPPRow = $cVPPResult->fetch_assoc();
+										$cVPP = $cPresPRow["Percentage"];
+										secondaryInvolvementInsertion(
+														$db, $VicePresidentID, $cID, $price, $p, $cVPP, $i, 3);
+									}
+									//Uplines
+									
+									if($ImmediateUplineID != null){//Upline 1
+										$UP2IDSQL = //Upline 2 ID and status of upline 1
+											"SELECT ImmediateUpline_ID,Status FROM agent WHERE Agent_ID=" . $ImmediateUplineID;
+										$UP2IDResult = mysqli_query($db, $UP2IDSQL);
+										$UP2IDRow = $UP2IDResult->fetch_assoc();
+										$UP2ID = $UP2IDRow["ImmediateUpline_ID"];
+										if($UP2IDRow["Status"] == 0){//Upline 1 is fired/not in employment
+											secondaryInvolvementInsertion(//Money goes to the company
+														$db, 0, $cID, $price, $p, 7, $i, 4);
+										}
+										if(in_array($ImmediateUplineID , $agents)){//one of the primary agents involved
+											if($ImmediateUplineID == $PresidentID ){//Branch President
+													secondaryInvolvementInsertion(
+															$db, 0, $cID, $price, $p, $cPresP, $i, 2);
+												}else if($ImmediateUplineID == $VicePresidentID){//Branch VP
+													secondaryInvolvementInsertion(
+															$db, 0, $cID, $price, $p, $cVPP, $i, 3);
+												}else{//Neither branch pres nor VP
+													secondaryInvolvementInsertion(
+														$db, 0, $cID, $price, $p, 7, $i, 4);
+												}
+										}else if($ImmediateUplineID == $PresidentID){//Branch President
+											secondaryInvolvementInsertion(
+														$db, $ImmediateUplineID, $cID, $price, $p, $cPresP, $i, 2);
+										}
+										else if($ImmediateUplineID == $VicePresidentID){//Branch VP
+											secondaryInvolvementInsertion(
+														$db, $ImmediateUplineID, $cID, $price, $p, $cVPP, $i, 3);
+										}
+										else if($ImmediateUplineID != $PresidentID
+											&& $ImmediateUplineID != $VicePresidentID){
+											//Not the pres or vp and not one of the primary agents
+											secondaryInvolvementInsertion(
+														$db, $ImmediateUplineID, $cID, $price, $p, 7, $i, 4);
+										}
+										//continue for 2nd upline
+										if($UP2ID != null){
+											$UP3IDSQL = //Upline 3 ID and Upline 2 Status
+												"SELECT ImmediateUpline_ID,Status FROM agent WHERE Agent_ID=" . $UP2ID;
+											$UP3IDResult = mysqli_query($db, $UP3IDSQL);
+											$UP3IDRow = $UP3IDResult->fetch_assoc();
+											$UP3ID = $UP3IDRow["ImmediateUpline_ID"];
+											if(in_array($UP2ID , $agents)){//one of the primary agents involved
+												if($UP2ID == $PresidentID ){//Branch President
+														secondaryInvolvementInsertion(
+																$db, 0, $cID, $price, $p, $cPresP, $i, 2);
+													}else if($UP2ID == $VicePresidentID){//Branch VP
+														secondaryInvolvementInsertion(
+																$db, 0, $cID, $price, $p, $cVPP, $i, 3);
+													}else{//Neither branch pres nor VP
+														secondaryInvolvementInsertion(
+															$db, 0, $cID, $price, $p, 2, $i, 5);
+													}
+											}else if($UP2ID == $PresidentID){//Branch President
+												secondaryInvolvementInsertion(
+															$db, $UP2ID, $cID, $price, $p, $cPresP, $i, 2);
+											}
+											else if($UP2ID == $VicePresidentID){//Branch VP
+												secondaryInvolvementInsertion(
+															$db, $UP2ID, $cID, $price, $p, $cVPP, $i, 3);
+											}
+											else if($UP2ID != $PresidentID
+												&& $UP2ID != $VicePresidentID){
+												//Not the pres or vp and not one of the primary agents
+												secondaryInvolvementInsertion(
+															$db, $UP2ID, $cID, $price, $p, 2, $i, 5);
+											}
+											//continue for 3rd upline if he exists
+											if($UP3ID != null){
+												$UP3StatusSQL = //Upline 3 Status
+													"SELECT ImmediateUpline_ID,Status FROM agent WHERE Agent_ID=" . $UP3ID;
+												$UP3StatusResult = mysqli_query($db, $UP3StatusSQL);
+												$UP3StatusRow = $UP3StatusResult->fetch_assoc();
+												$UP3Status = $UP3StatusRow["ImmediateUpline_ID"];
+												if($UP3IDRow["Status"] == 0){//Upline 3 is fired/not in employment
+													secondaryInvolvementInsertion(//Money goes to the company
+															$db, 0, $cID, $price, $p, 2, $i, 6);
+												}
+												if(in_array($UP3ID , $agents)){//one of the primary agents involved
+													if($UP3ID == $PresidentID ){//Branch President
+															secondaryInvolvementInsertion(
+																	$db, 0, $cID, $price, $p, $cPresP, $i, 2);
+														}else if($UP3ID == $VicePresidentID){//Branch VP
+															secondaryInvolvementInsertion(
+																	$db, 0, $cID, $price, $p, $cVPP, $i, 3);
+														}else{//Neither branch pres nor VP
+															secondaryInvolvementInsertion(
+																$db, 0, $cID, $price, $p, 1, $i, 6);
+														}
+												}else if($UP3ID == $PresidentID){//Branch President
+													secondaryInvolvementInsertion(
+																$db, $UP3ID, $cID, $price, $p, $cPresP, $i, 2);
+												}
+												else if($UP3ID == $VicePresidentID){//Branch VP
+													secondaryInvolvementInsertion(
+																$db, $UP3ID, $cID, $price, $p, $cVPP, $i, 3);
+												}
+												else if($UP3ID != $PresidentID
+													&& $UP3ID != $VicePresidentID){
+													//Not the pres or vp and not one of the primary agents
+													secondaryInvolvementInsertion(
+																$db, $UP3ID, $cID, $price, $p, 1, $i, 6);
+												}
+											}
+										}
+									}
+								}
+								else{
+									$stmti->close();
+									echo "Error: <br>" . mysqli_error($db);
+								}
+							}
+						} else {
+							$stmt->close();
+							echo "Error: <br>" . mysqli_error($db);
+						}
+					}
+				}
+			}
+		?>
+	>
 		<?php include('sidebar.php'); ?>
 		<div class="content">
 			<?php include('header.php'); ?>
@@ -79,8 +344,12 @@
 						<td>
 							<!-- <button onclick="document.getElementById('detail').style.display='block'" <?php $idKolom = $asd; ?> class="btn kantordaftarubah">DETAIL</button> -->
 							<a href='closing_agents.php?id=<?php echo $row["closing_ID"]; ?>' class="btn closingdetailedit">DETAIL</a>
-							<button onclick="document.getElementById('edit').style.display='block'" class="btn closingdetailedit">EDIT</button>	
-							<button onclick="document.getElementById('delete').style.display='block'" class="btn closingdetaildelete">DELETE</button>	
+							<button onclick="document.getElementById('edit').style.display='block'" 
+								class="btn closingdetailedit">EDIT</button>	
+							<a class="btn closingdetaildelete" 
+								href='closingmain.php?id=<?php echo $row["closing_ID"];?>
+										&cAddress=<?php echo $row["Address"];?>'
+								>DELETE</a>	
 						</td>
 					</tr>
 					<?php
@@ -145,15 +414,26 @@
 						<h2>DELETE CLOSING</h2>
 					</header>
 					<div class="w3-container">
-						<h5 class="kantormainformlabel">Apakah anda yakin?</h5>
+						<h5 class="kantormainformlabel">Apakah anda yakin mau menghapus closing 
+							<?php echo $_GET["cAddress"];?></h5>
 						<br>
 						<div class="modalfooter">
-							<button type="submit" class="btn modalleftbtn" onclick="document.getElementById('delete').style.display='none'">BATAL</button>
-							<button type="submit" class="btn modalrightbtn">SIMPAN</button>
+							<form method="POST" action="<?php echo htmlspecialchars($_SERVER['PHP_SELF']);?>">
+								<input type="hidden" name="cID" value="<?php echo $_GET["id"];?>">
+								<button type="button" class="btn modalleftbtn" 
+									onclick="document.getElementById('delete').style.display='none'">BATAL</button>
+								<button type="submit" class="btn modalrightbtn"
+									onclick="document.getElementById('delete').style.display='none'">DELETE</button>
+							</form>
 						</div>
 					</div>
 				</div>
 			</div>
+			<script type="text/javascript">
+				function showDelete(){
+					document.getElementById('delete').style.display='block'
+				}
+			</script>
 			<div id="edit" class="w3-modal" data-backdrop="">
 				<div class="w3-modal-content w3-animate-top w3-card-4">
 					<header class="w3-container modalheader">
@@ -269,7 +549,7 @@
 							</div>
 						<br>
 						<div class="modalfooter">
-							<button type="submit" class="btn modalleftbtn" onclick="document.getElementById('edit').style.display='none'">BATAL</button>
+							<button type="button" class="btn modalleftbtn" onclick="document.getElementById('edit').style.display='none'">BATAL</button>
 							<button type="submit" class="btn modalrightbtn">SIMPAN</button>
 						</div>
 						</form>
@@ -329,7 +609,7 @@
 				<div class="w3-modal-content w3-animate-top w3-card-4">
 					<header class="w3-container modalheader">
 						<span onclick="document.getElementById('tambah').style.display='none'"
-						class="w3-button w3-display-topright">&times;</span>
+							class="w3-button w3-display-topright">&times;</span>
 						<h2>TAMBAH CLOSING BARU</h2>
 					</header>
 					<div class="w3-container">
@@ -364,6 +644,7 @@
 														AND agent.Agent_ID != 0
 														AND agent.Agent_ID = agent_branch_employment.Agent_ID
 														AND agent_branch_employment.Branch_ID = branch.branch_id
+														AND agent_branch_employment.End IS NULL
 														AND branch.status = 1";
 										$agentResult = mysqli_query($db, $agentSQL);
 										if ($agentResult->num_rows > 0) {
@@ -440,7 +721,7 @@
 							</div>
 							<br>
 							<div class="modalfooter">
-								<button type="submit" class="btn modalleftbtn" onclick="document.getElementById('tambah').style.display='none'">BATAL</button>
+								<button type="button" class="btn modalleftbtn" onclick="document.getElementById('tambah').style.display='none'">BATAL</button>
 								<button type="submit" class="btn modalrightbtn">SIMPAN</button>
 							</div>
 						</form>
@@ -586,245 +867,8 @@
 	</div>
 	<?php
 	
-	$address = $date = $price = $nAgents = $agent1ID = "";
-	$password = $passwordCon = "";
-	if ($_SERVER["REQUEST_METHOD"] == "POST") {
-		$address = test_input($_POST["address"]);
-		$date = $_POST["date"];
-		$price = test_input($_POST["price"]);
-		$nAgents = test_input($_POST["nAgents"]);
-		$agent1ID = test_input($_POST["agent1ID"]);
-
-		if($nAgents>1)$agent2ID = test_input($_POST["agent2ID"]);
-		if($nAgents>2)$agent3ID = test_input($_POST["agent3ID"]);
-		if($nAgents>3)$agent4ID = test_input($_POST["agent4ID"]);
-		$agents = [];
-		echo "<h2>Your Input:</h2>";
-
-		if(isset($address))echo $address. "<br>";
-		if(isset($date))echo $date. "<br>";
-		if(isset($price))echo $price. "<br>";
-		if(isset($nAgents))echo $nAgents. "<br>";
-		if(isset($agent1ID)){
-			echo $agent1ID. "<br>";
-			$agents[] = $agent1ID;
-		}
-		if(isset($agent2ID)){
-			echo $agent2ID. "<br>";
-			$agents[] = $agent2ID;
-		}
-		if(isset($agent3ID)){
-			echo $agent3ID. "<br>";
-			$agents[] = $agent3ID;
-		}
-		if(isset($agent4ID)){
-			echo $agent4ID. "<br>";
-			$agents[] = $agent4ID;
-		}
-		echo "<br>";
-
-		if (!$db) {
-		die("Connection failed: " . mysqli_connect_error());
-		}
-		else{
-			$stmt = $db->prepare("INSERT INTO closing (`Date`, `Price`, `Address`)
-									VALUES (?,?,?)");
-			$stmt->bind_param('sis', $field1, $field2, $field3);
-			$field1 = $date;
-			$field2 = $price;
-			$field3 = $address;
-			if ($stmt->execute()) {//Closing Creation
-				$stmt->close();
-				echo "New closing created successfully <br>";
-				//sql to get closing_id
-				$lselect = "SELECT LAST_INSERT_ID()";
-				$cID =  mysqli_insert_id($db);
-				$p = 0;
-				if($nAgents == 1){
-					$p = 100;
-				}else if($nAgents == 2){
-					$p = 50;
-				}else{//3 & 4 agents
-					$p = 25;
-				}
-				for ($i = 0; $i < $nAgents; $i++) {//Primary involvement insertion
-					$stmti = $db->prepare("
-					INSERT INTO `agent_involved_in_closing`(`Agent_ID`, `Closing_ID`, `earning`, `workedAs`)
-					VALUES (?,?,?,?)");
-					$stmti->bind_param('iidi', $f1, $f2, $f3, $f4);
-					
-					$f1 = $agents[$i];
-						$f2 = $cID;
-					if($nAgents == 3){//
-						if($i == 0){
-							$p = 50;
-						}else{
-							$p = 25;
-						}
-					}
-					$f3 = $p*$price/100;
-					$f4 = 6*$i + 1;
-					if($stmti->execute()){
-						$stmti->close();
-						echo $i. "Primary Agent Involvement created successfully <br>";
-		////////////
-						//Secondary involvement insertion
-						$cAgentSQL =
-							"SELECT branch.President_ID,branch.VicePresident_ID, agent.ImmediateUpline_ID
-									FROM branch,agent,agent_branch_employment
-									WHERE branch.branch_id = agent_branch_employment.Branch_ID
-										AND agent_branch_employment.Agent_ID = agent.Agent_ID
-										AND agent_branch_employment.End IS NULL
-										AND agent.Agent_ID = " . $agents[$i];
-						$cAgentResult = mysqli_query($db, $cAgentSQL);
-						$cAgentRow = $cAgentResult->fetch_assoc();
-						//President & Vice President
-						$PresidentID  = $cAgentRow["President_ID"];
-						$VicePresidentID  = $cAgentRow["VicePresident_ID"];
-						$ImmediateUplineID = $cAgentRow["ImmediateUpline_ID"];
-						$cPresP = $cVPP = "";
-						//If there is a president and he's not the primary agent
-						if($PresidentID != null && $PresidentID != $agents[$i]){
-								$cPresPSQL = //Current President Percentage
-								"SELECT Percentage FROM `paypercentages`
-									WHERE JobName = 'President' AND ValidityEnd IS NULL";
-							$cPresPResult = mysqli_query($db, $cPresPSQL);
-							$cPresPRow = $cAgentResult->fetch_assoc();
-							$cPresP = $cPresPRow["Percentage"];
-							secondaryInvolvementInsertion(
-											$db, $PresidentID, $cID, $price, $p, $cPresP, $i, 2);
-						}
-						//If there is a vice president and he's not the primary agent
-						if($VicePresidentID != null && $VicePresidentID != $agents[$i]){
-							$cVPPSQL = //Current Vice President Percentage
-								"SELECT Percentage FROM `paypercentages`
-									WHERE JobName = 'Vice President' AND ValidityEnd IS NULL";
-							$cVPPResult = mysqli_query($db, $cVPPSQL);
-							$cVPPRow = $cAgentResult->fetch_assoc();
-							$cVPP = $cPresPRow["Percentage"];
-							secondaryInvolvementInsertion(
-											$db, $VicePresidentID, $cID, $price, $p, $cVPP, $i, 3);
-						}
-						//Uplines
-						
-						if($ImmediateUplineID != null){//Upline 1
-							$UP2IDSQL = //Upline 2 ID and status of upline 1
-								"SELECT ImmediateUpline_ID,Status FROM agent WHERE Agent_ID=" . $ImmediateUplineID;
-							$UP2IDResult = mysqli_query($db, $UP2IDSQL);
-							$UP2IDRow = $UP2IDResult->fetch_assoc();
-							$UP2ID = $UP2IDRow["ImmediateUpline_ID"];
-							if($UP2IDRow["Status"] == 0){//Upline 1 is fired/not in employment
-								secondaryInvolvementInsertion(//Money goes to the company
-											$db, 0, $cID, $price, $p, 7, $i, 4);
-							}
-							if(in_array($ImmediateUplineID , $agents)){//one of the primary agents involved
-								if($ImmediateUplineID == $PresidentID ){//Branch President
-										secondaryInvolvementInsertion(
-												$db, 0, $cID, $price, $p, $cPresP, $i, 2);
-									}else if($ImmediateUplineID == $VicePresidentID){//Branch VP
-										secondaryInvolvementInsertion(
-												$db, 0, $cID, $price, $p, $cVPP, $i, 3);
-									}else{//Neither branch pres nor VP
-										secondaryInvolvementInsertion(
-											$db, 0, $cID, $price, $p, 7, $i, 4);
-									}
-							}else if($ImmediateUplineID == $PresidentID){//Branch President
-								secondaryInvolvementInsertion(
-											$db, $ImmediateUplineID, $cID, $price, $p, $cPresP, $i, 2);
-							}
-							else if($ImmediateUplineID == $VicePresidentID){//Branch VP
-								secondaryInvolvementInsertion(
-											$db, $ImmediateUplineID, $cID, $price, $p, $cVPP, $i, 3);
-							}
-							else if($ImmediateUplineID != $PresidentID
-								&& $ImmediateUplineID != $VicePresidentID){
-								//Not the pres or vp and not one of the primary agents
-								secondaryInvolvementInsertion(
-											$db, $ImmediateUplineID, $cID, $price, $p, 7, $i, 4);
-							}
-							//continue for 2nd upline
-							if($UP2ID != null){
-								$UP3IDSQL = //Upline 3 ID and Upline 2 Status
-									"SELECT ImmediateUpline_ID,Status FROM agent WHERE Agent_ID=" . $UP2ID;
-								$UP3IDResult = mysqli_query($db, $UP3IDSQL);
-								$UP3IDRow = $UP3IDResult->fetch_assoc();
-								$UP3ID = $UP3IDRow["ImmediateUpline_ID"];
-								if(in_array($UP2ID , $agents)){//one of the primary agents involved
-									if($UP2ID == $PresidentID ){//Branch President
-											secondaryInvolvementInsertion(
-													$db, 0, $cID, $price, $p, $cPresP, $i, 2);
-										}else if($UP2ID == $VicePresidentID){//Branch VP
-											secondaryInvolvementInsertion(
-													$db, 0, $cID, $price, $p, $cVPP, $i, 3);
-										}else{//Neither branch pres nor VP
-											secondaryInvolvementInsertion(
-												$db, 0, $cID, $price, $p, 2, $i, 5);
-										}
-								}else if($UP2ID == $PresidentID){//Branch President
-									secondaryInvolvementInsertion(
-												$db, $UP2ID, $cID, $price, $p, $cPresP, $i, 2);
-								}
-								else if($UP2ID == $VicePresidentID){//Branch VP
-									secondaryInvolvementInsertion(
-												$db, $UP2ID, $cID, $price, $p, $cVPP, $i, 3);
-								}
-								else if($UP2ID != $PresidentID
-									&& $UP2ID != $VicePresidentID){
-									//Not the pres or vp and not one of the primary agents
-									secondaryInvolvementInsertion(
-												$db, $UP2ID, $cID, $price, $p, 2, $i, 5);
-								}
-								//continue for 3rd upline if he exists
-								if($UP3ID != null){
-									$UP3StatusSQL = //Upline 3 Status
-										"SELECT ImmediateUpline_ID,Status FROM agent WHERE Agent_ID=" . $UP3ID;
-									$UP3StatusResult = mysqli_query($db, $UP3StatusSQL);
-									$UP3StatusRow = $UP3StatusResult->fetch_assoc();
-									$UP3Status = $UP3StatusRow["ImmediateUpline_ID"];
-									if($UP3IDRow["Status"] == 0){//Upline 3 is fired/not in employment
-										secondaryInvolvementInsertion(//Money goes to the company
-												$db, 0, $cID, $price, $p, 2, $i, 6);
-									}
-									if(in_array($UP3ID , $agents)){//one of the primary agents involved
-										if($UP3ID == $PresidentID ){//Branch President
-												secondaryInvolvementInsertion(
-														$db, 0, $cID, $price, $p, $cPresP, $i, 2);
-											}else if($UP3ID == $VicePresidentID){//Branch VP
-												secondaryInvolvementInsertion(
-														$db, 0, $cID, $price, $p, $cVPP, $i, 3);
-											}else{//Neither branch pres nor VP
-												secondaryInvolvementInsertion(
-													$db, 0, $cID, $price, $p, 1, $i, 6);
-											}
-									}else if($UP3ID == $PresidentID){//Branch President
-										secondaryInvolvementInsertion(
-													$db, $UP3ID, $cID, $price, $p, $cPresP, $i, 2);
-									}
-									else if($UP3ID == $VicePresidentID){//Branch VP
-										secondaryInvolvementInsertion(
-													$db, $UP3ID, $cID, $price, $p, $cVPP, $i, 3);
-									}
-									else if($UP3ID != $PresidentID
-										&& $UP3ID != $VicePresidentID){
-										//Not the pres or vp and not one of the primary agents
-										secondaryInvolvementInsertion(
-													$db, $UP3ID, $cID, $price, $p, 1, $i, 6);
-									}
-								}
-							}
-						}
-					}
-					else{
-						$stmti->close();
-						echo "Error: <br>" . mysqli_error($db);
-					}
-				}
-			} else {
-				$stmt->close();
-				echo "Error: <br>" . mysqli_error($db);
-			}
-		}
-	}
+	
+	
 	//Trims and prevents malicious inputs
 	function test_input($data) {
 		$data = trim($data);
