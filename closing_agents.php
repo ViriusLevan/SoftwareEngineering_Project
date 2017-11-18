@@ -21,7 +21,7 @@
           while ($PPRow = $PPResults->fetch_assoc()) {
             if($PPRow["JobName"] == "President"){
               $PresP = $PPRow["Percentage"];
-            }else if($PPRow["JobName"] == "Vice President"){
+            }else if($PPRow["JobName"] == "VicePresident"){
               $VPP = $PPRow["Percentage"];
             }
           }

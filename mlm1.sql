@@ -191,6 +191,7 @@ INSERT INTO `closing` (`closing_ID`, `Date`, `Price`, `Address`) VALUES
 --
 
 CREATE TABLE `paypercentages` (
+  `PPID` INT(11) NOT NULL,
   `JobName` varchar(70) NOT NULL,
   `Percentage` double NOT NULL,
   `ValidityStart` date NOT NULL,
@@ -201,9 +202,9 @@ CREATE TABLE `paypercentages` (
 -- Dumping data for table `paypercentages`
 --
 
-INSERT INTO `paypercentages` (`JobName`, `Percentage`, `ValidityStart`, `ValidityEnd`) VALUES
-('President', 6, '2000-01-01', NULL),
-('Vice President', 4, '2000-01-01', NULL);
+INSERT INTO `paypercentages` (`PPID`, `JobName`, `Percentage`, `ValidityStart`, `ValidityEnd`) VALUES
+(1, 'President', 6, '2000-01-01', NULL),
+(2, 'VicePresident', 4, '2000-01-01', NULL);
 
 --
 -- Indexes for dumped tables
@@ -254,7 +255,7 @@ ALTER TABLE `closing`
 -- Indexes for table `paypercentages`
 --
 ALTER TABLE `paypercentages`
-  ADD PRIMARY KEY (`JobName`);
+  ADD PRIMARY KEY (`PPID`);
 
 --
 -- AUTO_INCREMENT for dumped tables
@@ -275,6 +276,11 @@ ALTER TABLE `branch`
 --
 ALTER TABLE `closing`
   MODIFY `closing_ID` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=8;
+--
+-- AUTO_INCREMENT for table `paypercentages`
+--
+ALTER TABLE `paypercentages`
+  MODIFY `PPID` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=3;
 --
 -- Constraints for dumped tables
 --

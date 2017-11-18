@@ -344,8 +344,8 @@
 						<td>
 							<!-- <button onclick="document.getElementById('detail').style.display='block'" <?php $idKolom = $asd; ?> class="btn kantordaftarubah">DETAIL</button> -->
 							<a href='closing_agents.php?id=<?php echo $row["closing_ID"]; ?>' class="btn closingdetailedit">DETAIL</a>
-							<button onclick="document.getElementById('edit').style.display='block'" 
-								class="btn closingdetailedit">EDIT</button>	
+							<!-- <button onclick="document.getElementById('edit').style.display='block'" 
+								class="btn closingdetailedit">EDIT</button>	 -->
 							<a class="btn closingdetaildelete" 
 								href='closingmain.php?id=<?php echo $row["closing_ID"];?>
 										&cAddress=<?php echo $row["Address"];?>'
@@ -553,55 +553,6 @@
 							<button type="submit" class="btn modalrightbtn">SIMPAN</button>
 						</div>
 						</form>
-						<script type="text/javascript">
-							function agentOptions(n){
-						// Agent Select disabling
-						// probably needs improvement
-								if(n == 1){
-									document.getElementById("agent2Select").disabled = true;
-									document.getElementById("agent3Select").disabled = true;
-									document.getElementById("agent4Select").disabled = true;
-								}
-								if(n == 2){
-									document.getElementById("agent2Select").disabled = false;
-									document.getElementById("agent3Select").disabled = true;
-									document.getElementById("agent4Select").disabled = true;
-								}if(n == 3){
-									document.getElementById("agent2Select").disabled = false;
-									document.getElementById("agent3Select").disabled = false;
-									document.getElementById("agent4Select").disabled = true;
-								}
-								if(n == 4){
-									document.getElementById("agent2Select").disabled = false;
-									document.getElementById("agent3Select").disabled = false;
-									document.getElementById("agent4Select").disabled = false;
-								}
-								optionDisabling();
-							}
-							function optionDisabling(){
-								var select = document.getElementsByClassName("agentSelection");
-								var selections = [];
-								for (var i = 0; i < 4; i++) {
-									if(select[i].disabled == false){
-										selections.push(select[i].options[select[i].selectedIndex].value);
-									}
-								}
-								for (var i = 0; i<4; i++) {
-									var opt = select[i].getElementsByTagName("option");
-									for (var j = 0; j < opt.length; j++) {
-										if(selections.indexOf(opt[j].value) == -1){
-										//not found on selections
-											opt[j].disabled = false;
-										}else if(opt[j].value == select[i].options[select[i].selectedIndex].value){
-										//the currently selected option
-											opt[j].disabled = false;
-										}else{//Found on selection and not the currently selected option
-											opt[j].disabled = true;
-										}
-									}
-								}
-							}
-						</script>
 					</div>
 				</div>
 			</div>
