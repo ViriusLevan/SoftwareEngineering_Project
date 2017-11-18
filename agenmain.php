@@ -190,6 +190,7 @@
 					}
 				}else if(isset($_POST["dismissalDate"]) && isset($_POST["dismissalID"])
 							&& isset($_POST["dismissalBranch"])){
+					//POST for dismissal
 					$dismissalDate = $_POST["dismissalDate"];
 					$dismissalDate = str_replace("-","", $dismissalDate);
 					$dismissalSQL = $db->prepare("UPDATE `agent` 
@@ -361,7 +362,7 @@
 								</div>
 								<br>
 								<div class="modalfooter">
-									<button type="submit" class="btn modalleftbtn" onclick="document.getElementById('tambah').style.display='none'">BATAL</button>
+									<button type="button" class="btn modalleftbtn" onclick="document.getElementById('tambah').style.display='none'">BATAL</button>
 									<button type="submit" class="btn modalrightbtn">SIMPAN</button>
 								</div>
 							</form>
@@ -470,7 +471,7 @@
 									value=<?php echo $minDismissalDate;?>
 									pattern='[0-9]{4}-[0-9]{2}-[0-9]{2}'>						
 								<div class="modalfooter">
-									<button type="submit" class="btn modalleftbtn" 
+									<button type="button" class="btn modalleftbtn" 
 										onclick="document.getElementById('hapus').style.display='none'">TIDAK</button>
 									<button type="submit" class="btn modalrightbtn">IYA</button>
 								</div>

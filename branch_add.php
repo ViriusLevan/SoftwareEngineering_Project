@@ -12,10 +12,20 @@ include('session.php');
 		Name: <input type="text" name="name" required><br>
 		President:
 		<?php
-			$sql = "SELECT agent.Name, agent.Agent_ID
-					from agent left join branch 
-					ON agent.Agent_ID != branch.President_ID 
-					AND agent.Agent_ID != branch.VicePresident_ID";
+			$sql = "SELECT DISTINCT agent.Name, agent.Agent_ID
+						FROM agent, agent_branch_employment, branch,
+						(SELECT agent.Name AS Name, agent.Agent_ID as ID
+							FROM agent, branch, agent_branch_employment
+						    	WHERE agent_branch_employment.End IS NULL
+						        AND agent_branch_employment.Agent_ID = agent.Agent_ID
+						        AND agent_branch_employment.Branch_ID = branch.branch_id
+						        AND (agent.Agent_ID = branch.President_ID OR agent.Agent_ID = branch.VicePresident_ID)) ranks
+						        WHERE ranks.ID != agent.Agent_ID
+						       	AND agent.Status = 1
+						        AND agent_branch_employment.End IS NULL
+						        AND agent_branch_employment.Agent_ID = agent.Agent_ID
+						        AND agent_branch_employment.Branch_ID = branch.branch_id
+						        AND agent.Agent_ID !=0";
 		    $result = mysqli_query($db, $sql);
 		    if ($result->num_rows > 0) {
 		    	echo "<select name='PresidentID'>";
