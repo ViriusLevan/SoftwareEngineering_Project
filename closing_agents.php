@@ -27,9 +27,10 @@
           }
 
           $idSQL = "SELECT Agent.Agent_ID, Agent.Name, agent_involved_in_closing.earning, 
-                      agent_involved_in_closing.workedAs, PhoneNumber, aCount.nAgents AS ac
-                    from Agent_involved_in_closing, Agent, 
-                      (SELECT closing.closing_ID AS cID, 
+                      agent_involved_in_closing.workedAs, 
+                      branch.Name AS bName, PhoneNumber, aCount.nAgents AS ac
+                    from Agent_involved_in_closing, Agent, branch, agent_branch_employment,
+                      (SELECT closing.closing_ID AS cID, closing.Date As cDate,
                           COUNT(agent_involved_in_closing.Agent_ID) AS nAgents
                         FROM agent_involved_in_closing, closing
                         WHERE agent_involved_in_closing.Closing_ID = closing.closing_ID
@@ -38,12 +39,16 @@
                     WHERE Agent.Agent_ID = agent_involved_in_closing.Agent_ID
                     AND agent.Agent_ID != 0
                     AND aCount.cID = agent_involved_in_closing.Closing_ID
+                    AND DATEDIFF(aCount.cDate, agent_branch_employment.Started)>=0
+                    AND (DATEDIFF(aCount.cDate, agent_branch_employment.End)<=0 OR agent_branch_employment.End IS NULL)
+                    AND agent_branch_employment.Branch_ID = branch.branch_id
+                    AND agent_branch_employment.Agent_ID = agent.Agent_ID
                     AND agent_involved_in_closing.Closing_ID = ".$row;
           $idResults = mysqli_query($db, $idSQL);
 
           if ($idResults->num_rows > 0) {
             echo "<table>";
-            echo "<tr> <th>Name</th> <th>Earned</th> <th>Percentage</th> <th>Worked as</th> 
+            echo "<tr> <th>Branch</th> <th>Agent Name</th> <th>Earned</th> <th>Percentage</th> <th>Worked as</th> 
                 <th>Phone Number</th> <th>Agent Details</th> </tr>";
             while($agentRow = $idResults->fetch_assoc()) { 
               $workedAs = "";
@@ -52,7 +57,8 @@
               $workedAs = setWorkedAs($agentRow["workedAs"]);
 
               // output data of each row
-              echo "<tr><td> " . $agentRow["Name"]. " </td>"; 
+              echo "<tr><td> " . $agentRow["bName"]. " </td>"; 
+              echo "<td> " . $agentRow["Name"]. " </td>"; 
               echo "<td> " . $agentRow["earning"]. " </td>"; 
               echo "<td> " . $Percentage . " </td>"; 
               echo "<td> " .  $workedAs . " </td>";
