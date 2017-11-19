@@ -274,5 +274,18 @@
 			return $data;
 			}
 		?>
+
+		<script>
+			document.getElementById("startDate").addEventListener("change", function() {
+			    var input = this.value;
+			    var startDateEntered = new Date(input);
+				document.getElementById("endDate").setAttribute("min", input);
+			});
+			document.getElementById("endDate").addEventListener("change", function() {
+			    var input = this.value;
+			    var endDateEntered = new Date(input);
+				document.getElementById("startDate").setAttribute("max", input);
+			});
+		</script>
 	</body>
 </html>
