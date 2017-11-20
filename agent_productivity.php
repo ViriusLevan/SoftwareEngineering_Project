@@ -1,13 +1,47 @@
-<!DOCTYPE html>
+<?php
+	$pagename='agen';
+	include('session.php');
+?>
 <html>
-    <head>
-   <title> Agent List </title>
-      <link type='text/css' rel='stylesheet' href='style.css'/>
- </head>
- <body>
- 	<p>
+	<head>
+		<?php include('htmlhead.php'); ?>
+		<title>Agen</title>
+	</head>
+	<body class="mainbody">
+		<?php include('sidebar.php'); ?>
+		<div class="content">
+			<?php include('header.php'); ?>
+			<div class="maincontent">
+				<div class="kantormainbtn">
+					<button onclick="document.getElementById('tambah').style.display='block'" class="btn kantormaintambahbtn" data-toggle="modal" data-target="#exampleModal">TAMBAH</button>
+					<a href="agenmain.php" class="btn kantormainprodukbtn">DAFTAR AGEN</a>
+				</div>
+				<br>
+				<div class="kantormainfilter">
+					<h2>Filter</h2>
+					<form action=<?php echo htmlspecialchars($_SERVER["PHP_SELF"]); ?> method="post">
+						<h5 class="kantormainformlabel">Tanggal&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;:</h5>
+						<input type="date" name="bfrDate"
+							id="startDate" class="form-control kantormainselect">
+						<h5 class="kantormainformlabel">s/d</h5>
+						<input type="date" name="aftDate"
+							id="endDate" class="form-control kantormainselect">
+						<input type="submit" name="submit" class="btn kantormainfiltersubmit">
+					</form>
+				</div>
+				<br>
+				<div class="kantormaintabel">
+					<div class="kantormaintabelheader"><h4>Hasil Produktivitas Agen</h4></div>
+					<table class="table" id="produktable">
+						<tr>
+							<th>Nama Agen</th>
+							<th>Unit</th>
+							<th>Total Closing</th>
+							<th>Pendapatan agen dari Closing (Rp)</th>
+						</tr>
+					
+				
 	<?php 
-		include('session.php');
 		$AgentProSQL = 
 		"SELECT agent.Name AS Name, IFNULL(UNIT, 0) AS Unit, 
 			IFNULL(Productivity,0) AS Pro, IFNULL(Earnings,0) AS Earn 
@@ -40,12 +74,11 @@
 						AND Agent.Agent_ID != 0
 						AND aCount.cID = agent_involved_in_closing.Closing_ID
 						GROUP BY agent.Agent_ID) pro
-			ON pro.Agent_ID = agent.Agent_ID";
+			ON pro.Agent_ID = agent.Agent_ID
+			WHERE agent.Agent_ID !=0";
 			$AgentProResult = mysqli_query($db, $AgentProSQL);
 
 			if ($AgentProResult->num_rows > 0) {
-	            echo "<table>";
-	            echo "<tr> <th>Name</th> <th>Unit</th> <th>Productivity</th> <th>Earnings</th> </tr>";
 	            while($AgentProRow = $AgentProResult->fetch_assoc()) { 
 
 	              // output data of each row
@@ -60,6 +93,79 @@
 	            echo "No agents found";
             }
 	?>
-	</p>
- </body>
+					</table>
+				</div>
+			</div>
+			<div id="tambah" class="w3-modal" data-backdrop="">
+					<div class="w3-modal-content w3-animate-top w3-card-4">
+						<header class="w3-container modalheader">
+							<span onclick="document.getElementById('tambah').style.display='none'"
+							class="w3-button w3-display-topright">&times;</span>
+							<h2>TAMBAH AGEN BARU</h2><!--Agent_add.php -->
+						</header>
+						<div class="w3-container">
+							<form action="<?php echo htmlspecialchars($_SERVER['PHP_SELF']);?>">
+								<h5 class="kantormainformlabel">Nama Agen</h5>
+								<input class="form-control" type="text" placeholder="Masukkan nama agen"
+									name="name" required>
+								<h5 class="kantormainformlabel">Nomor Telepon</h5>
+								<input class="form-control" placeholder="Masukkan nomor telepon" 
+									type="tel" name="phone" pattern="[0-9]+" required>
+								<br>
+								<div class="row">
+									<div class="col">
+										<h5 class="kantormainformlabel">Kantor</h5>
+										<!-- <select name="kantor" class="form-control kantormainselectvpv">
+											<option value="id">Nama Kantor</option>
+										</select> -->
+										<?php 
+											$branchSQL = "SELECT branch_id,Name FROM `branch` where status=1";
+											$branchResult = mysqli_query($db, $branchSQL);
+											if ($branchResult->num_rows > 0) {
+										    	echo "<select name='BranchID' class='form-control kantormainselectvpv'>";
+											    while($row = $branchResult->fetch_assoc()) {
+											        echo "<option value=".$row["branch_id"]."> ". $row["Name"] ." </option>"; 
+											    }
+											    echo "</select> <br>";
+											}     
+											else {//THIS SHOULD NOT HAPPEN
+										    	echo "No branches found<br>";
+											}
+										?>
+									</div>
+									<div class="col">
+										<h5 class="kantormainformlabel">Upline</h5>
+										<!-- <select name="kantor" class='form-control kantormainselectvpv'>
+											<option value="id">Nama Upline</option>
+										</select> -->
+										<?php
+											$agentSQL = "SELECT agent.Name, agent.Agent_ID from agent 
+												where status=1 AND Agent_ID != 0";
+										    $agentResult = mysqli_query($db, $agentSQL);
+										    if ($agentResult->num_rows > 0) {
+										    	echo "<select name='UplineID' class='form-control kantormainselectvpv'>";
+											    echo "<option value='empty'> Noone </option>";
+											    while($agentRow = $agentResult->fetch_assoc()) {
+											        echo "<option value=".$agentRow["Agent_ID"]."> ". $agentRow["Name"] ." </option>"; 
+											    }
+											    echo "</select> <br>";
+											}     
+											else {
+										    	echo "No agents to assign to <br>";
+											}
+										?>
+									</div>
+								</div>
+								<br>
+								<div class="modalfooter">
+									<button type="button" class="btn modalleftbtn" onclick="document.getElementById('tambah').style.display='none'">BATAL</button>
+									<button type="submit" class="btn modalrightbtn">SIMPAN</button>
+								</div>
+							</form>
+						</div>
+					</div>
+				</div>
+			</div>
+		</div>
+ 	</body>
 </html>

@@ -337,7 +337,7 @@
 								</div>
 								<br>
 								<div class="modalfooter">
-									<button type="button" class="btn modalleftbtn" onclick="document.getElementById('tambah').style.display='none'">BATAL</button>
+									<button type="button" class="btn modalleftbtn" onclick="document.getElementById('edit').style.display='none'">BATAL</button>
 									<button type="submit" class="btn modalrightbtn">SIMPAN</button>
 								</div>
 							</form>

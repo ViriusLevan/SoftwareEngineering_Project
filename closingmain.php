@@ -349,7 +349,7 @@
 							<a class="btn closingdetaildelete" 
 								href='closingmain.php?id=<?php echo $row["closing_ID"];?>
 										&cAddress=<?php echo $row["Address"];?>'
-								>DELETE</a>	
+								>HAPUS</a>	
 						</td>
 					</tr>
 					<?php

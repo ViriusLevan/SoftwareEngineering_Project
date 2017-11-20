@@ -241,6 +241,7 @@
 			<div class="maincontent">
 				<div class="kantormainbtn">
 				<button class="btn kantormaintambahbtn" onclick="document.getElementById('tambah').style.display='block'">TAMBAH</button>
+				<a href="agent_productivity.php" class="btn kantormainprodukbtn">PRODUKTIVITAS AGEN</a>
 			</div>
 			<br><br>
 			<div class="kantormaintabel">				
@@ -268,7 +269,7 @@
 					        echo "<td> " . $row["bName"]. " </td>";
 					        echo "<td> " . $row["PhoneNumber"]. " </td>";
 					        if($row["ImmediateUpline_ID"] == null){
-					        	echo "<td>  Noone </td>"; 
+					        	echo "<td>  None </td>"; 
 					        }else{
 					        	$IUSQL =//Getting name of Immediate Upline
 							    	"SELECT Name FROM agent WHERE Agent_ID=" . $row["ImmediateUpline_ID"];
@@ -278,9 +279,8 @@
 					        	echo "<td> " . $IU . " </td>"; 
 					    	}?>
 					    	<td>
-					    		<a class="btn btn-warning" href='agent_details.php?id=<?php echo $row["Agent_ID"]; ?>'><?php echo $row["Agent_ID"]; ?></a>             
-						    		<a href='agenmain.php?editID=<?php echo $row["Agent_ID"]; ?>'
-						    			class="btn">Details</a>
+					    		<a class="btn kantordaftarubah" href='agent_details.php?id=<?php echo $row["Agent_ID"]; ?>'>DETAIL</a>           
+						    	<a href='agenmain.php?editID=<?php echo $row["Agent_ID"]; ?>' class="btn kantordaftarubah">UBAH</a>
 							    	<!-- <button type="submit" class="btn agentransfer" 
 							    		onclick="document.getElementById('transfer').style.display='block'">Transfer</button> -->
 
@@ -374,20 +374,15 @@
 					<header class="w3-container modalheader">
 						<span onclick="document.getElementById('agendetail').style.display='none'"
 						class="w3-button w3-display-topright">&times;</span>
-						<h1>Details</h1>
+						<h2>UBAH AGEN</h2>
 					</header>
-					<form method="post" action="<?php echo htmlspecialchars($_SERVER['PHP_SELF']);?>">
-					<div class="w3-container agencontainer">
-						<div class="container">
-							<div class="row">
-								<div class="col">
-									<h2>ID</h2>
+					<div class="w3-container">
+					<form method="post" action="<?php echo htmlspecialchars($_SERVER['PHP_SELF']);?>"><!-- 
 									<h2>Nama</h2>
 									<h2>No. Telepon</h2>
 									<h2>Upline</h2>
 									<h2>Kantor</h2>
-								</div>
-								<div class="col-8">
+									<h2>Tgl. Pindah</h2> -->
 									<?php
 										if(isset($_GET["editID"])){
 											$row = $_GET["editID"];
@@ -406,20 +401,19 @@
 									        $AgentRow = $AgentResult->fetch_assoc();
 									        echo "<input type='hidden' name='editAID' 
 									        	value=". $AgentRow["Agent_ID"] .">";
-									        echo "<h2>". $AgentRow["Agent_ID"] ."</h2>";
-									        echo "<input type='text' name='editName'
-									         value=". $AgentRow["Name"] ." required> <br>";
-									        echo "<input  type='tel' name='editPhone' 
+									        echo '<h5 class="kantormainformlabel">Nama</h5>';
+									        echo "<input type='text' class='form-control' name='editName'
+									         value=". $AgentRow["Name"] ." required>";
+									         echo '<h5 class="kantormainformlabel">No. Telepon</h5>';
+									        echo "<input  type='tel' class='form-control' name='editPhone' 
 									         pattern='[0-9]+' value=". $AgentRow["PhoneNumber"] ." required>";
-									        if($AgentRow["ImmediateUpline_ID"] == null)
-									         echo "<h2> Noone </h2>";
-									        else
-									         echo "<h2>". $AgentRow["ImmediateUpline_ID"] ."</h2>";
-									        echo "<h2>". $AgentRow["bName"] ."</h2>";
-
+									        // if($AgentRow["ImmediateUpline_ID"] == null)
+									        //  echo "<h2> Noone </h2>";
+									        // else
+									        //  echo "<h2>". $AgentRow["ImmediateUpline_ID"] ."</h2>";
 									        $branchSQL = "SELECT branch_id,Name FROM `branch` where status=1";
 											$branchResult = mysqli_query($db, $branchSQL);
-
+											echo '<h5 class="kantormainformlabel">Kantor</h5>';
 									    	echo "<select name='editBID' class='form-control kantormainselectvpv'>";
 										    while($row = $branchResult->fetch_assoc()) {
 										    	if($row["branch_id"] == $AgentRow["bID"])
@@ -428,19 +422,16 @@
 										    	else
 										        	echo "<option value=".$row["branch_id"]."> ". $row["Name"] ." </option>"; 
 										    }
-										    echo "</select> <br>";
+										    echo "</select>";
 										    $dateMin = new Datetime($AgentRow["Started"]);
 										    //$dateMin->modify('+1 day');
 										    $dateMinStr = $dateMin->format('Y-m-d');
-										    echo "<input type='date' min=". $dateMinStr ." 
+										    echo '<h5 class="kantormainformlabel">Tgl. Pindah</h5>';
+										    echo "<input type='date' class='form-control min=". $dateMinStr ." 
 										    	name='editTDate' value=". $dateMinStr ."
 										    	pattern='[0-9]{4}-[0-9]{2}-[0-9]{2}'>";
 										}
-									?>
-								</div>
-								
-							</div>
-						</div>
+									?>								
 					</div>
 					<div class="agenkembalihapusubah">
 						<button type="submit" class="btn agenkembali" 

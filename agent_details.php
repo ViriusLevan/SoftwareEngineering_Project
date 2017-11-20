@@ -38,13 +38,8 @@
             <br>
           <?php
 
-<<<<<<< HEAD
           // echo"Agent's Downlines <br>-----------------------------------<br>";
           // $a->getDownline($db);
-=======
-          //echo"Agent's Downlines <br>-----------------------------------<br>";
-          //$a->getDownline($db);
->>>>>>> a864ab38e5107b6e96abdae42a8eddf568904694
 
 
         ?>
