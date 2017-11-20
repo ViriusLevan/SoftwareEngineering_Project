@@ -34,9 +34,10 @@
           $AgentResult = mysqli_query($db, $AgentSQL);
           $AgentRow = $AgentResult->fetch_assoc();
 
-          $a = new Agent($AgentRow["aID"], $AgentRow["bID"],
+          $a = new Agent($AgentRow["aID"], $AgentRow["bID"], $AgentRow["bName"], 
             $AgentRow["aName"], $AgentRow["phone"], $AgentRow["iupID"]);
           
+          $a->getUplineData($db);
           $a->printDetails();
           $a->getEarningTotal($db);
 

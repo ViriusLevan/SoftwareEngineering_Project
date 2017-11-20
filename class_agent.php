@@ -1,12 +1,13 @@
 <?php
 
 	class agent{
-	    public $Agent_ID, $branchID, $name, $uplineID, $phone;
+	    public $Agent_ID, $branchID, $branchName, $name, $uplineID, $phone, $uplineName;
 	    public $downlines = [];
     
-	    public function __construct($Agent_ID, $branchID, $name, $phone, $uplineID=NULL){
+	    public function __construct($Agent_ID, $branchID, $branchName, $name, $phone, $uplineID=NULL){
 	      $this->Agent_ID=$Agent_ID;
 	      $this->branchID=$branchID;
+	      $this->branchName=$branchName;
 	      $this->name=$name;
 	   	  $this->uplineID=$uplineID;
 	   	  $this->phone=$phone;
@@ -24,8 +25,7 @@
 
 	    	echo '<tr>';   	
 	    	echo '<td class="tabelkiri">' ."Kantor : " .'</td>';  
-	    	// echo '<td>' .$this->branchID .'</td>';   
-	    	echo '<td>' ."Pake nama cabang dil".'</td>';  
+	    	echo '<td>' .$this->branchName .'</td>';   
 	    	echo '</tr>'; 
 
 	    	echo '<tr>';   	
@@ -35,11 +35,22 @@
 
 	    	echo '<tr>';   	
 	    	echo '<td class="tabelkiri">' ."Upline : " .'</td>';  
-	    	// echo '<td>' .$this->uplineID .'</td>';   
-	    	echo '<td>' ."Pake nama orangnya dil" .'</td>'; 
+	    	echo '<td>' .$this->uplineName .'</td>';
 	    	echo '</tr>';
 	    	echo '</table>';
 
+	    }
+
+	    public function getUplineData($db){
+	    	if($this->uplineID == NULL){
+	    		$this->uplineName = "Tidak ada";
+	    	}else{
+		    	$uplineSQL = "SELECT * FROM agent WHERE Agent_ID = " . $this->uplineID;
+				$uplineResult = mysqli_query($db, $uplineSQL);
+				$uplineRow = $uplineResult->fetch_assoc();
+
+				$this->uplineName = $uplineRow["Name"];
+			}
 	    }
 
 	    public function getEarningTotal($db){
