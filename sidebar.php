@@ -1,5 +1,5 @@
 <div class="side">
-	<img class="avatar" src="img/defaultava.png" alt="">
+	<img class="avatar" src="img/defaultava.jpg" alt="">
 	<br><br><br><br><br><hr>
 	<a href="kantordaftar.php"><div class="sidenav <?php if ($pagename==='kantor') {echo 'active';} ?>"><h3>KANTOR</h3></div><hr></a>
 	<a href="agenmain.php"><div class="sidenav <?php if ($pagename==='agen') {echo 'active';} ?>"><h3>AGEN</h3></div><hr></a>

@@ -65,7 +65,7 @@ hr{
 
 .logout{
 	position: absolute;
-	margin: 5% 37%;
+	margin: 5% 35%;
 	bottom: 0;
 }
 
@@ -328,8 +328,12 @@ td{
 	height: 50px;
 	background-color: #D63438;
 	color: #fff;
-	padding-top: 6px;
+	padding-top: 14px;
 	margin-bottom: 5%;
+}
+
+.agenhapus:hover{
+	color: #fff;
 }
 
 .agenubah{
@@ -337,7 +341,7 @@ td{
 	display: inline-block;
 	border-radius: 0;
 	height: 50px;
-	background-color: #D45C00;
+	background-color: #183A56;
 	color: #fff;
 	padding-top: 6px;
 	margin-bottom: 5%;
@@ -353,6 +357,16 @@ td{
 	padding-top: 6px;
 }
 
+.agendetailbtn{
+	width: 47%;
+	display: inline-block;
+	border-radius: 0;
+	height: 35px;
+	background-color: #005859;
+	color: #fff;
+	padding-top: 6px;
+}
+
 .agendetailkembalibtn{
 	display: inline-block;
 	border-radius: 0;
@@ -363,7 +377,7 @@ td{
 	margin-left: 3px;
 }
 
-.agendetailkembalibtn:hover{
+.agendetailkembalibtn:hover, .agendetailbtn:hover{
 	color: #fff;
 }
 
@@ -386,7 +400,7 @@ td{
 	display: inline-block;
 	border-radius: 0;
 	height: 35px;
-	background-color: #D45C00;
+	background-color: #005859;
 	color: #fff;
 	padding-top: 6px;
 }

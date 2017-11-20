@@ -279,7 +279,7 @@
 					        	echo "<td> " . $IU . " </td>"; 
 					    	}?>
 					    	<td>
-					    		<a class="btn kantordaftarubah" href='agent_details.php?id=<?php echo $row["Agent_ID"]; ?>'>DETAIL</a>           
+					    		<a class="btn agendetailbtn" href='agent_details.php?id=<?php echo $row["Agent_ID"]; ?>'>DETAIL</a>           
 						    	<a href='agenmain.php?editID=<?php echo $row["Agent_ID"]; ?>' class="btn kantordaftarubah">UBAH</a>
 							    	<!-- <button type="submit" class="btn agentransfer" 
 							    		onclick="document.getElementById('transfer').style.display='block'">Transfer</button> -->
@@ -440,8 +440,8 @@
 						<a href="agenmain.php?dismissalID=<?php echo $AgentRow["Agent_ID"];?>
 							&dismissalName=<?php echo $AgentRow["Name"];?>
 							&dismissalBranch=<?php echo $AgentRow["bID"];?>" 
-							class="btn agenhapus">DISMISS</a>
-						<button type="submit" class="btn agenubah">UBAH</button>
+							class="btn agenhapus">PECAT</a>
+						<button type="submit" class="btn agenubah">SIMPAN</button>
 					</div>
 					</form>
 				</div>

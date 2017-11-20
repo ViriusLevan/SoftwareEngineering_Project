@@ -38,7 +38,7 @@
    <body class="loginbody">
       <div align = "center">
             <div style = "margin:10% 40%">
-            <img class="mainlogo" src="img/mainlogo.png" alt="">
+            <img class="mainlogo" src="img/mainlogo.jpg" alt="">
                <form action = "" method = "post">
                   <input type = "text" name = "username" class = "form-control form" placeholder="Username" />
                   <input type = "password" name = "password" class = "form-control form" placeholder="Password" />
