@@ -197,7 +197,8 @@
 							<h2>TAMBAH CABANG BARU</h2>
 						</header>
 						<div class="w3-container">
-							<form  method="POST" action="<?php echo htmlspecialchars($_SERVER['PHP_SELF']);?>">
+							<form  method="POST" action="<?php echo htmlspecialchars($_SERVER['PHP_SELF']);?>"
+								name="addForm" onsubmit="return validateAddForm()">
 								<h5 class="kantormainformlabel">Nama Cabang</h5>
 								<input class="form-control" type="text" placeholder="Masukkan nama kantor"
 									name="addBName">
@@ -256,11 +257,21 @@
 								</div>
 								<br>
 								<div class="modalfooter">
-									<button type="submit" class="btn modalleftbtn" onclick="document.getElementById('tambah').style.display='none'">BATAL</button>
+									<button type="button" class="btn modalleftbtn" onclick="document.getElementById('tambah').style.display='none'">BATAL</button>
 									<button type="submit" class="btn modalrightbtn">SIMPAN</button>
 								</div>
 							</form>
 						</div>
+						<script type="text/javascript">
+							function validateAddForm() {//Exactly what it says
+							    var x = document.forms["addForm"]["addVPID"];
+							    var y = document.forms["addForm"]["addPID"];
+							    if (x.selectedIndex != 0 && y.selectedIndex == 0) {
+							        alert("Vice President tidak boleh ada tanpa President");
+							        return false;
+							    }
+							}
+						</script>
 					</div>
 				</div>
 				<div id="edit" class="w3-modal" data-backdrop="">
@@ -271,7 +282,8 @@
 							<h2>EDIT CABANG</h2>
 						</header>
 						<div class="w3-container">
-							<form method="POST" action="<?php echo htmlspecialchars($_SERVER['PHP_SELF']);?>">
+							<form method="POST" action="<?php echo htmlspecialchars($_SERVER['PHP_SELF']);?>"
+								name="editForm" onsubmit="return validateEditForm()">
 								<input type='hidden' name='editIBID' value="<?php echo $_GET["editBID"];?>">
 								<h5 class="kantormainformlabel">Nama Cabang</h5>
 								<input class="form-control" type="text" value="<?php echo $_GET["editBNAME"];?>"
@@ -343,25 +355,56 @@
 							</form>
 						</div>
 						<script type="text/javascript">
-							function optionDisabling(){//HELP ME
+							function validateEditForm() {//Exactly what it says
+							    var x = document.forms["editForm"]["editIVPID"];
+							    var y = document.forms["editForm"]["editIPID"];
+							    if (x.selectedIndex != 0 && y.selectedIndex == 0) {
+							        alert("Vice President tidak boleh ada tanpa President");
+							        return false;
+							    }
+							}
+							function optionDisabling(){//Disabling options on other selects based on what is selected
 								var select = document.getElementsByClassName("form-control kantormainselectvpv");
 								var selections = [];
+								var selections2 = [];
 
-								for (var i = 0; i <4; i++) {
+								for (var i = 0; i<2; i++) {
 									if(select[i].disabled == false && 
-										select[i].options[select[i].selectedIndex].value != "-Tidak Ada-"){
-										selections.push(select[i].options[select[i].selectedIndex].value);
+										select[i].selectedIndex != 0){
+										selections.push(select[i].value);
 									}
 								}
 
-								for (var i = 0; i<4; i++) {
+								for (var i = 0; i<2; i++) {
 									var opt = select[i].getElementsByTagName("option");
 									for (var j = 0; j < opt.length; j++) {
 										if(selections.indexOf(opt[j].value) == -1){
 										//not found on selections
 											opt[j].disabled = false;
-										}else if(opt[j].value == select[i].options[select[i].selectedIndex].value){
-										//the currently selected option
+										}else if(opt[j].value == select[i].value){
+										//the currently selected option for this select box
+											opt[j].disabled = false; 
+										}else{//Found on selection and not the currently selected option
+											opt[j].disabled = true;
+										}
+									}
+								}
+
+								for (var i = 2; i<4; i++) {
+									if(select[i].disabled == false && 
+										select[i].selectedIndex != 0){
+										selections2.push(select[i].value);
+									}
+								}
+
+								for (var i = 2; i<4; i++) {
+									var opt = select[i].getElementsByTagName("option");
+									for (var j = 0; j < opt.length; j++) {
+										if(selections2.indexOf(opt[j].value) == -1){
+										//not found on selections
+											opt[j].disabled = false;
+										}else if(opt[j].value == select[i].value){
+										//the currently selected option for this select box
 											opt[j].disabled = false; 
 										}else{//Found on selection and not the currently selected option
 											opt[j].disabled = true;

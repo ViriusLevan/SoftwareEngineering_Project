@@ -707,7 +707,7 @@
 								var selections = [];
 								for (var i = 0; i < select.length; i++) {
 									if(select[i].disabled == false){
-										selections.push(select[i].options[select[i].selectedIndex].value);
+										selections.push(select[i].value);
 									}
 								}
 								for (var i = 0; i<select.length; i++) {
@@ -716,7 +716,7 @@
 										if(selections.indexOf(opt[j].value) == -1){
 										//not found on selections
 											opt[j].disabled = false;
-										}else if(opt[j].value == select[i].options[select[i].selectedIndex].value){
+										}else if(opt[j].value == select[i].value){
 										//the currently selected option
 											opt[j].disabled = false;
 										}else{//Found on selection and not the currently selected option
