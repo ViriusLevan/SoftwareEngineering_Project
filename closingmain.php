@@ -467,7 +467,7 @@
 							<div class="row">
 								<div class="col">
 									<h5 class="kantormainformlabel">Agen 1 (Agen Utama)</h5>
-									<?php
+									<!-- <?php
 										$agentSQL = "SELECT agent.Name, agent.Agent_ID
 														FROM agent,agent_branch_employment,branch
 														WHERE agent.status=1
@@ -489,11 +489,11 @@
 										else {
 											echo "No agents to assign to <br>";
 										}
-									?>
+									?> -->
 								</div>
 								<div class="col">
 									<h5 class="kantormainformlabel">Agen 2</h5>
-									<?php
+									<!-- <?php
 										$agentResult = mysqli_query($db, $agentSQL);
 										if ($agentResult->num_rows > 0) {
 											echo "<select name='agent2ID' id='agent2Select'
@@ -507,13 +507,13 @@
 										else {
 											echo "No agents to assign to <br>";
 										}
-									?>
+									?> -->
 								</div>
 							</div>
 							<div class="row">
 								<div class="col">
 									<h5 class="kantormainformlabel">Agen 3</h5>
-									<?php
+									<!-- <?php
 										$agentResult = mysqli_query($db, $agentSQL);
 										if ($agentResult->num_rows > 0) {
 											echo "<select name='agent3ID' id='agent3Select'
@@ -527,11 +527,11 @@
 										else {
 											echo "No agents to assign to <br>";
 										}
-									?>
+									?> -->
 								</div>
 								<div class="col">
 									<h5 class="kantormainformlabel">Agen 4</h5>
-									<?php
+									<!-- <?php
 									$agentResult = mysqli_query($db, $agentSQL);
 										if ($agentResult->num_rows > 0) {
 											echo "<select name='agent4ID' id='agent4Select'
@@ -545,7 +545,7 @@
 										else {
 											echo "No agents to assign to <br>";
 										}
-									?>
+									?> -->
 								</div>
 							</div>
 						<br>
@@ -705,12 +705,12 @@
 							function optionDisabling(){
 								var select = document.getElementsByClassName("agentSelection");
 								var selections = [];
-								for (var i = 0; i < 4; i++) {
+								for (var i = 0; i < select.length; i++) {
 									if(select[i].disabled == false){
 										selections.push(select[i].options[select[i].selectedIndex].value);
 									}
 								}
-								for (var i = 0; i<4; i++) {
+								for (var i = 0; i<select.length; i++) {
 									var opt = select[i].getElementsByTagName("option");
 									for (var j = 0; j < opt.length; j++) {
 										if(selections.indexOf(opt[j].value) == -1){
