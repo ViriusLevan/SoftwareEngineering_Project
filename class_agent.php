@@ -18,23 +18,23 @@
 
 	    	echo '<table class="table">';	
 	    	echo '<tr>';   	
-	    	echo '<td>' ."ID : " .'</td>';  
+	    	echo '<td class="tabelkiri">' ."ID : " .'</td>';  
 	    	echo '<td>' .$this->Agent_ID .'</td>';   
 	    	echo '</tr>';
 
 	    	echo '<tr>';   	
-	    	echo '<td>' ."Kantor : " .'</td>';  
+	    	echo '<td class="tabelkiri">' ."Kantor : " .'</td>';  
 	    	// echo '<td>' .$this->branchID .'</td>';   
 	    	echo '<td>' ."Pake nama cabang dil".'</td>';  
 	    	echo '</tr>'; 
 
 	    	echo '<tr>';   	
-	    	echo '<td>' ."No. Telepon : " .'</td>';  
+	    	echo '<td class="tabelkiri">' ."No. Telepon : " .'</td>';  
 	    	echo '<td>' .$this->phone .'</td>';   
 	    	echo '</tr>'; 
 
 	    	echo '<tr>';   	
-	    	echo '<td>' ."Upline : " .'</td>';  
+	    	echo '<td class="tabelkiri">' ."Upline : " .'</td>';  
 	    	// echo '<td>' .$this->uplineID .'</td>';   
 	    	echo '<td>' ."Pake nama orangnya dil" .'</td>'; 
 	    	echo '</tr>';

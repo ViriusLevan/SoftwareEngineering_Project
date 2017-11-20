@@ -40,16 +40,106 @@
           $a->getEarningTotal($db);
 
           ?>
-            <a class="btn btn-warning" 
+            <!-- <a class="btn btn-warning" 
               href='agent_involved_in_closing.php?id=<?php echo $row; ?>'
-              >Click to see Agent's involvement in closings</a> 
-            <br>
+              >Click to see Agent's involvement in closings</a>  -->
           <?php
-
           // echo"Agent's Downlines <br>-----------------------------------<br>";
           // $a->getDownline($db);
+          ?>
+          <h3>---------------------------------------</h3>
+          <h3>Riwayat</h3>
+        <?php
+            $pass = $_GET["id"];
 
+            $closingSQL = "SELECT * FROM  Agent_involved_in_closing where Agent_ID = " . $pass;
+            $closingResults = mysqli_query($db,$closingSQL);
+            if ($closingResults->num_rows > 0) {
+            // output data of each row
+              
+              while($closingRow = $closingResults->fetch_assoc()) {
+                $workedAs = setWorkedAs($closingRow["workedAs"]);
+                echo '<table class="table">'; 
 
+                echo '<tr>';    
+                echo '<td class="tabelkiri">' ."Closing ID: " .'</td>';  
+                echo '<td>' .$closingRow["Closing_ID"] .'</td>';   
+                echo '</tr>';
+
+                echo '<tr>';    
+                echo '<td class="tabelkiri">' ."Komisi: " .'</td>';  
+                echo '<td>' .$closingRow["earning"] .'</td>';   
+                echo '</tr>';
+                
+                echo '<tr>';    
+                echo '<td class="tabelkiri">' ."Sebagai: " .'</td>';  
+                echo '<td>' .$workedAs .'</td>';   
+                echo '</tr>';
+                
+                echo '</table>';
+                // echo "Closing ID: " . $closingRow["Closing_ID"]. "<br>"; 
+                // echo "Earned    : " . $closingRow["earning"]. "<br>";
+                // echo "Worked As : " . $workedAs. "<br>"; 
+                echo "<br>";
+              }              
+            } else {
+              echo "0 results";
+            }
+
+            //Get Closing Details but who cares about this
+            /*$idSQL = "SELECT Closing_ID from Agent_involved_in_closing where Agent_ID = " . $pass;
+            $idResults = mysqli_query($db, $idSQL);
+
+            if ($idResults->num_rows > 0) {
+            // output data of each row
+              while($idRow = $idResults->fetch_assoc()) {
+                $closingSQL = "SELECT * FROM closing where Closing_ID = ". $idRow["Closing_ID"];
+                $closingResults = mysqli_query($db,$closingSQL);
+                if ($closingResults->num_rows > 0) {
+                // output data of each row
+                  while($closingRow = $closingResults->fetch_assoc()) {
+                    echo "ID: " . $closingRow["closing_ID"]. "<br>"; 
+                    echo "Date: " . $closingRow["Date"]. "<br>";
+                    echo "Price: " . $closingRow["Price"]. "<br>"; 
+                    echo "Address: " . $closingRow["Address"]. "<br>";
+                    echo "-------------<br>";
+                  }
+                } else {
+                  echo "0 results";
+                }
+              }
+            } else {
+              echo "Agent not involved in any closing";
+            }*/
+              
+          function setWorkedAs($code){
+              $workedAs = "";
+              if($code>18){
+                $workedAs = "Agent 4";
+              }else if($code>12){
+                $workedAs = "Agent 3";
+              }else if($code>6){
+                $workedAs = "Agent 2";
+              }else{
+                $workedAs = "Agent 1";
+              }
+
+              if($code%6==0){
+                $workedAs .= "'s 3rd upline";
+              }else if($code%6==1){
+                //The actual agent
+              }else if($code%6==2){
+                $workedAs .= "'s Branch President";
+              }else if($code%6==3){
+                $workedAs .= "'s Vice President";
+              }else if($code%6==4){
+                $workedAs .= "'s 1st upline";
+              }else {
+                $workedAs .= "'s 2nd upline";
+              }
+
+              return $workedAs;
+            }
         ?>
         </div>
           <div class="col">
