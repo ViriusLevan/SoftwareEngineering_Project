@@ -418,3 +418,27 @@ td{
 	color: #fff;
 	padding-top: 6px;
 }
+
+/*************************************/
+
+.nodeExample1{
+	background-color: #183A56;
+	color: #fff;
+	text-align: center;
+	vertical-align: middle;
+	border: 0;
+}
+
+.nodeExample1:hover{
+	color: #fff;
+}
+
+.node-title{
+	font-size: 1rem;
+	margin-top: 7.5%;
+}
+
+.node-name{
+	font-size: 1.5rem;
+	margin-top: 7.5%;
+}
