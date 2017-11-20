@@ -13,11 +13,33 @@
 	    }   
 
 	    public function printDetails(){
-	    	echo "Name : " . $this->name . "<br>";
-	    	echo "Agent ID : " . $this->Agent_ID . "<br>";
-	    	echo "Branch ID : " . $this->branchID . "<br>";
-	    	echo "Phone Number : " . $this->phone . "<br>";
-	    	echo "Upline ID : " . $this->uplineID . "<br>";
+	    	echo '<h1>'.$this->name.'</h1>';
+	    	echo '<br>';
+
+	    	echo '<table class="table">';	
+	    	echo '<tr>';   	
+	    	echo '<td>' ."ID : " .'</td>';  
+	    	echo '<td>' .$this->Agent_ID .'</td>';   
+	    	echo '</tr>';
+
+	    	echo '<tr>';   	
+	    	echo '<td>' ."Kantor : " .'</td>';  
+	    	// echo '<td>' .$this->branchID .'</td>';   
+	    	echo '<td>' ."Pake nama cabang dil".'</td>';  
+	    	echo '</tr>'; 
+
+	    	echo '<tr>';   	
+	    	echo '<td>' ."No. Telepon : " .'</td>';  
+	    	echo '<td>' .$this->phone .'</td>';   
+	    	echo '</tr>'; 
+
+	    	echo '<tr>';   	
+	    	echo '<td>' ."Upline : " .'</td>';  
+	    	// echo '<td>' .$this->uplineID .'</td>';   
+	    	echo '<td>' ."Pake nama orangnya dil" .'</td>'; 
+	    	echo '</tr>';
+	    	echo '</table>';
+
 	    }
 
 	    public function getEarningTotal($db){
@@ -27,7 +49,7 @@
 			$earningRow = $earningResult->fetch_assoc();
 
 			$total = $earningRow["total"];
-			echo "Total Earning : " . $total . "<br>";
+			echo '<h3>'."Total Komisi : Rp. " . $total . "</h3>";
 	    }
 
 	    public function getDownline($db){

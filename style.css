@@ -353,6 +353,20 @@ td{
 	padding-top: 6px;
 }
 
+.agendetailkembalibtn{
+	display: inline-block;
+	border-radius: 0;
+	height: 50px;
+	background-color: #005859;
+	color: #fff;
+	padding-top: 13px;
+	margin-left: 3px;
+}
+
+.agendetailkembalibtn:hover{
+	color: #fff;
+}
+
 /*************************************/
 
 .propertyselect{
