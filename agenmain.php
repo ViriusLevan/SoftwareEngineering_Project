@@ -7,7 +7,7 @@
 		<?php include('htmlhead.php'); ?>
 		<title>Agen</title>
 	</head>
-	<body class="mainbody" 
+	<body class="mainbody"
 		<?php 
 			
 
