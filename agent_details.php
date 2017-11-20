@@ -15,8 +15,8 @@
           $row = $_GET["id"];
 
           $AgentSQL =
-                "SELECT agent.Agent_ID, agent.Name, agent.PhoneNumber, 
-                  agent.ImmediateUpline_ID, agent.Status,branch.branch_id,branch.Name 
+                "SELECT agent.Agent_ID AS aID, agent.Name AS aName, agent.PhoneNumber AS phone, 
+                  agent.ImmediateUpline_ID AS iupID, agent.Status,branch.branch_id AS bID,branch.Name AS bName 
                   FROM agent,branch,agent_branch_employment 
                   WHERE agent.Agent_ID = agent_branch_employment.Agent_ID
                   AND agent_branch_employment.Branch_ID = branch.branch_id
@@ -25,8 +25,8 @@
           $AgentResult = mysqli_query($db, $AgentSQL);
           $AgentRow = $AgentResult->fetch_assoc();
 
-          $a = new Agent($AgentRow["Agent_ID"], 
-            $AgentRow["Name"], $AgentRow["PhoneNumber"], $AgentRow["ImmediateUpline_ID"]);
+          $a = new Agent($AgentRow["aID"], $AgentRow["bID"],
+            $AgentRow["aName"], $AgentRow["phone"], $AgentRow["iupID"]);
           
           $a->getEarningTotal($db);
           $a->printDetails();
@@ -38,8 +38,13 @@
             <br>
           <?php
 
+<<<<<<< HEAD
           // echo"Agent's Downlines <br>-----------------------------------<br>";
           // $a->getDownline($db);
+=======
+          //echo"Agent's Downlines <br>-----------------------------------<br>";
+          //$a->getDownline($db);
+>>>>>>> a864ab38e5107b6e96abdae42a8eddf568904694
 
 
         ?>
