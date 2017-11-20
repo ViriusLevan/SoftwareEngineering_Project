@@ -5,7 +5,7 @@
 <html>
 	<head>
 		<?php include('htmlhead.php'); ?>
-		<title>Kantor</title>
+		<title>Cabang</title>
 	</head>
 	<body class="mainbody">
 		<?php include('sidebar.php'); ?>
@@ -14,7 +14,7 @@
 			<div class="maincontent">
 				<div class="kantormainbtn">
 					<button onclick="document.getElementById('tambah').style.display='block'" class="btn kantormaintambahbtn" data-toggle="modal" data-target="#exampleModal">TAMBAH</button>
-					<a href="kantordaftar.php" class="btn kantormainprodukbtn">DAFTAR KANTOR</a>
+					<a href="kantordaftar.php" class="btn kantormainprodukbtn">DAFTAR CABANG</a>
 					<input type="button" onclick="printDiv('printableArea')" class="btn btn-lg btn-success" value="PRINT" />
 				</div>
 				<br>
@@ -33,13 +33,13 @@
 				<br>
 				
 				<div class="kantormaintabel" id="printableArea">
-					<div class="kantormaintabelheader"><h4>Hasil Produktivitas Kantor</h4></div>
+					<div class="kantormaintabelheader"><h4>Hasil Produktivitas Cabang</h4></div>
 					<table class="table" id="produktable">
 						<tr>
-							<th>Nama Kantor/Branch</th>
+							<th>Nama Cabang</th>
 							<th>Unit</th>
 							<th>Total Closing</th>
-							<th>Pendapatan cabang dari Closing (Rp)</th>
+							<th>Pendapatan Cabang dari Closing (Rp)</th>
 						</tr>
 						<?php
 							
@@ -148,18 +148,18 @@
 						<header class="w3-container modalheader">
 							<span onclick="document.getElementById('tambah').style.display='none'"
 							class="w3-button w3-display-topright">&times;</span>
-							<h2>TAMBAH KANTOR BARU</h2>
+							<h2>TAMBAH CABANG BARU</h2>
 						</header>
 						<div class="w3-container">
 							<form action="">
-								<h5 class="kantormainformlabel">Nama Kantor</h5>
+								<h5 class="kantormainformlabel">Nama Cabang</h5>
 								<input class="form-control" type="text" placeholder="Masukkan nama kantor">
-								<h5 class="kantormainformlabel">Alamat Kantor</h5>
+								<h5 class="kantormainformlabel">Alamat Cabang</h5>
 								<input class="form-control" type="text" placeholder="Masukkan alamat kantor">
 								<br>
 								<div class="row">
 									<div class="col">
-										<h5 class="kantormainformlabel">President</h5>
+										<h5 class="kantormainformlabel">Kepala Cabang</h5>
 										<!-- <select name="kantor" class="form-control kantormainselectvpv">
 												<option value="id">Nama President</option>
 										</select> -->
@@ -184,7 +184,7 @@
 										?>
 									</div>
 									<div class="col">
-										<h5 class="kantormainformlabel">Vice President</h5>
+										<h5 class="kantormainformlabel">Wakil Kepala Cabang</h5>
 										<!-- <select name="kantor" class="form-control kantormainselectvpv">
 												<option value="id">Nama Vice President</option>
 										</select> -->

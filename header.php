@@ -2,7 +2,7 @@
 	<div class="pagetitle">
 		<h1>
 		<?php
-		if ($pagename==='kantor') {echo 'KANTOR';}
+		if ($pagename==='kantor') {echo 'CABANG';}
 		elseif ($pagename==='agen') {echo 'AGEN';}
 		elseif ($pagename==='properti') {echo 'PROPERTI';}
 		elseif ($pagename==='closing') {echo 'CLOSING';}

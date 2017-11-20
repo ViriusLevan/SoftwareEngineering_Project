@@ -318,7 +318,7 @@
 								<br>
 								<div class="row">
 									<div class="col">
-										<h5 class="kantormainformlabel">Kantor</h5>
+										<h5 class="kantormainformlabel">Cabang</h5>
 										<!-- <select name="kantor" class="form-control kantormainselectvpv">
 											<option value="id">Nama Kantor</option>
 										</select> -->
@@ -413,7 +413,7 @@
 									        //  echo "<h2>". $AgentRow["ImmediateUpline_ID"] ."</h2>";
 									        $branchSQL = "SELECT branch_id,Name FROM `branch` where status=1";
 											$branchResult = mysqli_query($db, $branchSQL);
-											echo '<h5 class="kantormainformlabel">Kantor</h5>';
+											echo '<h5 class="kantormainformlabel">Cabang</h5>';
 									    	echo "<select name='editBID' class='form-control kantormainselectvpv'>";
 										    while($row = $branchResult->fetch_assoc()) {
 										    	if($row["branch_id"] == $AgentRow["bID"])

@@ -23,7 +23,7 @@
 	    	echo '</tr>';
 
 	    	echo '<tr>';   	
-	    	echo '<td class="tabelkiri">' ."Kantor : " .'</td>';  
+	    	echo '<td class="tabelkiri">' ."Cabang : " .'</td>';  
 	    	// echo '<td>' .$this->branchID .'</td>';   
 	    	echo '<td>' ."Pake nama cabang dil".'</td>';  
 	    	echo '</tr>'; 

@@ -5,7 +5,7 @@
 <html>
 	<head>
 		<?php include('htmlhead.php'); ?>
-		<title>Login</title>
+		<title>Cabang</title>
 	</head>
 	<body class="mainbody" 
 		<?php  
@@ -128,24 +128,24 @@
 			<div class="maincontent">
 				<div class="kantormainbtn">
 					<button onclick="document.getElementById('tambah').style.display='block'" class="btn kantormaintambahbtn" data-toggle="modal" data-target="#exampleModal">TAMBAH</button>
-					<a href="kantormain.php" class="btn kantormainprodukbtn">PRODUKTIVITAS KANTOR</a>
+					<a href="kantormain.php" class="btn kantormainprodukbtn">PRODUKTIVITAS CABANG</a>
 				</div>
 				<br><br>
 				<div class="kantormaintabel">
-					<div class="kantormaintabelheader"><h4>Daftar Kantor</h4></div>
+					<div class="kantormaintabelheader"><h4>Daftar Cabang</h4></div>
 					<table class="table">
 						<tr>
-							<th>Kantor</th>
+							<th>Nama Cabang</th>
 							<th>Alamat</th>
-							<th>President</th>
-							<th>Vice President</th>
+							<th>Kepala Cabang</th>
+							<th>Wakil Kepala Cabang</th>
 							<th>Opsi</th>
 						</tr>
 						<?php 
 						$sql = "SELECT  branch.branch_id AS bID, branch.Name, branch.address, 
 									branch.President_ID AS pID, branch.VicePresident_ID AS vpID,
-									IFNULL(pGet.President, 'Noone') AS President, 
-									IFNULL(vpGet.VP, 'Noone') AS VicePresident
+									IFNULL(pGet.President, '-Tidak Ada-') AS President, 
+									IFNULL(vpGet.VP, '-Tidak Ada-') AS VicePresident
 									FROM branch LEFT JOIN
                                     (SELECT agent.Name as President, branch.branch_id FROM agent, 
                                      branch WHERE agent.Agent_ID = branch.President_ID)pGet  
@@ -194,20 +194,20 @@
 						<header class="w3-container modalheader">
 							<span onclick="document.getElementById('tambah').style.display='none'"
 							class="w3-button w3-display-topright">&times;</span>
-							<h2>TAMBAH KANTOR BARU</h2>
+							<h2>TAMBAH CABANG BARU</h2>
 						</header>
 						<div class="w3-container">
 							<form  method="POST" action="<?php echo htmlspecialchars($_SERVER['PHP_SELF']);?>">
-								<h5 class="kantormainformlabel">Nama Kantor</h5>
+								<h5 class="kantormainformlabel">Nama Cabang</h5>
 								<input class="form-control" type="text" placeholder="Masukkan nama kantor"
 									name="addBName">
-								<h5 class="kantormainformlabel">Alamat Kantor</h5>
+								<h5 class="kantormainformlabel">Alamat Cabang</h5>
 								<input class="form-control" type="text" placeholder="Masukkan alamat kantor"
 									name="addBAddress">
 								<br>
 								<div class="row">
 									<div class="col">
-										<h5 class="kantormainformlabel">Principal</h5>
+										<h5 class="kantormainformlabel">Kepala Cabang</h5>
 										<?php
 											$sql = "SELECT DISTINCT agent.Name AS aName, agent.Agent_ID as aID
 														FROM agent, agent_branch_employment, branch
@@ -224,7 +224,7 @@
 										    if ($result->num_rows > 0) {
 										    	echo "<select name='addPID' class='form-control kantormainselectvpv'
 										    		onchange='optionDisabling()'>";
-											    echo "<option value='empty' selected='selected'> Noone </option>";
+											    echo "<option value='empty' selected='selected'> -Tidak Ada- </option>";
 											    while($row = $result->fetch_assoc()) {
 											        echo "<option value=".$row["aID"]."> ". $row["aName"] ." </option>"; 
 											    }
@@ -236,13 +236,13 @@
 										?>
 									</div>
 									<div class="col">
-										<h5 class="kantormainformlabel">Vice Principal</h5>
+										<h5 class="kantormainformlabel">Wakil Kepala Cabang</h5>
 										<?php
 											$result = mysqli_query($db, $sql);
 										    if ($result->num_rows > 0) {
 										    	echo "<select name='addVPID' class='form-control kantormainselectvpv'
 										    		onchange='optionDisabling()'>";
-											    echo "<option value='empty' selected='selected'> Noone </option>";
+											    echo "<option value='empty' selected='selected'> -Tidak Ada- </option>";
 											    while($row = $result->fetch_assoc()) {
 											        echo "<option value=".$row["aID"]."> ". $row["aName"] ." </option>"; 
 											    }
@@ -268,21 +268,21 @@
 						<header class="w3-container modalheader">
 							<span onclick="document.getElementById('edit').style.display='none'"
 							class="w3-button w3-display-topright">&times;</span>
-							<h2>EDIT KANTOR</h2>
+							<h2>EDIT CABANG</h2>
 						</header>
 						<div class="w3-container">
 							<form method="POST" action="<?php echo htmlspecialchars($_SERVER['PHP_SELF']);?>">
 								<input type='hidden' name='editIBID' value="<?php echo $_GET["editBID"];?>">
-								<h5 class="kantormainformlabel">Nama Kantor</h5>
+								<h5 class="kantormainformlabel">Nama Cabang</h5>
 								<input class="form-control" type="text" value="<?php echo $_GET["editBNAME"];?>"
 									name="editIBName" required>
-								<h5 class="kantormainformlabel">Alamat Kantor</h5>
+								<h5 class="kantormainformlabel">Alamat Cabang</h5>
 								<input class="form-control" type="text" value="<?php echo $_GET["editBADD"];?>"
 									name="editIBAddress" required>
 								<br>
 								<div class="row">
 									<div class="col">
-										<h5 class="kantormainformlabel">Principal</h5>
+										<h5 class="kantormainformlabel">Kepala Cabang</h5>
 										<?php
 											$sql = "SELECT DISTINCT agent.Name AS aName, agent.Agent_ID as aID
 														FROM agent, agent_branch_employment, branch
@@ -299,7 +299,7 @@
 										    if ($result->num_rows > 0) {
 										    	echo "<select name='editIPID' class='form-control kantormainselectvpv'
 										    		onchange='optionDisabling()'>";
-											    echo "<option value='empty'> Noone </option>";
+											    echo "<option value='empty'> -Tidak Ada- </option>";
 											    if($_GET["editPID"]!=NULL)
 												    echo "<option value=". $_GET["editPID"] ." selected='selected'> "
 												    	. $_GET["editPNAME"] ." </option>";
@@ -314,13 +314,13 @@
 										?>
 									</div>
 									<div class="col">
-										<h5 class="kantormainformlabel">Vice Principal</h5>
+										<h5 class="kantormainformlabel">Wakil Kepala Cabang</h5>
 										<?php
 											$result = mysqli_query($db, $sql);
 										    if ($result->num_rows > 0) {
 										    	echo "<select name='editIVPID' class='form-control kantormainselectvpv'
 										    		onchange='optionDisabling()'>";
-											    echo "<option value='empty'> Noone </option>";
+											    echo "<option value='empty'> -Tidak Ada- </option>";
 											    if($_GET["editVPID"]!=NULL)
 											    	echo "<option value=". $_GET["editVPID"] ." selected='selected'> "
 											    		. $_GET["editVPNAME"] ." </option>";
@@ -349,7 +349,7 @@
 
 								for (var i = 0; i <4; i++) {
 									if(select[i].disabled == false && 
-										select[i].options[select[i].selectedIndex].value != "Noone"){
+										select[i].options[select[i].selectedIndex].value != "-Tidak Ada-"){
 										selections.push(select[i].options[select[i].selectedIndex].value);
 									}
 								}
