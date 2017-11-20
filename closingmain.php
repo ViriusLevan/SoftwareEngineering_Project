@@ -279,6 +279,7 @@
 			<div class="maincontent">
 				<div class="kantormainbtn">
 					<button onclick="document.getElementById('tambah').style.display='block'" class="btn kantormaintambahbtn" data-toggle="modal" data-target="#exampleModal">TAMBAH</button>
+					<input type="button" onclick="printDiv('printableArea')" class="btn btn-lg btn-success" value="PRINT" />
 				</div>
 				<br>
 				<div class="kantormainfilter">
@@ -321,7 +322,7 @@
 					</form>
 				</div>
 				<br>
-				<div class="kantormaintabel">
+				<div class="kantormaintabel" id="printableArea">
 					<div class="kantormaintabelheader"><h4>Hasil Closing</h4></div>
 					<table class="table" id="closingTable">
 						<tr>
@@ -861,6 +862,17 @@
 		    var endDateEntered = new Date(input);
 			document.getElementById("startDate").setAttribute("max", input);
 		});
+
+	 	function printDiv(divName) {
+            var printContents = document.getElementById(divName).innerHTML;
+            var originalContents = document.body.innerHTML;
+
+            document.body.innerHTML = printContents;
+
+            window.print();
+
+            document.body.innerHTML = originalContents;
+        }
 	</script>
 </body>
 </html>

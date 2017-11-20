@@ -13,7 +13,8 @@
     <?php include('sidebar.php'); ?>
     <div class="content">
       <?php include('header.php'); ?>
-      <div class="maincontent">        
+      <input type="button" onclick="printDiv('printableArea')" class="btn btn-lg btn-success" value="PRINT" />
+      <div class="maincontent" id="printableArea">        
           
         <div class="row">
           <div class="col">
@@ -258,10 +259,19 @@
                           ]
                       }
                   };
-              </script>
-              <!-- <script src="es-tree.js"></script> -->
-              <script>
-                  new Treant( chart_config );
+
+                new Treant( chart_config );
+        
+                function printDiv(divName) {
+                    var printContents = document.getElementById(divName).innerHTML;
+                    var originalContents = document.body.innerHTML;
+
+                    document.body.innerHTML = printContents;
+
+                    window.print();
+
+                    document.body.innerHTML = originalContents;
+                }
               </script>
           </div>
         </div>
