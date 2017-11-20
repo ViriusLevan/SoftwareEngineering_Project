@@ -105,12 +105,11 @@
 
 					}
 
-				}else if(isset($_POST["name"]) && isset($_POST["phone"]) 
-					&& isset($_POST["UplineID"]) && isset($_POST["BranchID"])){
+				}else if(isset($_POST["addName"])){
 				//POST for new Agent
 					$name = $phone = $UplineID = $BranchID = "";
 					$password = $passwordCon = "";
-					$name = test_input($_POST["name"]);
+					$name = test_input($_POST["addName"]);
 					$phone = $_POST["phone"];
 					$UplineID = test_input($_POST["UplineID"]);
 					$BranchID = test_input($_POST["BranchID"]);
@@ -308,10 +307,10 @@
 							<h2>TAMBAH AGEN BARU</h2><!--Agent_add.php -->
 						</header>
 						<div class="w3-container">
-							<form action="<?php echo htmlspecialchars($_SERVER['PHP_SELF']);?>">
+							<form method="POST" action="<?php echo htmlspecialchars($_SERVER['PHP_SELF']);?>">
 								<h5 class="kantormainformlabel">Nama Agen</h5>
 								<input class="form-control" type="text" placeholder="Masukkan nama agen"
-									name="name" required>
+									name="addName" required>
 								<h5 class="kantormainformlabel">Nomor Telepon</h5>
 								<input class="form-control" placeholder="Masukkan nomor telepon" 
 									type="tel" name="phone" pattern="[0-9]+" required>
