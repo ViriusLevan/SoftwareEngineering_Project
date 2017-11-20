@@ -40,102 +40,104 @@
 							<th>Pendapatan cabang dari Closing (Rp)</th>
 						</tr>
 						<?php
-							if (isset($_POST["bfrDate"]) && isset($_POST["aftDate"])) {
-								if($_POST["bfrDate"]!= NULL && $_POST["aftDate"]!= NULL){//filter still doesnt work
-								$bfrDate = $_POST["bfrDate"];
-								$aftDate = $_POST["aftDate"];
-								$bfrDate =  str_replace("-","", $bfrDate); //remove "-" from date
-								$aftDate =  str_replace("-","", $aftDate);
-								$branchSQL = "SELECT branch.Name AS Name, IFNULL(UNIT,0) AS Unit, 
-												IFNULL(Productivity,0) AS Productivity, IFNULL(Earnings,0) AS Earnings
-												FROM branch LEFT OUTER JOIN
-													(SELECT branch.Name, branch.branch_id,
-														SUM(CASE 
-											             WHEN aCount.nAgents = 1 THEN 1
-											             WHEN aCount.nAgents = 2 THEN 0.5
-											             WHEN agent_involved_in_closing.workedAs = 1
-											             	&& aCount.nAgents = 3 THEN 0.5
-											             WHEN agent_involved_in_closing.workedAs IN (7,13)
-											             	&& aCount.nAgents = 3 THEN 0.25
-											             WHEN aCount.nAgents = 4 THEN 0.25
-											            END) AS Unit,
-														COUNT(DISTINCT agent_involved_in_closing.Closing_ID) AS Productivity,
-														SUM(agent_involved_in_closing.earning) AS Earnings
-														FROM agent_involved_in_closing, branch, agent,
-																Agent_Branch_Employment, closing,
-											                    (
-											                    	SELECT closing.closing_ID AS cID, 
-											                        	COUNT(agent_involved_in_closing.Agent_ID) AS nAgents
-											                        FROM agent_involved_in_closing, closing
-											                        WHERE agent_involved_in_closing.Closing_ID = closing.closing_ID
-											                            AND agent_involved_in_closing.workedAs IN (1,7,13,19)
-											                        GROUP BY closing.closing_ID
-											                    )aCount
-														WHERE agent_involved_in_closing.workedAs IN (1,7,13,19)
-															AND agent_involved_in_closing.Agent_ID = agent.Agent_ID
-															AND agent.Agent_ID = Agent_Branch_Employment.Agent_ID
-															AND Agent_Branch_Employment.Branch_ID = branch.Branch_ID
-															AND agent_involved_in_closing.Closing_ID = closing.closing_ID
-         		AND (agent_branch_employment.End IS NULL OR agent_branch_employment.End >= closing.Date)
-															AND Agent.Agent_ID != 0
-															AND aCount.cID = agent_involved_in_closing.Closing_ID
-															AND closing.Date >=$bfrDate
-															AND closing.Date <=$aftDate
-															GROUP BY branch.branch_id) pro
-												ON pro.branch_id = branch.branch_id
-												WHERE branch.status = 1";
-											}							
-							}else{
-								$branchSQL = "SELECT branch.Name AS Name, IFNULL(UNIT,0) AS Unit, 
-												IFNULL(Productivity,0) AS Productivity, IFNULL(Earnings,0) AS Earnings
-												FROM branch LEFT OUTER JOIN
-													(SELECT branch.Name, branch.branch_id,
-														SUM(CASE 
-											             WHEN aCount.nAgents = 1 THEN 1
-											             WHEN aCount.nAgents = 2 THEN 0.5
-											             WHEN agent_involved_in_closing.workedAs = 1
-											             	&& aCount.nAgents = 3 THEN 0.5
-											             WHEN agent_involved_in_closing.workedAs IN (7,13)
-											             	&& aCount.nAgents = 3 THEN 0.25
-											             WHEN aCount.nAgents = 4 THEN 0.25
-											            END) AS Unit,
-														COUNT(DISTINCT agent_involved_in_closing.Closing_ID) AS Productivity,
-														SUM(agent_involved_in_closing.earning) AS Earnings
-														FROM agent_involved_in_closing, branch, agent,
-																Agent_Branch_Employment, closing,
-											                    (
-											                    	SELECT closing.closing_ID AS cID, 
-											                        	COUNT(agent_involved_in_closing.Agent_ID) AS nAgents
-											                        FROM agent_involved_in_closing, closing
-											                        WHERE agent_involved_in_closing.Closing_ID = closing.closing_ID
-											                            AND agent_involved_in_closing.workedAs IN (1,7,13,19)
-											                        GROUP BY closing.closing_ID
-											                    )aCount
-														WHERE agent_involved_in_closing.workedAs IN (1,7,13,19)
-															AND agent_involved_in_closing.Agent_ID = agent.Agent_ID
-															AND agent.Agent_ID = Agent_Branch_Employment.Agent_ID
-															AND Agent_Branch_Employment.Branch_ID = branch.Branch_ID
-															AND agent_involved_in_closing.Closing_ID = closing.closing_ID
-         		AND (agent_branch_employment.End IS NULL OR agent_branch_employment.End >= closing.Date)
-															AND Agent.Agent_ID != 0
-															AND aCount.cID = agent_involved_in_closing.Closing_ID
-															GROUP BY branch.branch_id) pro
-												ON pro.branch_id = branch.branch_id
-												WHERE branch.status = 1";
-							}
-						$result = mysqli_query($db,$branchSQL);
-							if ($result->num_rows > 0) {//Table data printing
-								while($row = $result->fetch_assoc()) {
-									echo "<tr>";
-										echo "<td>". $row["Name"] ."</td>";
-										echo "<td>". $row["Unit"] ."</td>";
-										echo "<td>". $row["Productivity"] ."</td>";
-										echo "<td>". $row["Earnings"] ."</td>";
-									echo "</tr>";
+							
+							$branchSQL = "SELECT branch.Name AS Name, IFNULL(UNIT,0) AS Unit, 
+											IFNULL(Productivity,0) AS Productivity, IFNULL(Earnings,0) AS Earnings
+											FROM branch LEFT OUTER JOIN
+												(SELECT branch.Name, branch.branch_id,
+													SUM(CASE 
+										             WHEN aCount.nAgents = 1 THEN 1
+										             WHEN aCount.nAgents = 2 THEN 0.5
+										             WHEN agent_involved_in_closing.workedAs = 1
+										             	&& aCount.nAgents = 3 THEN 0.5
+										             WHEN agent_involved_in_closing.workedAs IN (7,13)
+										             	&& aCount.nAgents = 3 THEN 0.25
+										             WHEN aCount.nAgents = 4 THEN 0.25
+										            END) AS Unit,
+													COUNT(DISTINCT agent_involved_in_closing.Closing_ID) AS Productivity,
+													SUM(agent_involved_in_closing.earning) AS Earnings
+													FROM agent_involved_in_closing, branch, agent,
+															Agent_Branch_Employment, closing,
+										                    (
+										                    	SELECT closing.closing_ID AS cID, 
+										                        	COUNT(agent_involved_in_closing.Agent_ID) AS nAgents
+										                        FROM agent_involved_in_closing, closing
+										                        WHERE agent_involved_in_closing.Closing_ID = closing.closing_ID
+										                            AND agent_involved_in_closing.workedAs IN (1,7,13,19)
+										                        GROUP BY closing.closing_ID
+										                    )aCount
+													WHERE agent_involved_in_closing.workedAs IN (1,7,13,19)
+														AND agent_involved_in_closing.Agent_ID = agent.Agent_ID
+														AND agent.Agent_ID = Agent_Branch_Employment.Agent_ID
+														AND Agent_Branch_Employment.Branch_ID = branch.Branch_ID
+														AND agent_involved_in_closing.Closing_ID = closing.closing_ID
+     		AND (agent_branch_employment.End IS NULL OR agent_branch_employment.End >= closing.Date)
+														AND Agent.Agent_ID != 0
+														AND aCount.cID = agent_involved_in_closing.Closing_ID
+														AND closing.closing_ID = agent_involved_in_closing.Closing_ID
+														GROUP BY branch.branch_id) pro
+											ON pro.branch_id = branch.branch_id
+											WHERE branch.status = 1";
+							if(isset($_POST["bfrDate"]) && isset($_POST["aftDate"])) {
+								if($_POST["bfrDate"]!= NULL && $_POST["aftDate"]!= NULL){
+									$bfrDate = $_POST["bfrDate"];
+									$aftDate = $_POST["aftDate"];
+									$bfrDate =  str_replace("-","", $bfrDate); //remove "-" from date
+									$aftDate =  str_replace("-","", $aftDate);
+									$branchSQL = "SELECT branch.Name AS Name, IFNULL(UNIT,0) AS Unit, 
+													IFNULL(Productivity,0) AS Productivity, IFNULL(Earnings,0) AS Earnings
+													FROM branch LEFT OUTER JOIN
+														(SELECT branch.Name, branch.branch_id,
+															SUM(CASE 
+												             WHEN aCount.nAgents = 1 THEN 1
+												             WHEN aCount.nAgents = 2 THEN 0.5
+												             WHEN agent_involved_in_closing.workedAs = 1
+												             	&& aCount.nAgents = 3 THEN 0.5
+												             WHEN agent_involved_in_closing.workedAs IN (7,13)
+												             	&& aCount.nAgents = 3 THEN 0.25
+												             WHEN aCount.nAgents = 4 THEN 0.25
+												            END) AS Unit,
+															COUNT(DISTINCT agent_involved_in_closing.Closing_ID) AS Productivity,
+															SUM(agent_involved_in_closing.earning) AS Earnings
+															FROM agent_involved_in_closing, branch, agent,
+																	Agent_Branch_Employment, closing,
+												                    (
+												                    	SELECT closing.closing_ID AS cID, 
+												                        	COUNT(agent_involved_in_closing.Agent_ID) AS nAgents
+												                        FROM agent_involved_in_closing, closing
+												                        WHERE agent_involved_in_closing.Closing_ID = closing.closing_ID
+												                            AND agent_involved_in_closing.workedAs IN (1,7,13,19)
+												                        GROUP BY closing.closing_ID
+												                    )aCount
+															WHERE agent_involved_in_closing.workedAs IN (1,7,13,19)
+																AND agent_involved_in_closing.Agent_ID = agent.Agent_ID
+																AND agent.Agent_ID = Agent_Branch_Employment.Agent_ID
+																AND Agent_Branch_Employment.Branch_ID = branch.Branch_ID
+																AND agent_involved_in_closing.Closing_ID = closing.closing_ID
+	         		AND (agent_branch_employment.End IS NULL OR agent_branch_employment.End >= closing.Date)
+																AND Agent.Agent_ID != 0
+																AND aCount.cID = agent_involved_in_closing.Closing_ID
+																AND closing.closing_ID = agent_involved_in_closing.Closing_ID
+																AND DATEDIFF(closing.Date,$bfrDate)>=0
+																AND DATEDIFF(closing.Date,$aftDate)<=0
+																GROUP BY branch.branch_id) pro
+													ON pro.branch_id = branch.branch_id
+													WHERE branch.status = 1";
 								}
-							} else {
-								echo "0 results";
 							}
+							$result = mysqli_query($db,$branchSQL);
+								if ($result->num_rows > 0) {//Table data printing
+									while($row = $result->fetch_assoc()) {
+										echo "<tr>";
+											echo "<td>". $row["Name"] ."</td>";
+											echo "<td>". $row["Unit"] ."</td>";
+											echo "<td>". $row["Productivity"] ."</td>";
+											echo "<td>". $row["Earnings"] ."</td>";
+										echo "</tr>";
+									}
+								} else {
+									echo "0 results";
+								}
 						?>
 					</table>
 				</div>

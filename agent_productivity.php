@@ -7,7 +7,97 @@
 		<?php include('htmlhead.php'); ?>
 		<title>Agen</title>
 	</head>
-	<body class="mainbody">
+	<body class="mainbody"
+		<?php
+			if ($_SERVER["REQUEST_METHOD"] == "POST"){
+				if(isset($_POST["name"]) && isset($_POST["phone"]) 
+					&& isset($_POST["UplineID"]) && isset($_POST["BranchID"])){
+				//POST for new Agent
+					$name = $phone = $UplineID = $BranchID = "";
+					$password = $passwordCon = "";
+					$name = test_input($_POST["name"]);
+					$phone = $_POST["phone"];
+					$UplineID = test_input($_POST["UplineID"]);
+					$BranchID = test_input($_POST["BranchID"]);
+
+					// echo "<h2>Your Input:</h2>";
+					// if(isset($name))echo $name. "<br>";  
+					// if(isset($phone))echo $phone. "<br>";  
+					// if(isset($UplineID))echo $UplineID. "<br>";  
+					// if(isset($BranchID))echo $BranchID. "<br>";
+					// echo "<br>";
+
+				  	if ($UplineID == "empty") {$UplineID = null;}
+
+				  	if (!$db) {
+				    	die("Connection failed: " . mysqli_connect_error());
+					}else{
+							$stmt = $db->prepare("
+								INSERT INTO agent (Name, ImmediateUpline_ID, Status, PhoneNumber) 
+								VALUES (?,?,1,?)");
+							$stmt->bind_param('sis', $field2, $field3, $field4);
+
+							$field2 = $name;
+							$field3 = $UplineID;
+							$field4 = $phone;
+
+						if ($stmt->execute()) {
+							$stmt->close();
+						    echo "New agent created successfully <br>";
+							
+							$agentID =  mysqli_insert_id($db);//get last inserted AUTO_INCREMENT (which is agent ID)
+							//Branch Employment Insertion
+							$employmentSTMT = $db->prepare("
+						    		INSERT INTO `agent_branch_employment`(`Agent_ID`, `Branch_ID`, `Started`, `End`) 
+						    		VALUES (?,?,?,NULL)");
+							$employmentSTMT->bind_param('iis', $f1, $f2, $f3);
+							$f1 = $agentID;
+							$f2 = $BranchID;
+							$f3 = date("Y-m-d");
+							if($employmentSTMT->execute()){
+					    		$employmentSTMT->close();
+					    		echo "Employment entry created successfully <br>";
+					    	}else{
+					    		$employmentSTMT->close();
+					    		echo "Error: <br>" . mysqli_error($db);
+					    	}
+
+							//Recursive Insertion for downline relation
+						    while($UplineID != NULL){
+						    	$upSTMT = $db->prepare("
+						    		INSERT INTO `agent_has_downline`(`Agent_ID`, `Downline_ID`) 
+						    		VALUES (?,?)");
+						    	$upSTMT->bind_param('ii' ,$Up, $Down);
+						    	$Up = $UplineID;
+						    	$Down = $agentID;
+
+						    	
+						    	if($upSTMT->execute()){
+						    		$upSTMT->close();
+						    		echo "Downline relation created successfully <br>";
+						    	}else{
+						    		$upSTMT->close();
+						    		echo "Error: <br>" . mysqli_error($db);
+						    	}
+
+						    	$cAgentSQL = 
+									    "SELECT agent.ImmediateUpline_ID FROM agent 
+											WHERE agent.Agent_ID = " . $UplineID;
+				    			$cAgentResult = mysqli_query($db, $cAgentSQL);
+				    			$cAgentRow = $cAgentResult->fetch_assoc();
+				    			$UplineID = $cAgentRow["ImmediateUpline_ID"];
+						    }
+
+						} else {
+							$stmt->close();
+						    echo "Error: <br>" . mysqli_error($db);
+						}
+					}
+				} 
+			}
+		?>
+	>
+	
 		<?php include('sidebar.php'); ?>
 		<div class="content">
 			<?php include('header.php'); ?>
@@ -40,58 +130,103 @@
 							<th>Pendapatan agen dari Closing (Rp)</th>
 						</tr>
 					
-				
 	<?php 
 		$AgentProSQL = 
-		"SELECT agent.Name AS Name, IFNULL(UNIT, 0) AS Unit, 
-			IFNULL(Productivity,0) AS Pro, IFNULL(Earnings,0) AS Earn 
-			FROM agent LEFT OUTER JOIN
-				(SELECT agent.Name, agent.Agent_ID,
-					SUM(CASE 
-		             WHEN aCount.nAgents = 1 THEN 1
-		             WHEN aCount.nAgents = 2 THEN 0.5
-		             WHEN agent_involved_in_closing.workedAs = 1
-		             	&& aCount.nAgents = 3 THEN 0.5
-		             WHEN agent_involved_in_closing.workedAs IN (7,13)
-		             	&& aCount.nAgents = 3 THEN 0.25
-		             WHEN aCount.nAgents = 4 THEN 0.25
-		            END) AS Unit,
-					COUNT(DISTINCT agent_involved_in_closing.Closing_ID) AS Productivity,
-					SUM(agent_involved_in_closing.earning) AS Earnings
-					FROM agent_involved_in_closing, branch, agent, Agent_Branch_Employment,
-		                    (
-		                    	SELECT closing.closing_ID AS cID, 
-		                        	COUNT(agent_involved_in_closing.Agent_ID) AS nAgents
-		                        FROM agent_involved_in_closing, closing
-		                        WHERE agent_involved_in_closing.Closing_ID = closing.closing_ID
-		                            AND agent_involved_in_closing.workedAs IN (1,7,13,19)
-		                        GROUP BY closing.closing_ID
-		                    )aCount
-					WHERE agent_involved_in_closing.workedAs IN (1,7,13,19)
-						AND agent_involved_in_closing.Agent_ID = agent.Agent_ID
-						AND agent.Agent_ID = Agent_Branch_Employment.Agent_ID
-						AND Agent_Branch_Employment.Branch_ID = branch.Branch_ID
-						AND Agent.Agent_ID != 0
-						AND aCount.cID = agent_involved_in_closing.Closing_ID
-						GROUP BY agent.Agent_ID) pro
-			ON pro.Agent_ID = agent.Agent_ID
-			WHERE agent.Agent_ID !=0";
-			$AgentProResult = mysqli_query($db, $AgentProSQL);
+			"SELECT agent.Name AS Name, IFNULL(UNIT, 0) AS Unit, 
+				IFNULL(Productivity,0) AS Pro, IFNULL(Earnings,0) AS Earn 
+				FROM agent LEFT OUTER JOIN
+					(SELECT agent.Name, agent.Agent_ID,
+						SUM(CASE 
+			             WHEN aCount.nAgents = 1 THEN 1
+			             WHEN aCount.nAgents = 2 THEN 0.5
+			             WHEN agent_involved_in_closing.workedAs = 1
+			             	&& aCount.nAgents = 3 THEN 0.5
+			             WHEN agent_involved_in_closing.workedAs IN (7,13)
+			             	&& aCount.nAgents = 3 THEN 0.25
+			             WHEN aCount.nAgents = 4 THEN 0.25
+			            END) AS Unit,
+						COUNT(DISTINCT agent_involved_in_closing.Closing_ID) AS Productivity,
+						SUM(agent_involved_in_closing.earning) AS Earnings
+						FROM agent_involved_in_closing, branch, agent, Agent_Branch_Employment,
+			                    (
+			                    	SELECT closing.closing_ID AS cID, 
+			                        	COUNT(agent_involved_in_closing.Agent_ID) AS nAgents
+			                        FROM agent_involved_in_closing, closing
+			                        WHERE agent_involved_in_closing.Closing_ID = closing.closing_ID
+			                            AND agent_involved_in_closing.workedAs IN (1,7,13,19)
+			                        GROUP BY closing.closing_ID
+			                    )aCount
+						WHERE agent_involved_in_closing.workedAs IN (1,7,13,19)
+							AND agent_involved_in_closing.Agent_ID = agent.Agent_ID
+							AND agent.Agent_ID = Agent_Branch_Employment.Agent_ID
+							AND Agent_Branch_Employment.Branch_ID = branch.Branch_ID
+							AND Agent.Agent_ID != 0
+							AND aCount.cID = agent_involved_in_closing.Closing_ID
+							GROUP BY agent.Agent_ID) pro
+				ON pro.Agent_ID = agent.Agent_ID
+				WHERE agent.Agent_ID !=0";
+		if(isset($_POST["bfrDate"]) && isset($_POST["aftDate"])) {
+			if($_POST["bfrDate"]!= NULL && $_POST["aftDate"]!= NULL){
+				$bfrDate = $_POST["bfrDate"];
+				$aftDate = $_POST["aftDate"];
+				$bfrDate =  str_replace("-","", $bfrDate); //remove "-" from date
+				$aftDate =  str_replace("-","", $aftDate);
+				$AgentProSQL = 
+					"SELECT agent.Name AS Name, IFNULL(UNIT, 0) AS Unit, 
+						IFNULL(Productivity,0) AS Pro, IFNULL(Earnings,0) AS Earn 
+						FROM agent LEFT OUTER JOIN
+							(SELECT agent.Name, agent.Agent_ID,
+								SUM(CASE 
+					             WHEN aCount.nAgents = 1 THEN 1
+					             WHEN aCount.nAgents = 2 THEN 0.5
+					             WHEN agent_involved_in_closing.workedAs = 1
+					             	&& aCount.nAgents = 3 THEN 0.5
+					             WHEN agent_involved_in_closing.workedAs IN (7,13)
+					             	&& aCount.nAgents = 3 THEN 0.25
+					             WHEN aCount.nAgents = 4 THEN 0.25
+					            END) AS Unit,
+								COUNT(DISTINCT agent_involved_in_closing.Closing_ID) AS Productivity,
+								SUM(agent_involved_in_closing.earning) AS Earnings
+								FROM agent_involved_in_closing, branch, agent, Agent_Branch_Employment, closing,
+					                    (
+					                    	SELECT closing.closing_ID AS cID, 
+					                        	COUNT(agent_involved_in_closing.Agent_ID) AS nAgents
+					                        FROM agent_involved_in_closing, closing
+					                        WHERE agent_involved_in_closing.Closing_ID = closing.closing_ID
+					                            AND agent_involved_in_closing.workedAs IN (1,7,13,19)
+					                        GROUP BY closing.closing_ID
+					                    )aCount
+								WHERE agent_involved_in_closing.workedAs IN (1,7,13,19)
+									AND agent_involved_in_closing.Agent_ID = agent.Agent_ID
+									AND agent.Agent_ID = Agent_Branch_Employment.Agent_ID
+									AND Agent_Branch_Employment.Branch_ID = branch.Branch_ID
+									AND Agent.Agent_ID != 0
+									AND aCount.cID = agent_involved_in_closing.Closing_ID
+									AND closing.closing_ID = agent_involved_in_closing.Closing_ID
+									AND DATEDIFF(closing.Date,$bfrDate)>=0
+									AND DATEDIFF(closing.Date,$aftDate)<=0
+									GROUP BY agent.Agent_ID) pro
+						ON pro.Agent_ID = agent.Agent_ID
+						WHERE agent.Agent_ID !=0";
+			}
+		}
+		
+		$AgentProResult = mysqli_query($db, $AgentProSQL);
 
-			if ($AgentProResult->num_rows > 0) {
-	            while($AgentProRow = $AgentProResult->fetch_assoc()) { 
+		if ($AgentProResult->num_rows > 0) {
+            while($AgentProRow = $AgentProResult->fetch_assoc()) { 
 
-	              // output data of each row
-	              echo "<tr><td> " . $AgentProRow["Name"]. " </td>"; 
-	              echo "<td> " . $AgentProRow["Unit"]. " </td>"; 
-	              echo "<td> " . $AgentProRow["Pro"] . " </td>"; 
-	              echo "<td> " .  $AgentProRow["Earn"] . " </td>";
+              // output data of each row
+              echo "<tr><td> " . $AgentProRow["Name"]. " </td>"; 
+              echo "<td> " . $AgentProRow["Unit"]. " </td>"; 
+              echo "<td> " . $AgentProRow["Pro"] . " </td>"; 
+              echo "<td> " .  $AgentProRow["Earn"] . " </td>";
 
-	            }
-            } else {
-	            //SHOULD NEVER HAPPEN
-	            echo "No agents found";
             }
+        } else {
+            //SHOULD NEVER HAPPEN
+            echo "No agents found";
+        }
 	?>
 					</table>
 				</div>
