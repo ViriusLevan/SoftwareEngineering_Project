@@ -448,7 +448,7 @@
 							<div class="row">
 								<div class="col">
 									<h5 class="kantormainformlabel">Tanggal</h5>
-									<input class="form-control" type="date" name="date" required>
+									<input class="form-control" type="date" name="date" id="tanggalClosing" required>
 								</div>
 								<div class="col">
 									<h5 class="kantormainformlabel">Harga (Rp)</h5>
@@ -849,5 +849,18 @@
 		}
 	}
 	?>
+
+	<script>
+		document.getElementById("startDate").addEventListener("change", function() {
+		    var input = this.value;
+		    var startDateEntered = new Date(input);
+			document.getElementById("endDate").setAttribute("min", input);
+		});
+		document.getElementById("endDate").addEventListener("change", function() {
+		    var input = this.value;
+		    var endDateEntered = new Date(input);
+			document.getElementById("startDate").setAttribute("max", input);
+		});
+	</script>
 </body>
 </html>
