@@ -276,7 +276,7 @@ td{
 	padding-top: 6px;
 }
 
-.kantordaftarubah:hover{
+.kantordaftarubah:hover, .kantordaftarhapus:hover{
 	color: #fff;
 }
 
@@ -288,6 +288,17 @@ td{
 	background-color: #D63438;
 	color: #fff;
 	padding-top: 6px;
+}
+
+.kantormodalhapus{
+	width: 47%;
+	display: inline-block;
+	border-radius: 0;
+	height: 50px;
+	background-color: #D63438;
+	color: #fff;
+	padding-top: 6px;
+	margin-left: 3px;
 }
 
 /*************************************/
@@ -415,7 +426,7 @@ td{
 	padding-top: 6px;
 }
 
-.closingdetailedit:hover{
+.closingdetailedit:hover, .closingdetaildelete:hover{
 	color: #fff;
 }
 

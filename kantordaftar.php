@@ -374,21 +374,22 @@
 				</div>
 				<div id="hapus" class="w3-modal" data-backdrop="">
 					<div class="w3-modal-content w3-animate-top w3-card-4">
-						<header class="w3-container">
-							<h2>Branch <?php echo $_GET["dismissalName"];?> DISMISSAL</h2>
+						<header class="w3-container modalheader">
+							<h2>HAPUS CABANG <?php echo $_GET["dismissalName"];?></h2>
 						</header>
 						<form method="POST" action="<?php echo htmlspecialchars($_SERVER['PHP_SELF']);?>">
 							<div class="w3-container">
 								<input type='hidden' name='dismissalID' 
 									value=<?php echo $_GET["dismissalID"];?> >
-								Dismissal Date<input type="date" name="dismissalDate" 
+								<h5 class="kantormainformlabel">Tanggal Hapus</h5>
+								<input type="date" class="form-control" name="dismissalDate" 
 									min=<?php echo $minDismissalDate;?>
 									value=<?php echo $minDismissalDate;?>
 									pattern='[0-9]{4}-[0-9]{2}-[0-9]{2}'>						
 								<div class="modalfooter">
 									<button type="button" class="btn modalleftbtn" 
-										onclick="document.getElementById('hapus').style.display='none'">TIDAK</button>
-									<button type="submit" class="btn modalrightbtn">IYA</button>
+										onclick="document.getElementById('hapus').style.display='none'">BATAL</button>
+									<button type="submit" class="btn kantormodalhapus">HAPUS</button>
 								</div>
 								<script type="text/javascript">
 									function showDismissalDetails(){

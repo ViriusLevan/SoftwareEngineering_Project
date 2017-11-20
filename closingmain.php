@@ -412,19 +412,19 @@
 					<header class="w3-container modalheader">
 						<span onclick="document.getElementById('delete').style.display='none'"
 						class="w3-button w3-display-topright">&times;</span>
-						<h2>DELETE CLOSING</h2>
+						<h2>HAPUS CLOSING</h2>
 					</header>
 					<div class="w3-container">
 						<h5 class="kantormainformlabel">Apakah anda yakin mau menghapus closing 
-							<?php echo $_GET["cAddress"];?></h5>
+							<?php echo $_GET["cAddress"];?>?</h5>
 						<br>
 						<div class="modalfooter">
 							<form method="POST" action="<?php echo htmlspecialchars($_SERVER['PHP_SELF']);?>">
 								<input type="hidden" name="cID" value="<?php echo $_GET["id"];?>">
 								<button type="button" class="btn modalleftbtn" 
 									onclick="document.getElementById('delete').style.display='none'">BATAL</button>
-								<button type="submit" class="btn modalrightbtn"
-									onclick="document.getElementById('delete').style.display='none'">DELETE</button>
+								<button type="submit" class="btn kantormodalhapus"
+									onclick="document.getElementById('delete').style.display='none'">HAPUS</button>
 							</form>
 						</div>
 					</div>
