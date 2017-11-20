@@ -115,27 +115,27 @@
           function setWorkedAs($code){
               $workedAs = "";
               if($code>18){
-                $workedAs = "Agent 4";
+                $workedAs = "Agen 4";
               }else if($code>12){
-                $workedAs = "Agent 3";
+                $workedAs = "Agen 3";
               }else if($code>6){
-                $workedAs = "Agent 2";
+                $workedAs = "Agen 2";
               }else{
-                $workedAs = "Agent 1";
+                $workedAs = "Agen 1";
               }
 
               if($code%6==0){
-                $workedAs .= "'s 3rd upline";
+                $workedAs = "Upline ketiga ".$workedAs;
               }else if($code%6==1){
                 //The actual agent
               }else if($code%6==2){
-                $workedAs .= "'s Branch President";
+                $workedAs = "Presiden cabang  ".$workedAs;
               }else if($code%6==3){
-                $workedAs .= "'s Vice President";
+                $workedAs = "Wakil presiden cabang ".$workedAs;
               }else if($code%6==4){
-                $workedAs .= "'s 1st upline";
+                $workedAs = "Upline pertama ".$workedAs;
               }else {
-                $workedAs .= "'s 2nd upline";
+                $workedAs = "Upline kedua ".$workedAs;
               }
 
               return $workedAs;
@@ -220,7 +220,7 @@
                       },
                       nodeStructure: {
                           text: {
-                              title: "Direct Upline",
+                              title: "Upline",
                               <?php echo 'name: "'.($agentInvolved[1])["agentName"].'"'; ?>,
                               <?php echo 'contact: "'.($agentInvolved[1])["agentPhone"].'"'; ?>,
                           },
