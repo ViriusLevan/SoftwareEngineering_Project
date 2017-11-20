@@ -38,8 +38,8 @@
             <br>
           <?php
 
-          echo"Agent's Downlines <br>-----------------------------------<br>";
-          $a->getDownline($db);
+          // echo"Agent's Downlines <br>-----------------------------------<br>";
+          // $a->getDownline($db);
 
 
         ?>
@@ -47,7 +47,6 @@
         <div class="chart" id="agent-tree"></div>
 
         <?php
-          include('config.php');
           $chosenAgentId = $_GET['id'];
 
           $sql = "SELECT * FROM agent where status = 1";

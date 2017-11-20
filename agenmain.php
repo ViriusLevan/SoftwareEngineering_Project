@@ -238,10 +238,14 @@
 		<?php include('sidebar.php'); ?>
 		<div class="content">
 			<?php include('header.php'); ?>
-			<div class="agentable">
+			<div class="maincontent">
+				<div class="kantormainbtn">
+				<button class="btn kantormaintambahbtn" onclick="document.getElementById('tambah').style.display='block'">TAMBAH</button>
+			</div>
+			<br><br>
+			<div class="kantormaintabel">				
+				<div class="kantormaintabelheader"><h4>Daftar Agen</h4></div>
 				<?php
-
-
 			        $sql = "SELECT agent.Agent_ID, agent.Name, agent.PhoneNumber,agent.ImmediateUpline_ID,
 			        			branch.status AS bStatus, branch.name as bName
 			        			FROM `agent`,agent_branch_employment,branch
@@ -252,9 +256,8 @@
 								AND agent_branch_employment.End IS NULL";
 				    $result = mysqli_query($db,$sql);
 				    if ($result->num_rows > 0) {
-				    	echo "<table>";
-				    	echo "<tr> <th>ID</th> <th>Name</th> <th>Branch Name</th> 
-				    			<th>Phone</th> <th>Upline</th> <th>Details</th> </tr>";
+				    	echo '<table class="table">';
+				    	echo "<tr> <th>ID</th> <th>Nama Agen</th> <th>Nama Cabang</th> <th>No. Telepon</th> <th>Upline</th> <th>Opsi</th> </tr>";
 					    while($row = $result->fetch_assoc()) {//Output data
 					    	if($row["bStatus"] == 0)
 					    		echo"<tr class = 'Unstationed'>";
@@ -296,9 +299,6 @@
         			document.getElementById('agendetail').style.display='block';
         		}
         	</script>
-			</div>
-			<div class="agenfooter">
-				<button class="btn agentambahbtn" onclick="document.getElementById('tambah').style.display='block'">Tambah Agen</button>
 			</div>
 			<div id="tambah" class="w3-modal" data-backdrop="">
 					<div class="w3-modal-content w3-animate-top w3-card-4">
@@ -483,6 +483,7 @@
 							</div>
 						</form>
 					</div>
+				</div>
 				</div>
 				<!-- <div id="transfer" class="w3-modal" data-backdrop="">
 					<div class="w3-modal-content w3-animate-top w3-card-4">

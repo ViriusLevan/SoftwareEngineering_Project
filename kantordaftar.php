@@ -174,7 +174,7 @@
 								class="btn kantordaftarubah">UBAH</a>
 								<a href="kantordaftar.php?dismissalID=<?php echo $row["bID"];?>
 									&dismissalName=<?php echo $row["Name"];?>"
-								class="btn kantordaftarubah">HAPUS</a>
+								class="btn kantordaftarhapus">HAPUS</a>
 						    	<?php 
 						    }
 						} else {
