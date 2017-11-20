@@ -279,7 +279,7 @@
 			<div class="maincontent">
 				<div class="kantormainbtn">
 					<button onclick="document.getElementById('tambah').style.display='block'" class="btn kantormaintambahbtn" data-toggle="modal" data-target="#exampleModal">TAMBAH</button>
-					<input type="button" onclick="printDiv('printableArea')" class="btn btn-lg btn-success" value="PRINT" />
+					<button onclick="printDiv('printableArea')" class="btn printbtn">CETAK</button>
 				</div>
 				<br>
 				<div class="kantormainfilter">

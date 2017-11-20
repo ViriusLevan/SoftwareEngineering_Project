@@ -24,14 +24,9 @@
 	    	echo '</tr>';
 
 	    	echo '<tr>';   	
-<<<<<<< HEAD
+
 	    	echo '<td class="tabelkiri">' ."Cabang : " .'</td>';  
-	    	// echo '<td>' .$this->branchID .'</td>';   
-	    	echo '<td>' ."Pake nama cabang dil".'</td>';  
-=======
-	    	echo '<td class="tabelkiri">' ."Kantor : " .'</td>';  
 	    	echo '<td>' .$this->branchName .'</td>';   
->>>>>>> 010084f247c2574e2a181dcd0184bed27d36166e
 	    	echo '</tr>'; 
 
 	    	echo '<tr>';   	

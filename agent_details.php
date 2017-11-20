@@ -13,7 +13,6 @@
     <?php include('sidebar.php'); ?>
     <div class="content">
       <?php include('header.php'); ?>
-      <input type="button" onclick="printDiv('printableArea')" class="btn btn-lg btn-success" value="PRINT" />
       <div class="maincontent" id="printableArea">        
           
         <div class="row">
@@ -277,6 +276,7 @@
           </div>
         </div>
         <a href="agenmain.php" class="btn agendetailkembalibtn">KEMBALI</a>
+        <button onclick="printDiv('printableArea')" class="btn printbtn">CETAK</button>
       </div>
     </body>
 </html>

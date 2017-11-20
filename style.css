@@ -25,6 +25,16 @@ body {
 	color: #183A56;
 	font-weight: bold;
 }
+
+.printbtn{
+	display: inline-block;
+	border-radius: 0;
+	height: 50px;
+	background-color: #009900;
+	color: #fff;
+	padding-top: 6px;
+	margin-left: 6px;
+}
 /****************************************/
 .side{
 	position: fixed;

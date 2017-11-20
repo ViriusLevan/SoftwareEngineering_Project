@@ -269,7 +269,7 @@
 					        echo "<td> " . $row["bName"]. " </td>";
 					        echo "<td> " . $row["PhoneNumber"]. " </td>";
 					        if($row["ImmediateUpline_ID"] == null){
-					        	echo "<td>  None </td>"; 
+					        	echo "<td>  -Tidak Ada- </td>"; 
 					        }else{
 					        	$IUSQL =//Getting name of Immediate Upline
 							    	"SELECT Name FROM agent WHERE Agent_ID=" . $row["ImmediateUpline_ID"];
