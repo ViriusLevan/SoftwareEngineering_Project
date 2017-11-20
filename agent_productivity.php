@@ -125,10 +125,10 @@
 					<div class="kantormaintabelheader"><h4>Hasil Produktivitas Agen</h4></div>
 					<table class="table" id="produktable">
 						<tr>
-							<th>Nama Agen</th>
-							<th>Unit</th>
-							<th>Total Closing</th>
-							<th>Pendapatan agen dari Closing (Rp)</th>
+							<th onclick="sortTable(0)">Nama Agen</th>
+							<th onclick="sortTable(1)">Unit</th>
+							<th onclick="sortTable(2)">Total Closing</th>
+							<th onclick="sortTable(3)">Pendapatan agen dari Closing (Rp)</th>
 						</tr>
 					
 	<?php 
@@ -232,6 +232,52 @@
 					</table>
 				</div>
 			</div>
+			<script>
+			function sortTable(n) {
+			  var table, rows, switching, i,a, b, x, y, shouldSwitch, dir, switchcount = 0;
+			  table = document.getElementById("produktable");
+			  switching = true;
+			  dir = "asc"; 
+			  while (switching) {
+			    switching = false;
+			    rows = table.getElementsByTagName("TR");
+			    for (i = 1; i < (rows.length - 1); i++) {
+			      shouldSwitch = false;
+			      x = rows[i].getElementsByTagName("TD")[n];
+			      y = rows[i + 1].getElementsByTagName("TD")[n];
+			      if (n==0) {
+					a=x.innerHTML;
+					b=y.innerHTML;
+			      } else{
+			      	a = parseInt(x.innerHTML);
+			      	b = parseInt(y.innerHTML);
+			      }
+			      
+			      if (dir == "asc") {
+			        if (a> b) {
+			          shouldSwitch= true;
+			          break;
+			        }
+			      } else if (dir == "desc") {
+			        if (a< b) {
+			          shouldSwitch= true;
+			          break;
+			        }
+			      }
+			    }
+			    if (shouldSwitch) {
+			      rows[i].parentNode.insertBefore(rows[i + 1], rows[i]);
+			      switching = true;
+			      switchcount ++; 
+			    } else {
+			      if (switchcount == 0 && dir == "asc") {
+			        dir = "desc";
+			        switching = true;
+			      }
+			    }
+			  }
+			}
+			</script>
 			<div id="tambah" class="w3-modal" data-backdrop="">
 					<div class="w3-modal-content w3-animate-top w3-card-4">
 						<header class="w3-container modalheader">
