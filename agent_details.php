@@ -222,12 +222,13 @@
                       nodeStructure: {
                           text: {
                               title: "Upline",
-                              <?php echo 'name: "'.($agentInvolved[1])["agentName"].'"'; ?>,
+                              
+                              <?php if (($agentInvolved[0])["uplineID"]!=null) { echo 'name: "'.($agentInvolved[1])["agentName"].'"'; } else { echo 'name: "COMPANY"'; } ?>,
                               <?php echo 'contact: "'.($agentInvolved[1])["agentPhone"].'"'; ?>,
                           },
                           // image: "examples/headshots/2.jpg",
                           link: {
-                              <?php echo 'href: "agent_details.php?id='.($agentInvolved[0])["uplineID"].'"'; ?>
+                              <?php if (($agentInvolved[0])["uplineID"]!=null) { echo 'href: "agent_details.php?id='.($agentInvolved[0])["uplineID"].'"';} ?>
                           },
                           children: [
                           {
