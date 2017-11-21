@@ -78,9 +78,7 @@
          															AND DATEDIFF(agent_branch_employment.Started, closing.Date)>=0)
          													)
 															AND Agent.Agent_ID != 0
-															AND aCount.cID = agent_involved_in_closing.Closing_ID
-															AND DATEDIFF(closing.Date,$bfrDate)>=0
-															AND DATEDIFF(closing.Date,$aftDate)<=0
+															AND aCount.cID = agent_involved_in_closing.Closing_ID	
 															GROUP BY branch.branch_id) pro
 												ON pro.branch_id = branch.branch_id
 												WHERE branch.status = 1";
@@ -138,7 +136,7 @@
 											echo "<td>". $row["Name"] ."</td>";
 											echo "<td>". $row["Unit"] ."</td>";
 											echo "<td>". $row["Productivity"] ."</td>";
-											echo "<td>". $row["Earnings"] ."</td>";
+											echo '<td class="pull-right">'. $row["Earnings"] ."</td>";
 										echo "</tr>";
 									}
 								} else {
