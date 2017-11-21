@@ -61,7 +61,7 @@
 			$earningRow = $earningResult->fetch_assoc();
 
 			$total = $earningRow["total"];
-			echo '<h3>'."Total Komisi : Rp. " . $total . "</h3>";
+			echo '<h3>'."Total Komisi : Rp " . number_format($total) . "</h3>";
 	    }
 
 	    public function getDownline($db){
