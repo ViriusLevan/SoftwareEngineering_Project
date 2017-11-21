@@ -329,8 +329,8 @@
 					<table class="table sortable" id="closingTable">
 						<tr>
 							<th>Alamat</th>
-							<th>Harga (Rp)</th>
 							<th>Tanggal</th>
+							<th>Harga (Rp)</th>
 							<th>Opsi</th>
 						</tr>
 						<?php
@@ -340,9 +340,9 @@
 								while($row = $closingResult->fetch_assoc()) {
 									// output data of each row
 									echo "<tr><td> " . $row["Address"]. " </td>";
-									echo "<td class='pull-right'> " . number_format($row["Price"]). " </td>";
 									echo "<td>   " . $row["Date"]. " </td>";
 									$asd = $row["closing_ID"];
+									echo "<td class='pull-right'> " . number_format($row["Price"]). " </td>";
 						?>
 						<td>
 							<!-- <button onclick="document.getElementById('detail').style.display='block'" <?php $idKolom = $asd; ?> class="btn kantordaftarubah">DETAIL</button> -->
@@ -762,7 +762,11 @@
 
 					              // output data of each row
 					              echo "<tr><td> " . $agentRow["Name"]. " </td>"; 
+<<<<<<< HEAD
 					              echo "<td> " . number_format($agentRow["earning"]). " </td>"; 
+=======
+					              echo '<td class="pull-right"> ' . $agentRow["earning"]. " </td>"; 
+>>>>>>> 4cfde60797139d68cd212c31966e959f4fd07ee4
 					              echo "<td> " .  $workedAs . " </td>";
 					              echo "<td> " . $agentRow["PhoneNumber"]. " </td>";
 					              
