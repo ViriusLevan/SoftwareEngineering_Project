@@ -52,7 +52,7 @@
 					$f5 = $_POST["editIBID"];
 					if($bUpdateSQL->execute()){
 						$bUpdateSQL->close();
-						echo "Branch Info updated successfully";
+						echo "Informasi cabang berhasil diperbarui";
 					}else{
 						$bUpdateSQL->close();
 						echo "Error: <br>" . mysqli_error($db);
@@ -79,7 +79,7 @@
 
 					if($bAddSQL->execute()){
 						$bAddSQL->close();
-						echo "Branch Added successfully";
+						echo "Cabang berhasil ditambah";
 					}else{
 						$bAddSQL->close();
 						echo "Error: <br>" . mysqli_error($db);
@@ -96,7 +96,7 @@
 					
 					if($dismissalSQL->execute()){
 						$dismissalSQL->close();
-						echo "Agent Dismissed Successfully";
+						echo "Agen berhasil dipecat";
 						$employmentSQL = $db->prepare("UPDATE `agent_branch_employment` 
 											SET `End`= ?  
 											WHERE Branch_ID = ?
@@ -107,7 +107,7 @@
 
 						if($employmentSQL->execute()){
 							$employmentSQL->close();
-							echo "Employment Successfully Ended";
+							echo "Pekerjaan berhasil diakhiri";
 						}else{
 							$employmentSQL->close();
 							echo "Error: <br>" . mysqli_error($db);
@@ -232,7 +232,7 @@
 											    echo "</select> <br>";
 											}     
 											else {
-										    	echo "No agents available for assignment <br>";
+										    	echo "Tidak ada agen yang dapat dipilih <br>";
 											}
 										?>
 									</div>
@@ -250,7 +250,7 @@
 											    echo "</select> <br>";
 											}     
 											else {
-										    	echo "No agents available for assignment <br>";
+										    	echo "Tidak ada agen yang dapat dipilih <br>";
 											}
 										?>
 									</div>
@@ -267,7 +267,7 @@
 							    var x = document.forms["addForm"]["addVPID"];
 							    var y = document.forms["addForm"]["addPID"];
 							    if (x.selectedIndex != 0 && y.selectedIndex == 0) {
-							        alert("Vice President tidak boleh ada tanpa President");
+							        alert("Kantor tidak dapat memiliki Wakil Kepala Cabang sebelum memiliki Kepala Cabang");
 							        return false;
 							    }
 							}
@@ -321,7 +321,7 @@
 											    echo "</select> <br>";
 											}     
 											else {
-										    	echo "No agents available for assignment <br>";
+										    	echo "Tidak ada agen yang dapat dipilih <br>";
 											}
 										?>
 									</div>
@@ -342,7 +342,7 @@
 											    echo "</select> <br>";
 											}     
 											else {
-										    	echo "No agents available for assignment <br>";
+										    	echo "Tidak ada agen yang dapat dipilih <br>";
 											}
 										?>
 									</div>
@@ -359,7 +359,7 @@
 							    var x = document.forms["editForm"]["editIVPID"];
 							    var y = document.forms["editForm"]["editIPID"];
 							    if (x.selectedIndex != 0 && y.selectedIndex == 0) {
-							        alert("Vice President tidak boleh ada tanpa President");
+							        alert("Kantor tidak dapat memiliki Wakil Kepala Cabang sebelum memiliki Kepala Cabang");
 							        return false;
 							    }
 							}

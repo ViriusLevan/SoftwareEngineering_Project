@@ -56,7 +56,7 @@
 						$field3 = $_POST["editAID"];
 						if ($stmt->execute()) {
 							$stmt->close();
-						    echo "New agent created successfully <br>";
+						    echo "Agen berhasil dibuat <br>";
 						}else{
 							$stmt->close();
 			    			echo "Error: <br>" . mysqli_error($db);
@@ -79,7 +79,7 @@
 
 						if ($bUpdateSQL->execute()) {
 							$bUpdateSQL->close();
-	    					echo "Employment Record updated successfully";
+	    					echo "Catatan pekerjaan berhasil diperbarui";
 						    $newDate = new Datetime($_POST["editTDate"]);
 						    $newDate->modify('+1 day');
 						    $newDateStr = $newDate->format('Ymd');
@@ -93,7 +93,7 @@
 							$f3 = $newDateStr;
 							if ($newEmployment->execute()) {
 								$newEmployment->close();
-							    echo "New Employment created successfully <br>";
+							    echo "Pekerjaan berhasil ditambah <br>";
 							}else{
 								$newEmployment->close();
 				    			echo "Error: <br>" . mysqli_error($db);
@@ -137,7 +137,7 @@
 
 						if ($stmt->execute()) {
 							$stmt->close();
-						    echo "New agent created successfully <br>";
+						    echo "Agen berhasil dibuat <br>";
 							
 							$agentID =  mysqli_insert_id($db);//get last inserted AUTO_INCREMENT (which is agent ID)
 							//Branch Employment Insertion
@@ -150,7 +150,7 @@
 							$f3 = date("Y-m-d");
 							if($employmentSTMT->execute()){
 					    		$employmentSTMT->close();
-					    		echo "Employment entry created successfully <br>";
+					    		echo "Pekerjaan berhasil ditambah <br>";
 					    	}else{
 					    		$employmentSTMT->close();
 					    		echo "Error: <br>" . mysqli_error($db);
@@ -168,7 +168,7 @@
 						    	
 						    	if($upSTMT->execute()){
 						    		$upSTMT->close();
-						    		echo "Downline relation created successfully <br>";
+						    		echo "Downline berhasil dibuat <br>";
 						    	}else{
 						    		$upSTMT->close();
 						    		echo "Error: <br>" . mysqli_error($db);
@@ -199,7 +199,7 @@
 					
 					if($dismissalSQL->execute()){
 						$dismissalSQL->close();
-						echo "Agent Dismissed Successfully";
+						echo "Agent berhasil dipecat";
 						$employmentSQL = $db->prepare("UPDATE `agent_branch_employment` 
 											SET `End`= ?  
 											WHERE Agent_ID = ?
@@ -212,7 +212,7 @@
 
 						if($employmentSQL->execute()){
 							$employmentSQL->close();
-							echo "Employment Successfully Ended";
+							echo "Pekerjaan berhasil diakhiri";
 						}else{
 							$employmentSQL->close();
 							echo "Error: <br>" . mysqli_error($db);
@@ -332,7 +332,7 @@
 											    echo "</select> <br>";
 											}     
 											else {//THIS SHOULD NOT HAPPEN
-										    	echo "No branches found<br>";
+										    	echo "Tidak ada cabang<br>";
 											}
 										?>
 									</div>
@@ -354,7 +354,7 @@
 											    echo "</select> <br>";
 											}     
 											else {
-										    	echo "No agents to assign to <br>";
+										    	echo "Tidak ada agen <br>";
 											}
 										?>
 									</div>

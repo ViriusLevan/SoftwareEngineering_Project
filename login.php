@@ -44,7 +44,7 @@
                   <input type = "password" name = "password" class = "form-control form" placeholder="Password" />
                   <input type = "submit" value = " LOGIN " class="btn btn-primary form" /><br />
                </form>
-               <div style = "font-size:11px; color:#cc0000; margin-top:10px"><?php if(isset($error))echo $error; ?></div>
+               <div style = "font-size:12px; color:#fff; margin-top:10px"><?php if(isset($error))echo $error; ?></div>
             </div>
       </div>
    </body>

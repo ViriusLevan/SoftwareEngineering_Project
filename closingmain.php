@@ -25,7 +25,7 @@
 
 					if($deletionSQL->execute()){
 						$deletionSQL->close();
-						echo "Closing successfully deleted";
+						echo "Closing berhasil dihapus";
 					}else{
 						$deletionSQL->close();
 						echo "Error: <br>" . mysqli_error($db);
@@ -82,7 +82,7 @@
 						$field3 = $address;
 						if ($stmt->execute()) {//Closing Creation
 							$stmt->close();
-							echo "New closing created successfully <br>";
+							echo "Closing berhasil dibuat <br>";
 							//sql to get closing_id
 							$lselect = "SELECT LAST_INSERT_ID()";
 							$cID =  mysqli_insert_id($db);
@@ -113,7 +113,7 @@
 								$f4 = 6*$i + 1;
 								if($stmti->execute()){
 									$stmti->close();
-									echo "Primary Agent Involvement created successfully <br>";
+									echo "Agen utama berhasil dibuat <br>";
 					////////////
 									//Secondary involvement insertion
 									$cAgentSQL =
@@ -358,7 +358,7 @@
 					<?php
 								}
 							} else {
-								echo "No closing found";
+								echo "Tidak ada closing";
 							}
 					?>
 				</table>
@@ -492,7 +492,7 @@
 												echo "</select>";
 										}
 										else {
-											echo "No agents to assign to <br>";
+											echo "Tidak ada agen <br>";
 										}
 									?> -->
 								</div>
@@ -510,7 +510,7 @@
 											echo "</select>";
 										}
 										else {
-											echo "No agents to assign to <br>";
+											echo "Tidak ada agen <br>";
 										}
 									?> -->
 								</div>
@@ -530,7 +530,7 @@
 											echo "</select>";
 										}
 										else {
-											echo "No agents to assign to <br>";
+											echo "Tidak ada agen <br>";
 										}
 									?> -->
 								</div>
@@ -548,7 +548,7 @@
 											echo "</select>";
 										}
 										else {
-											echo "No agents to assign to <br>";
+											echo "Tidak ada agen <br>";
 										}
 									?> -->
 								</div>
@@ -615,7 +615,7 @@
 												echo "</select>";
 										}
 										else {
-											echo "No agents to assign to <br>";
+											echo "Tidak ada agen <br>";
 										}
 									?>
 								</div>
@@ -633,7 +633,7 @@
 											echo "</select>";
 										}
 										else {
-											echo "No agents to assign to <br>";
+											echo "Tidak ada agen <br>";
 										}
 									?>
 								</div>
@@ -653,7 +653,7 @@
 											echo "</select>";
 										}
 										else {
-											echo "No agents to assign to <br>";
+											echo "Tidak ada agen <br>";
 										}
 									?>
 								</div>
@@ -671,7 +671,7 @@
 											echo "</select>";
 										}
 										else {
-											echo "No agents to assign to <br>";
+											echo "Tidak ada agen <br>";
 										}
 									?>
 								</div>
@@ -776,7 +776,7 @@
 					            }
 					          } else {
 					            //SHOULD NEVER HAPPEN
-					            echo "No agents found";
+					            echo "Tidak ada agen";
 					          }
 					              echo '</table>'; 
 					        ?>
@@ -848,7 +848,7 @@
 		
 		if($insertion->execute()){
 			$insertion->close();
-			echo "Secondary Agent Involvement created successfully <br>";
+			echo "Agen pendukung berhasil dibuat <br>";
 		}else{
 			$insertion->close();
 			echo "Error: " . mysqli_error($db);
