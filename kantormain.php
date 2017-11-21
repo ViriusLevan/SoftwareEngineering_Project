@@ -140,7 +140,7 @@
 										echo "</tr>";
 									}
 								} else {
-									echo "0 results";
+									echo "Tidak ada hasil";
 								}
 						?>
 					</table>
@@ -220,14 +220,14 @@
 											$result = mysqli_query($db, $sql);
 											if ($result->num_rows > 0) {
 												echo "<select name='PresidentID' class='form-control kantormainselectvpv'>";
-												echo "<option value='empty'> Noone </option>";
+												echo "<option value='empty'> -Tidak Ada- </option>";
 												while($row = $result->fetch_assoc()) {
 													echo "<option value=".$row["Agent_ID"]."> ". $row["Name"] ." </option>";
 												}
 												echo "</select> <br>";
 											}
 											else {
-												echo "No agents available for assignment <br>";
+												echo "Tidak ada agen yang dapat dipilih <br>";
 											}
 										?>
 									</div>
@@ -240,14 +240,14 @@
 											$result = mysqli_query($db, $sql);
 											if ($result->num_rows > 0) {
 												echo "<select name='VicePresidentID' class='form-control kantormainselectvpv'>";
-												echo "<option value='empty'> Noone </option>";
+												echo "<option value='empty'> -Tidak Ada- </option>";
 												while($row = $result->fetch_assoc()) {
 													echo "<option value=".$row["Agent_ID"]."> ". $row["Name"] ." </option>";
 												}
 												echo "</select>";
 											}
 											else {
-												echo "No agents available for assignment <br>";
+												echo "Tidak ada agen yang dapat dipilih <br>";
 											}
 										?>
 									</div>
@@ -287,15 +287,15 @@
 		//ERROR CHECKS
 				if($PresidentID == NULL && $VicePresidentID != NULL){
 					$vpBastard=true;
-					echo "A VP cannot be picked without a President";
+					echo "Kantor tidak dapat memiliki Wakil Kepala Cabang sebelum memiliki Kepala Cabang";
 				}
 				if(count($lines) > 0) {
 					$duplicate = true;
-					echo "Branch with the same name already exists <br>";
+					echo "Cabang dengan nama tersebut sudah terdaftar <br>";
 				}
 				if($PresidentID == $VicePresidentID && $PresidentID != NULL){
 					$samePerson = true;
-					echo "President and Vice President cannot be the same person <br>";
+					echo "Kepala Cabang dan Wakil Kepala Cabang tidak boleh orang yang sama<br>";
 				}
 				$check->close();
 				if(!$samePerson && !$duplicate && !$vpBastard){
@@ -311,7 +311,7 @@
 						$field3 = $name;
 						if ($stmt->execute()) {
 							$stmt->close();
-							echo "New branch created successfully";
+							echo "Cabang berhasil ditambah";
 						} else {
 							$stmt->close();
 							echo "Error: <br>" . mysqli_error($db);

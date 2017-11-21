@@ -43,7 +43,7 @@
 
 						if ($stmt->execute()) {
 							$stmt->close();
-						    echo "New agent created successfully <br>";
+						    echo "Agen berhasil dibuat <br>";
 							
 							$agentID =  mysqli_insert_id($db);//get last inserted AUTO_INCREMENT (which is agent ID)
 							//Branch Employment Insertion
@@ -56,7 +56,7 @@
 							$f3 = date("Y-m-d");
 							if($employmentSTMT->execute()){
 					    		$employmentSTMT->close();
-					    		echo "Employment entry created successfully <br>";
+					    		echo "Pekerjaan berhasil ditambah <br>";
 					    	}else{
 					    		$employmentSTMT->close();
 					    		echo "Error: <br>" . mysqli_error($db);
@@ -74,7 +74,7 @@
 						    	
 						    	if($upSTMT->execute()){
 						    		$upSTMT->close();
-						    		echo "Downline relation created successfully <br>";
+						    		echo "Downline berhasil dibuat <br>";
 						    	}else{
 						    		$upSTMT->close();
 						    		echo "Error: <br>" . mysqli_error($db);
@@ -311,7 +311,7 @@
 											    echo "</select> <br>";
 											}     
 											else {//THIS SHOULD NOT HAPPEN
-										    	echo "No branches found<br>";
+										    	echo "Tidak ada cabang<br>";
 											}
 										?>
 									</div>
@@ -333,7 +333,7 @@
 											    echo "</select> <br>";
 											}     
 											else {
-										    	echo "No agents to assign to <br>";
+										    	echo "Tidak ada agen <br>";
 											}
 										?>
 									</div>
