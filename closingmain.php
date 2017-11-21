@@ -338,7 +338,7 @@
 								while($row = $closingResult->fetch_assoc()) {
 									// output data of each row
 									echo "<tr><td> " . $row["Address"]. " </td>";
-									echo "<td> " . $row["Price"]. " </td>";
+									echo "<td class='pull-right'> " . number_format($row["Price"]). " </td>";
 									echo "<td>   " . $row["Date"]. " </td>";
 									$asd = $row["closing_ID"];
 						?>
@@ -453,7 +453,7 @@
 								</div>
 								<div class="col">
 									<h5 class="kantormainformlabel">Harga (Rp)</h5>
-									<input class="form-control" placeholder="Masukkan harga properti" type="number" name="price" min=100000.00 step="any" required>
+									<input class="form-control" placeholder="Masukkan harga properti" id="fadielGanteng" type="number" name="price" min=100000.00 step="any" data-a-sign="" data-a-dec="," data-a-sep="." required>
 								</div>
 							</div>
 							<br>
@@ -575,7 +575,7 @@
 								</div>
 								<div class="col">
 									<h5 class="kantormainformlabel">Harga (Rp)</h5>
-									<input class="form-control" placeholder="Masukkan harga properti" type="number" name="price" min=100000.00 step="any" required>
+									<input class="form-control" placeholder="Masukkan harga properti" type="number" id="fadielGanteng" data-a-sign="" data-a-dec="," data-a-sep="." name="price" min=100000.00 step="any" required>
 								</div>
 							</div>
 							<br>
@@ -873,6 +873,12 @@
 
             document.body.innerHTML = originalContents;
         }
+
+		jQuery(function($) {
+			$('#fadielGanteng').autoNumeric('init');   
+		});
+	</script>
+
 	</script>
 </body>
 </html>
