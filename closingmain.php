@@ -762,11 +762,8 @@
 
 					              // output data of each row
 					              echo "<tr><td> " . $agentRow["Name"]. " </td>"; 
-<<<<<<< HEAD
-					              echo "<td> " . number_format($agentRow["earning"]). " </td>"; 
-=======
+					              echo "<td> " . number_format($agentRow["earning"]). " </td>";
 					              echo '<td class="pull-right"> ' . $agentRow["earning"]. " </td>"; 
->>>>>>> 4cfde60797139d68cd212c31966e959f4fd07ee4
 					              echo "<td> " .  $workedAs . " </td>";
 					              echo "<td> " . $agentRow["PhoneNumber"]. " </td>";
 					              
