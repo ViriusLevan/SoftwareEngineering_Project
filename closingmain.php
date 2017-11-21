@@ -11,6 +11,8 @@
 		<?php
 			if(isset($_GET["id"])){
 				echo "onload ='agentOptions(1);showDelete();'";
+			}elseif(isset($_GET["detailid"])){
+				echo "onload ='agentOptions(1);showDetail();'";
 			}else{
 				echo "onload ='agentOptions(1)'";
 			}
@@ -344,7 +346,7 @@
 						?>
 						<td>
 							<!-- <button onclick="document.getElementById('detail').style.display='block'" <?php $idKolom = $asd; ?> class="btn kantordaftarubah">DETAIL</button> -->
-							<a href='closing_agents.php?id=<?php echo $row["closing_ID"]; ?>' class="btn closingdetailedit">DETAIL</a>
+							<a href='closingmain.php?detailid=<?php echo $row["closing_ID"]; ?>' class="btn closingdetailedit">DETAIL</a>
 							<!-- <button onclick="document.getElementById('edit').style.display='block'" 
 								class="btn closingdetailedit">EDIT</button>	 -->
 							<a class="btn closingdetaildelete" 
@@ -433,6 +435,9 @@
 			<script type="text/javascript">
 				function showDelete(){
 					document.getElementById('delete').style.display='block'
+				}
+				function showDetail(){
+					document.getElementById('detail').style.display='block'
 				}
 			</script>
 			<div id="edit" class="w3-modal" data-backdrop="">
@@ -738,8 +743,7 @@
 						</header>
 						<div class="w3-container">
 					        <?php
-					          $row = $idKolom;
-					          echo $row;
+					          $row = $_GET["detailid"];
 					          $idSQL = "SELECT Agent.Agent_ID, Agent.Name, agent_involved_in_closing.earning, 
 					                      agent_involved_in_closing.workedAs, PhoneNumber 
 					                    from Agent_involved_in_closing, Agent 
@@ -750,8 +754,8 @@
 
 					          if ($idResults->num_rows > 0) {
 					            echo '<table class="table">';
-					            echo "<tr> <th>Name</th> <th>Earned</th> <th>Worked as</th> 
-					                <th>Phone Number</th> <th>Agent Details</th> </tr>";
+					            echo "<tr> <th>Nama</th> <th>Komisi</th> <th>Sebagai</th> 
+					                <th>No. Telepon</th> <th>Opsi</th> </tr>";
 					            while($agentRow = $idResults->fetch_assoc()) { 
 					              $workedAs = "";
 					              $workedAs = setWorkedAs($agentRow["workedAs"]);
@@ -764,7 +768,8 @@
 					              
 					              ?> 
 					                <td>
-					                  <a class="btn btn-warning" href='agent_details.php?id=<?php echo $agentRow["Agent_ID"]; ?>'>Click</a> 
+
+					                  <a class="btn closingdetailagen" href='agent_details.php?id=<?php echo $agentRow["Agent_ID"]; ?>'>DETAIL</a> 
 					                </td></tr>
 					              <?php
 
@@ -773,46 +778,46 @@
 					            //SHOULD NEVER HAPPEN
 					            echo "No agents found";
 					          }
-					              
+					              echo '</table>'; 
 					        ?>
 
 					    <?php 
-					      function setWorkedAs($code){
-					        $workedAs = "";
-					        if($code>18){
-					          $workedAs = "Agent 4";
-					        }else if($code>12){
-					          $workedAs = "Agent 3";
-					        }else if($code>6){
-					          $workedAs = "Agent 2";
-					        }else{
-					          $workedAs = "Agent 1";
-					        }
+					     function setWorkedAs($code){
+				              $workedAs = "";
+				              if($code>18){
+				                $workedAs = "Agen 4";
+				              }else if($code>12){
+				                $workedAs = "Agen 3";
+				              }else if($code>6){
+				                $workedAs = "Agen 2";
+				              }else{
+				                $workedAs = "Agen 1";
+				              }
 
-					        if($code%6==0){
-					          $workedAs .= "'s 3rd upline";
-					        }else if($code%6==1){
-					          //The actual agent
-					        }else if($code%6==2){
-					          $workedAs .= "'s Branch President";
-					        }else if($code%6==3){
-					          $workedAs .= "'s Vice President";
-					        }else if($code%6==4){
-					          $workedAs .= "'s 1st upline";
-					        }else {
-					          $workedAs .= "'s 2nd upline";
-					        }
+				              if($code%6==0){
+				                $workedAs = "Upline ketiga ".$workedAs;
+				              }else if($code%6==1){
+				                //The actual agent
+				              }else if($code%6==2){
+				                $workedAs = "Presiden cabang  ".$workedAs;
+				              }else if($code%6==3){
+				                $workedAs = "Wakil presiden cabang ".$workedAs;
+				              }else if($code%6==4){
+				                $workedAs = "Upline pertama ".$workedAs;
+				              }else {
+				                $workedAs = "Upline kedua ".$workedAs;
+				              }
 
-					        return $workedAs;
+				              return $workedAs;
 					      }
 					    ?>
-							<br>
-							<!-- <div class="modalfooter">
-								<button type="submit" class="btn modalleftbtn" onclick="document.getElementById('detail').style.display='none'">BATAL</button>
-								<button type="submit" class="btn modalrightbtn">SIMPAN</button>
-							</div> -->
 						</div>
-					</div>
+						<div class="modalfooterclosing">
+							<button type="submit" class="btn closingkembalibtn" 
+						onclick="document.getElementById('detail').style.display='none'">
+						KEMBALI</button>
+						</div>
+						</div>						
 				</div>
 			</div>
 		</div>

@@ -265,6 +265,9 @@ h4{
 	margin-left: 3px;
 }
 
+.modalfooterclosing{
+	margin: 2% 0 0 85%;
+}
 /*************************************/
 
 td{
@@ -431,7 +434,7 @@ td{
 	padding-top: 6px;
 }
 
-.closingdetailedit:hover, .closingdetaildelete:hover{
+.closingdetailedit:hover, .closingdetaildelete:hover, .closingdetailagen:hover{
 	color: #fff;
 }
 
@@ -445,6 +448,26 @@ td{
 	padding-top: 6px;
 }
 
+.closingdetailagen{
+	width: 80%;
+	display: inline-block;
+	border-radius: 0;
+	height: 35px;
+	background-color: #005859;
+	color: #fff;
+	padding-top: 6px;
+}
+
+.closingkembalibtn{
+	width: 85%;
+	display: inline-block;
+	border-radius: 0;
+	height: 50px;
+	background-color: #999;
+	color: #fff;
+	padding-top: 6px;
+	margin-bottom: 10%;
+}
 /*************************************/
 
 .nodeExample1{
