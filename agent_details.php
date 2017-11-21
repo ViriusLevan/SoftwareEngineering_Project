@@ -69,7 +69,7 @@
 
                 echo '<tr>';    
                 echo '<td class="tabelkiri">' ."Komisi: " .'</td>';  
-                echo '<td>' .$closingRow["earning"] .'</td>';   
+                echo '<td>Rp ' .number_format($closingRow["earning"]) .'</td>';   
                 echo '</tr>';
                 
                 echo '<tr>';    
