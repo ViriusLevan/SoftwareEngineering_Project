@@ -35,6 +35,11 @@ body {
 	padding-top: 6px;
 	margin-left: 6px;
 }
+
+.pull-right{
+	float: none;
+	text-align: right;
+}
 /****************************************/
 .side{
 	position: fixed;

@@ -327,8 +327,8 @@
 					<table class="table" id="closingTable">
 						<tr>
 							<th onclick="sortTable(0)">Alamat</th>
-							<th onclick="sortTable(1)">Harga (Rp)</th>
-							<th onclick="sortTable(2)">Tanggal</th>
+							<th onclick="sortTable(1)">Tanggal</th>
+							<th onclick="sortTable(2)">Harga (Rp)</th>
 							<th>Opsi</th>
 						</tr>
 						<?php
@@ -337,10 +337,10 @@
 							if ($closingResult->num_rows > 0) {
 								while($row = $closingResult->fetch_assoc()) {
 									// output data of each row
-									echo "<tr><td> " . $row["Address"]. " </td>";
-									echo "<td class='pull-right'> " . number_format($row["Price"]). " </td>";
+									echo "<tr><td> " . $row["Address"]. " </td>";									
 									echo "<td>   " . $row["Date"]. " </td>";
 									$asd = $row["closing_ID"];
+									echo "<td class='pull-right'> " . number_format($row["Price"]). " </td>";
 						?>
 						<td>
 							<!-- <button onclick="document.getElementById('detail').style.display='block'" <?php $idKolom = $asd; ?> class="btn kantordaftarubah">DETAIL</button> -->
