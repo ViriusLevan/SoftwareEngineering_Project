@@ -61,8 +61,13 @@
                 echo '</tr>';
 
                 echo '<tr>';    
+<<<<<<< HEAD
                 echo '<td class="tabelkiri">' ."Komisi(Rp): " .'</td>';  
                 echo '<td>' .$closingRow["earning"] .'</td>';   
+=======
+                echo '<td class="tabelkiri">' ."Komisi: " .'</td>';  
+                echo '<td>Rp ' .number_format($closingRow["earning"]) .'</td>';   
+>>>>>>> 003e87d359971b7c0cdcf3fc00d3fe8aa3fead8a
                 echo '</tr>';
                 
                 echo '<tr>';    
