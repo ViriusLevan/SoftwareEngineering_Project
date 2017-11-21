@@ -34,12 +34,12 @@
 				
 				<div class="kantormaintabel" id="printableArea">
 					<div class="kantormaintabelheader"><h4>Hasil Produktivitas Cabang</h4></div>
-					<table class="table" id="produktable">
+					<table class="table sortable" id="produktable">
 						<tr>
-							<th onclick="sortTable(0)">Nama Cabang</th>
-							<th onclick="sortTable(1)">Unit</th>
-							<th onclick="sortTable(2)">Total Closing</th>
-							<th onclick="sortTable(3)">Pendapatan Cabang dari Closing (Rp)</th>
+							<th>Nama Cabang</th>
+							<th>Unit</th>
+							<th>Total Closing</th>
+							<th>Pendapatan Cabang dari Closing (Rp)</th>
 						</tr>
 						<?php
 							
