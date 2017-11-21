@@ -123,12 +123,12 @@
 				<br>
 				<div class="kantormaintabel" id="printableArea">
 					<div class="kantormaintabelheader"><h4>Hasil Produktivitas Agen</h4></div>
-					<table class="table" id="produktable">
+					<table class="table sortable" id="produktable">
 						<tr>
-							<th onclick="sortTable(0)">Nama Agen</th>
-							<th onclick="sortTable(1)">Unit</th>
-							<th onclick="sortTable(2)">Total Closing</th>
-							<th onclick="sortTable(3)">Pendapatan agen dari Closing (Rp)</th>
+							<th>Nama Agen</th>
+							<th>Unit</th>
+							<th>Total Closing</th>
+							<th>Pendapatan agen dari Closing (Rp)</th>
 						</tr>
 					
 	<?php 

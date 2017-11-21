@@ -256,7 +256,7 @@
 								AND agent_branch_employment.End IS NULL";
 				    $result = mysqli_query($db,$sql);
 				    if ($result->num_rows > 0) {
-				    	echo '<table class="table">';
+				    	echo '<table class="table sortable">';
 				    	echo "<tr> <th>ID</th> <th>Nama Agen</th> <th>Nama Cabang</th> <th>No. Telepon</th> <th>Upline</th> <th>Opsi</th> </tr>";
 					    while($row = $result->fetch_assoc()) {//Output data
 					    	if($row["bStatus"] == 0)

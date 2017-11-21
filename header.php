@@ -6,7 +6,7 @@
 		elseif ($pagename==='agen') {echo 'AGEN';}
 		elseif ($pagename==='properti') {echo 'PROPERTI';}
 		elseif ($pagename==='closing') {echo 'CLOSING';}
-		elseif ($pagename==='welcome') {echo 'WELCOME '; echo $login_session;}?>
+		elseif ($pagename==='welcome') {echo 'Welcome, '; echo $login_session; echo "!";}?>
 		</h1>
 	</div>
 	<!-- <div class="headersearchform">

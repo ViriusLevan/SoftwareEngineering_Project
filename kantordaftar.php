@@ -133,7 +133,7 @@
 				<br><br>
 				<div class="kantormaintabel">
 					<div class="kantormaintabelheader"><h4>Daftar Cabang</h4></div>
-					<table class="table">
+					<table class="table sortable">
 						<tr>
 							<th>Nama Cabang</th>
 							<th>Alamat</th>

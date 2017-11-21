@@ -324,11 +324,11 @@
 				<br>
 				<div class="kantormaintabel" id="printableArea">
 					<div class="kantormaintabelheader"><h4>Hasil Closing</h4></div>
-					<table class="table" id="closingTable">
+					<table class="table sortable" id="closingTable">
 						<tr>
-							<th onclick="sortTable(0)">Alamat</th>
-							<th onclick="sortTable(1)">Harga (Rp)</th>
-							<th onclick="sortTable(2)">Tanggal</th>
+							<th>Alamat</th>
+							<th>Harga (Rp)</th>
+							<th>Tanggal</th>
 							<th>Opsi</th>
 						</tr>
 						<?php
