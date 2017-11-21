@@ -148,7 +148,7 @@
 												WHERE JobName = 'Vice President' AND ValidityEnd IS NULL";
 										$cVPPResult = mysqli_query($db, $cVPPSQL);
 										$cVPPRow = $cVPPResult->fetch_assoc();
-										$cVPP = $cPresPRow["Percentage"];
+										$cVPP = $cVPPRow["Percentage"];
 										secondaryInvolvementInsertion(
 														$db, $VicePresidentID, $cID, $price, $p, $cVPP, $i, 3);
 									}
