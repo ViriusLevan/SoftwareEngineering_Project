@@ -221,7 +221,7 @@
               echo "<tr><td> " . $AgentProRow["Name"]. " </td>"; 
               echo "<td> " . $AgentProRow["Unit"]. " </td>"; 
               echo "<td> " . $AgentProRow["Pro"] . " </td>"; 
-              echo '<td class="pull-right"> ' .  $AgentProRow["Earn"] . " </td>";
+              echo '<td class="pull-right"> ' .  number_format($AgentProRow["Earn"]) . " </td>";
 
             }
         } else {
