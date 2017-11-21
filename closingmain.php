@@ -25,7 +25,7 @@
 
 					if($deletionSQL->execute()){
 						$deletionSQL->close();
-						echo "Closing berhasil dihapus";
+						// echo "Closing berhasil dihapus";
 					}else{
 						$deletionSQL->close();
 						echo "Error: <br>" . mysqli_error($db);
@@ -46,26 +46,26 @@
 					if($nAgents>2)$agent3ID = test_input($_POST["agent3ID"]);
 					if($nAgents>3)$agent4ID = test_input($_POST["agent4ID"]);
 					$agents = [];
-					echo "<h2>Your Input:</h2>";
+					// echo "<h2>Your Input:</h2>";
 
-					if(isset($address))echo $address. "<br>";
-					if(isset($date))echo $date. "<br>";
-					if(isset($price))echo $price. "<br>";
-					if(isset($nAgents))echo $nAgents. "<br>";
+					// if(isset($address))echo $address. "<br>";
+					// if(isset($date))echo $date. "<br>";
+					// if(isset($price))echo $price. "<br>";
+					// if(isset($nAgents))echo $nAgents. "<br>";
 					if(isset($agent1ID)){
-						echo $agent1ID. "<br>";
+						// echo $agent1ID. "<br>";
 						$agents[] = $agent1ID;
 					}
 					if(isset($agent2ID)){
-						echo $agent2ID. "<br>";
+						// echo $agent2ID. "<br>";
 						$agents[] = $agent2ID;
 					}
 					if(isset($agent3ID)){
-						echo $agent3ID. "<br>";
+						// echo $agent3ID. "<br>";
 						$agents[] = $agent3ID;
 					}
 					if(isset($agent4ID)){
-						echo $agent4ID. "<br>";
+						// echo $agent4ID. "<br>";
 						$agents[] = $agent4ID;
 					}
 					echo "<br>";
@@ -82,7 +82,7 @@
 						$field3 = $address;
 						if ($stmt->execute()) {//Closing Creation
 							$stmt->close();
-							echo "Closing berhasil dibuat <br>";
+							// echo "Closing berhasil dibuat <br>";
 							//sql to get closing_id
 							$lselect = "SELECT LAST_INSERT_ID()";
 							$cID =  mysqli_insert_id($db);
@@ -113,7 +113,7 @@
 								$f4 = 6*$i + 1;
 								if($stmti->execute()){
 									$stmti->close();
-									echo "Agen utama berhasil dibuat <br>";
+									// echo "Agen utama berhasil dibuat <br>";
 					////////////
 									//Secondary involvement insertion
 									$cAgentSQL =
@@ -288,9 +288,6 @@
 					<h2>Filter</h2>
 					<form action="">
 						<h5 class="kantormainformlabel">Tanggal&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;:</h5>
-						<!-- <select name="bfrbulan" class="form-control propertyselect">
-															<option value="agenA">Agen A</option>
-						</select> -->
 						<input type="date" name="bfrDate"
 							id="startDate" onchange="closingFilter()" class="form-control kantormainselect">
 						<h5 class="kantormainformlabel">s/d</h5>
@@ -300,7 +297,6 @@
 						<br>
 						<script>
 							function closingFilter() {
-								// window.alert("shit");
 								var startDt = document.getElementById("startDate").value;
 								var endDt = document.getElementById("endDate").value;
 								// Declare variables
@@ -345,10 +341,7 @@
 									echo "<td class='pull-right'> " . number_format($row["Price"]). " </td>";
 						?>
 						<td>
-							<!-- <button onclick="document.getElementById('detail').style.display='block'" <?php $idKolom = $asd; ?> class="btn kantordaftarubah">DETAIL</button> -->
 							<a href='closingmain.php?detailid=<?php echo $row["closing_ID"]; ?>' class="btn closingdetailedit">DETAIL</a>
-							<!-- <button onclick="document.getElementById('edit').style.display='block'" 
-								class="btn closingdetailedit">EDIT</button>	 -->
 							<a class="btn closingdetaildelete" 
 								href='closingmain.php?id=<?php echo $row["closing_ID"];?>
 										&cAddress=<?php echo $row["Address"];?>'
@@ -848,7 +841,7 @@
 		
 		if($insertion->execute()){
 			$insertion->close();
-			echo "Agen pendukung berhasil dibuat <br>";
+			// echo "Agen pendukung berhasil dibuat <br>";
 		}else{
 			$insertion->close();
 			echo "Error: " . mysqli_error($db);

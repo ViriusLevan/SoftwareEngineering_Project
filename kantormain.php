@@ -1,5 +1,5 @@
 <?php
-	$pagename='kantor';
+	$pagename='cabangproduk';
 	include('session.php');
 ?>
 <html>
@@ -140,7 +140,7 @@
 										echo "</tr>";
 									}
 								} else {
-									echo "Tidak ada hasil";
+									// echo "Tidak ada hasil";
 								}
 						?>
 					</table>
@@ -208,9 +208,6 @@
 								<div class="row">
 									<div class="col">
 										<h5 class="kantormainformlabel">Kepala Cabang</h5>
-										<!-- <select name="kantor" class="form-control kantormainselectvpv">
-												<option value="id">Nama President</option>
-										</select> -->
 										<?php
 											$sql = "SELECT agent.Name, agent.Agent_ID
 														from agent left join branch
@@ -233,9 +230,6 @@
 									</div>
 									<div class="col">
 										<h5 class="kantormainformlabel">Wakil Kepala Cabang</h5>
-										<!-- <select name="kantor" class="form-control kantormainselectvpv">
-												<option value="id">Nama Vice President</option>
-										</select> -->
 										<?php
 											$result = mysqli_query($db, $sql);
 											if ($result->num_rows > 0) {
@@ -287,15 +281,15 @@
 		//ERROR CHECKS
 				if($PresidentID == NULL && $VicePresidentID != NULL){
 					$vpBastard=true;
-					echo "Kantor tidak dapat memiliki Wakil Kepala Cabang sebelum memiliki Kepala Cabang";
+					// echo "Kantor tidak dapat memiliki Wakil Kepala Cabang sebelum memiliki Kepala Cabang";
 				}
 				if(count($lines) > 0) {
 					$duplicate = true;
-					echo "Cabang dengan nama tersebut sudah terdaftar <br>";
+					// echo "Cabang dengan nama tersebut sudah terdaftar <br>";
 				}
 				if($PresidentID == $VicePresidentID && $PresidentID != NULL){
 					$samePerson = true;
-					echo "Kepala Cabang dan Wakil Kepala Cabang tidak boleh orang yang sama<br>";
+					// echo "Kepala Cabang dan Wakil Kepala Cabang tidak boleh orang yang sama<br>";
 				}
 				$check->close();
 				if(!$samePerson && !$duplicate && !$vpBastard){
@@ -311,7 +305,7 @@
 						$field3 = $name;
 						if ($stmt->execute()) {
 							$stmt->close();
-							echo "Cabang berhasil ditambah";
+							// echo "Cabang berhasil ditambah";
 						} else {
 							$stmt->close();
 							echo "Error: <br>" . mysqli_error($db);

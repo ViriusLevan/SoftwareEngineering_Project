@@ -1,5 +1,5 @@
 <?php 
-	$pagename='agen'; 
+	$pagename='agendaftar'; 
 	include('session.php');
 ?>
 <html>
@@ -56,7 +56,7 @@
 						$field3 = $_POST["editAID"];
 						if ($stmt->execute()) {
 							$stmt->close();
-						    echo "Agen berhasil dibuat <br>";
+						    // echo "Agen berhasil dibuat <br>";
 						}else{
 							$stmt->close();
 			    			echo "Error: <br>" . mysqli_error($db);
@@ -79,7 +79,7 @@
 
 						if ($bUpdateSQL->execute()) {
 							$bUpdateSQL->close();
-	    					echo "Catatan pekerjaan berhasil diperbarui";
+	    					// echo "Catatan pekerjaan berhasil diperbarui";
 						    $newDate = new Datetime($_POST["editTDate"]);
 						    $newDate->modify('+1 day');
 						    $newDateStr = $newDate->format('Ymd');
@@ -93,7 +93,7 @@
 							$f3 = $newDateStr;
 							if ($newEmployment->execute()) {
 								$newEmployment->close();
-							    echo "Pekerjaan berhasil ditambah <br>";
+							    // echo "Pekerjaan berhasil ditambah <br>";
 							}else{
 								$newEmployment->close();
 				    			echo "Error: <br>" . mysqli_error($db);
@@ -113,14 +113,6 @@
 					$phone = $_POST["phone"];
 					$UplineID = test_input($_POST["UplineID"]);
 					$BranchID = test_input($_POST["BranchID"]);
-
-					// echo "<h2>Your Input:</h2>";
-					// if(isset($name))echo $name. "<br>";  
-					// if(isset($phone))echo $phone. "<br>";  
-					// if(isset($UplineID))echo $UplineID. "<br>";  
-					// if(isset($BranchID))echo $BranchID. "<br>";
-					// echo "<br>";
-
 				  	if ($UplineID == "empty") {$UplineID = null;}
 
 				  	if (!$db) {
@@ -137,7 +129,7 @@
 
 						if ($stmt->execute()) {
 							$stmt->close();
-						    echo "Agen berhasil dibuat <br>";
+						    // echo "Agen berhasil dibuat <br>";
 							
 							$agentID =  mysqli_insert_id($db);//get last inserted AUTO_INCREMENT (which is agent ID)
 							//Branch Employment Insertion
@@ -150,7 +142,7 @@
 							$f3 = date("Y-m-d");
 							if($employmentSTMT->execute()){
 					    		$employmentSTMT->close();
-					    		echo "Pekerjaan berhasil ditambah <br>";
+					    		// echo "Pekerjaan berhasil ditambah <br>";
 					    	}else{
 					    		$employmentSTMT->close();
 					    		echo "Error: <br>" . mysqli_error($db);
@@ -168,7 +160,7 @@
 						    	
 						    	if($upSTMT->execute()){
 						    		$upSTMT->close();
-						    		echo "Downline berhasil dibuat <br>";
+						    		// echo "Downline berhasil dibuat <br>";
 						    	}else{
 						    		$upSTMT->close();
 						    		echo "Error: <br>" . mysqli_error($db);
@@ -280,9 +272,6 @@
 					    	<td>
 					    		<a class="btn agendetailbtn" href='agent_details.php?id=<?php echo $row["Agent_ID"]; ?>'>DETAIL</a>           
 						    	<a href='agenmain.php?editID=<?php echo $row["Agent_ID"]; ?>' class="btn kantordaftarubah">UBAH</a>
-							    	<!-- <button type="submit" class="btn agentransfer" 
-							    		onclick="document.getElementById('transfer').style.display='block'">Transfer</button> -->
-
 					    	</td></tr>
 					    	<?php
 					    }
@@ -318,9 +307,6 @@
 								<div class="row">
 									<div class="col">
 										<h5 class="kantormainformlabel">Cabang</h5>
-										<!-- <select name="kantor" class="form-control kantormainselectvpv">
-											<option value="id">Nama Kantor</option>
-										</select> -->
 										<?php 
 											$branchSQL = "SELECT branch_id,Name FROM `branch` where status=1";
 											$branchResult = mysqli_query($db, $branchSQL);
@@ -338,9 +324,6 @@
 									</div>
 									<div class="col">
 										<h5 class="kantormainformlabel">Upline</h5>
-										<!-- <select name="kantor" class='form-control kantormainselectvpv'>
-											<option value="id">Nama Upline</option>
-										</select> -->
 										<?php
 											$agentSQL = "SELECT agent.Name, agent.Agent_ID from agent 
 												where status=1 AND Agent_ID != 0";
@@ -376,12 +359,7 @@
 						<h2>UBAH AGEN</h2>
 					</header>
 					<div class="w3-container">
-					<form method="post" action="<?php echo htmlspecialchars($_SERVER['PHP_SELF']);?>"><!-- 
-									<h2>Nama</h2>
-									<h2>No. Telepon</h2>
-									<h2>Upline</h2>
-									<h2>Kantor</h2>
-									<h2>Tgl. Pindah</h2> -->
+					<form method="post" action="<?php echo htmlspecialchars($_SERVER['PHP_SELF']);?>">
 									<?php
 										if(isset($_GET["editID"])){
 											$row = $_GET["editID"];
@@ -406,10 +384,6 @@
 									         echo '<h5 class="kantormainformlabel">No. Telepon</h5>';
 									        echo "<input  type='tel' class='form-control' name='editPhone' 
 									         pattern='[0-9]+' value=". $AgentRow["PhoneNumber"] ." required>";
-									        // if($AgentRow["ImmediateUpline_ID"] == null)
-									        //  echo "<h2> Noone </h2>";
-									        // else
-									        //  echo "<h2>". $AgentRow["ImmediateUpline_ID"] ."</h2>";
 									        $branchSQL = "SELECT branch_id,Name FROM `branch` where status=1";
 											$branchResult = mysqli_query($db, $branchSQL);
 											echo '<h5 class="kantormainformlabel">Cabang</h5>';
@@ -423,7 +397,6 @@
 										    }
 										    echo "</select>";
 										    $dateMin = new Datetime($AgentRow["Started"]);
-										    //$dateMin->modify('+1 day');
 										    $dateMinStr = $dateMin->format('Y-m-d');
 										    echo '<h5 class="kantormainformlabel">Tgl. Pindah</h5>';
 										    echo "<input type='date' class='form-control min=". $dateMinStr ." 
@@ -447,23 +420,24 @@
 			</div>
 			<div id="hapus" class="w3-modal" data-backdrop="">
 					<div class="w3-modal-content w3-animate-top w3-card-4">
-						<header class="w3-container">
-							<h2>Agent <?php echo $_GET["dismissalName"];?> DISMISSAL</h2>
+						<header class="w3-container modalheader">
+							<h2>PECAT AGEN <?php echo $_GET["dismissalName"];?></h2>
 						</header>
 						<form method="POST" action="<?php echo htmlspecialchars($_SERVER['PHP_SELF']);?>">
 							<div class="w3-container">
 								<input type='hidden' name='dismissalID' 
 									value=<?php echo $_GET["dismissalID"];?> >
 								<input type='hidden' name='dismissalBranch' 
-									value=<?php echo $_GET["dismissalBranch"];?> >
-								Dismissal Date<input type="date" name="dismissalDate" 
+									value=<?php echo $_GET["dismissalBranch"];?> >								
+								<h5 class="kantormainformlabel">Tanggal Hapus</h5>
+								<input type="date" name="dismissalDate" class="form-control" 
 									min=<?php echo $minDismissalDate;?>
 									value=<?php echo $minDismissalDate;?>
 									pattern='[0-9]{4}-[0-9]{2}-[0-9]{2}'>						
 								<div class="modalfooter">
 									<button type="button" class="btn modalleftbtn" 
-										onclick="document.getElementById('hapus').style.display='none'">TIDAK</button>
-									<button type="submit" class="btn modalrightbtn">IYA</button>
+										onclick="document.getElementById('hapus').style.display='none'">BATAL</button>
+									<button type="submit" class="btn kantormodalhapus">PECAT</button>
 								</div>
 								<script type="text/javascript">
 									function showAgentDismissal(){
@@ -475,23 +449,6 @@
 					</div>
 				</div>
 				</div>
-				<!-- <div id="transfer" class="w3-modal" data-backdrop="">
-					<div class="w3-modal-content w3-animate-top w3-card-4">
-						<header class="w3-container modalheader">
-							<span onclick="document.getElementById('transfer').style.display='none'"
-							class="w3-button w3-display-topright">&times;</span>
-							<h2>TRANSFER KANTOR</h2>
-						</header>
-						<div class="w3-container">
-							INSERT CODE HERE
-							<br>
-							<div class="modalfooter">
-								<button type="submit" class="btn modalleftbtn" onclick="document.getElementById('transfer').style.display='none'">BATAL</button>
-								<button type="submit" class="btn modalrightbtn">SIMPAN</button>
-							</div>
-						</div>
-					</div>
-				</div> -->
 		</div>
 	</body>
 

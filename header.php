@@ -2,17 +2,13 @@
 	<div class="pagetitle">
 		<h1>
 		<?php
-		if ($pagename==='kantor') {echo 'CABANG';}
-		elseif ($pagename==='agen') {echo 'AGEN';}
-		elseif ($pagename==='properti') {echo 'PROPERTI';}
+		if ($pagename==='cabangdaftar') {echo 'DAFTAR CABANG';}
+		elseif ($pagename==='cabangproduk') {echo 'PRODUKTIVITAS CABANG';}
+		elseif ($pagename==='agendaftar') {echo 'DAFTAR AGEN';}
+		elseif ($pagename==='agenproduk') {echo 'PRODUKTIVITAS AGEN';}
+		elseif ($pagename==='agendetail') {echo 'DETAIL AGEN';}
 		elseif ($pagename==='closing') {echo 'CLOSING';}
 		elseif ($pagename==='welcome') {echo 'Welcome, '; echo $login_session; echo "!";}?>
 		</h1>
 	</div>
-	<!-- <div class="headersearchform">
-		<form action="">
-			<input type="text" class="form-control searchform" placeholder="Cari...">
-			<button type="submit" class="btn searchbtn"><i class="fa fa-search" aria-hidden="true"></i></button>
-		</form>
-	</div> -->
 </div>

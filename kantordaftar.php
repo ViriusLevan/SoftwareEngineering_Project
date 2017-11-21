@@ -1,5 +1,5 @@
 <?php 
-	$pagename='kantor'; 
+	$pagename='cabangdaftar'; 
 	include('session.php');
 ?>
 <html>
@@ -52,7 +52,7 @@
 					$f5 = $_POST["editIBID"];
 					if($bUpdateSQL->execute()){
 						$bUpdateSQL->close();
-						echo "Informasi cabang berhasil diperbarui";
+						// echo "Informasi cabang berhasil diperbarui";
 					}else{
 						$bUpdateSQL->close();
 						echo "Error: <br>" . mysqli_error($db);
@@ -79,7 +79,7 @@
 
 					if($bAddSQL->execute()){
 						$bAddSQL->close();
-						echo "Cabang berhasil ditambah";
+						// echo "Cabang berhasil ditambah";
 					}else{
 						$bAddSQL->close();
 						echo "Error: <br>" . mysqli_error($db);
@@ -96,7 +96,7 @@
 					
 					if($dismissalSQL->execute()){
 						$dismissalSQL->close();
-						echo "Agen berhasil dipecat";
+						// echo "Agen berhasil dipecat";
 						$employmentSQL = $db->prepare("UPDATE `agent_branch_employment` 
 											SET `End`= ?  
 											WHERE Branch_ID = ?
@@ -107,7 +107,7 @@
 
 						if($employmentSQL->execute()){
 							$employmentSQL->close();
-							echo "Pekerjaan berhasil diakhiri";
+							// echo "Pekerjaan berhasil diakhiri";
 						}else{
 							$employmentSQL->close();
 							echo "Error: <br>" . mysqli_error($db);

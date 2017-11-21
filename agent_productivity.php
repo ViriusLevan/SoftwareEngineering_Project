@@ -1,5 +1,5 @@
 <?php
-	$pagename='agen';
+	$pagename='agenproduk';
 	include('session.php');
 ?>
 <html>
@@ -19,14 +19,6 @@
 					$phone = $_POST["phone"];
 					$UplineID = test_input($_POST["UplineID"]);
 					$BranchID = test_input($_POST["BranchID"]);
-
-					// echo "<h2>Your Input:</h2>";
-					// if(isset($name))echo $name. "<br>";  
-					// if(isset($phone))echo $phone. "<br>";  
-					// if(isset($UplineID))echo $UplineID. "<br>";  
-					// if(isset($BranchID))echo $BranchID. "<br>";
-					// echo "<br>";
-
 				  	if ($UplineID == "empty") {$UplineID = null;}
 
 				  	if (!$db) {
@@ -43,7 +35,7 @@
 
 						if ($stmt->execute()) {
 							$stmt->close();
-						    echo "Agen berhasil dibuat <br>";
+						    // echo "Agen berhasil dibuat <br>";
 							
 							$agentID =  mysqli_insert_id($db);//get last inserted AUTO_INCREMENT (which is agent ID)
 							//Branch Employment Insertion
@@ -56,7 +48,7 @@
 							$f3 = date("Y-m-d");
 							if($employmentSTMT->execute()){
 					    		$employmentSTMT->close();
-					    		echo "Pekerjaan berhasil ditambah <br>";
+					    		// echo "Pekerjaan berhasil ditambah <br>";
 					    	}else{
 					    		$employmentSTMT->close();
 					    		echo "Error: <br>" . mysqli_error($db);
@@ -74,7 +66,7 @@
 						    	
 						    	if($upSTMT->execute()){
 						    		$upSTMT->close();
-						    		echo "Downline berhasil dibuat <br>";
+						    		// echo "Downline berhasil dibuat <br>";
 						    	}else{
 						    		$upSTMT->close();
 						    		echo "Error: <br>" . mysqli_error($db);
@@ -297,9 +289,6 @@
 								<div class="row">
 									<div class="col">
 										<h5 class="kantormainformlabel">Kantor</h5>
-										<!-- <select name="kantor" class="form-control kantormainselectvpv">
-											<option value="id">Nama Kantor</option>
-										</select> -->
 										<?php 
 											$branchSQL = "SELECT branch_id,Name FROM `branch` where status=1";
 											$branchResult = mysqli_query($db, $branchSQL);
@@ -317,9 +306,6 @@
 									</div>
 									<div class="col">
 										<h5 class="kantormainformlabel">Upline</h5>
-										<!-- <select name="kantor" class='form-control kantormainselectvpv'>
-											<option value="id">Nama Upline</option>
-										</select> -->
 										<?php
 											$agentSQL = "SELECT agent.Name, agent.Agent_ID from agent 
 												where status=1 AND Agent_ID != 0";

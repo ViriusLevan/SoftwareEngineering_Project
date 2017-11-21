@@ -1,5 +1,5 @@
 <?php
-  $pagename='agen';
+  $pagename='agendetail';
   include('session.php');
 ?>
 <html>
@@ -41,13 +41,6 @@
           $a->getEarningTotal($db);
 
           ?>
-            <!-- <a class="btn btn-warning" 
-              href='agent_involved_in_closing.php?id=<?php echo $row; ?>'
-              >Click to see Agent's involvement in closings</a>  -->
-          <?php
-          // echo"Agent's Downlines <br>-----------------------------------<br>";
-          // $a->getDownline($db);
-          ?>
           <h3>---------------------------------------</h3>
           <h3>Riwayat</h3>
         <?php
@@ -68,7 +61,7 @@
                 echo '</tr>';
 
                 echo '<tr>';    
-                echo '<td class="tabelkiri">' ."Komisi: " .'</td>';  
+                echo '<td class="tabelkiri">' ."Komisi(Rp): " .'</td>';  
                 echo '<td>' .$closingRow["earning"] .'</td>';   
                 echo '</tr>';
                 
@@ -78,40 +71,11 @@
                 echo '</tr>';
                 
                 echo '</table>';
-                // echo "Closing ID: " . $closingRow["Closing_ID"]. "<br>"; 
-                // echo "Earned    : " . $closingRow["earning"]. "<br>";
-                // echo "Worked As : " . $workedAs. "<br>"; 
                 echo "<br>";
               }              
             } else {
               echo "0 results";
             }
-
-            //Get Closing Details but who cares about this
-            /*$idSQL = "SELECT Closing_ID from Agent_involved_in_closing where Agent_ID = " . $pass;
-            $idResults = mysqli_query($db, $idSQL);
-
-            if ($idResults->num_rows > 0) {
-            // output data of each row
-              while($idRow = $idResults->fetch_assoc()) {
-                $closingSQL = "SELECT * FROM closing where Closing_ID = ". $idRow["Closing_ID"];
-                $closingResults = mysqli_query($db,$closingSQL);
-                if ($closingResults->num_rows > 0) {
-                // output data of each row
-                  while($closingRow = $closingResults->fetch_assoc()) {
-                    echo "ID: " . $closingRow["closing_ID"]. "<br>"; 
-                    echo "Date: " . $closingRow["Date"]. "<br>";
-                    echo "Price: " . $closingRow["Price"]. "<br>"; 
-                    echo "Address: " . $closingRow["Address"]. "<br>";
-                    echo "-------------<br>";
-                  }
-                } else {
-                  echo "0 results";
-                }
-              }
-            } else {
-              echo "Agent not involved in any closing";
-            }*/
               
           function setWorkedAs($code){
               $workedAs = "";
@@ -193,19 +157,11 @@
               }
 
               $arrayLength = sizeof($agentInvolved);
-              //     echo json_encode($agentInvolved);
-              // $json_data = json_encode($agentInvolved);
-              // file_put_contents('agents.json', $json_data);
-
-              //     $coba = $agentInvolved[1];
-              //     echo($coba['agentName']);
-              //     echo(($agentInvolved[1])['uplineID']);
               ?>
 
               <script src="treant-js-master/vendor/raphael.js"></script>
               <script src="treant-js-master/Treant.js"></script>
               
-              <!-- <script src="agents.json"></script> -->
               <script type="text/javascript">
                   var abc = <?php echo $arrayLength; ?>;
                   var chart_config = {
@@ -226,7 +182,6 @@
                               <?php if (($agentInvolved[0])["uplineID"]!=null) { echo 'name: "'.($agentInvolved[1])["agentName"].'"'; } else { echo 'name: "COMPANY"'; } ?>,
                               <?php echo 'contact: "'.($agentInvolved[1])["agentPhone"].'"'; ?>,
                           },
-                          // image: "examples/headshots/2.jpg",
                           link: {
                               <?php if (($agentInvolved[0])["uplineID"]!=null) { echo 'href: "agent_details.php?id='.($agentInvolved[0])["uplineID"].'"';} ?>
                           },
@@ -235,7 +190,6 @@
                               text:{
                                   <?php echo 'name: "'.($agentInvolved[0])["agentName"].'"'; ?>,
                               },
-                              // image: "examples/headshots/1.jpg",
                               stackChildren: true,
                               children: [
                               <?php 
@@ -247,7 +201,6 @@
                                           <?php echo 'name: "'.($agentInvolved[$i])["agentName"].'"'; ?>,
                                           <?php echo 'contact: "'.($agentInvolved[$i])["agentPhone"].'"'; ?>
                                       },
-                                      // image: "examples/headshots/8.jpg",
                                       link: {
                                           <?php echo 'href: "agent_details.php?id='.($agentInvolved[$i])["agentID"].'"'; ?>
                                       }
