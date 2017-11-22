@@ -51,10 +51,10 @@
 					<form action=<?php echo htmlspecialchars($_SERVER["PHP_SELF"]); ?> method="post">
 						<h5 class="kantormainformlabel">Tanggal&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;:</h5>
 						<input type="date" name="bfrDate"
-							id="startDate" class="form-control kantormainselect">
+							id="startDate" value="<?php echo date('Y-m-d');?>" class="form-control kantormainselect">
 						<h5 class="kantormainformlabel">s/d</h5>
 						<input type="date" name="aftDate"
-							id="endDate" class="form-control kantormainselect">
+							id="endDate" value="<?php echo date('Y-m-d');?>" class="form-control kantormainselect">
 						<input type="submit" name="submit" class="btn kantormainfiltersubmit">
 					</form>
 				</div>

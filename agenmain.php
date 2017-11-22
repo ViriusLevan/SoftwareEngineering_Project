@@ -432,7 +432,7 @@
 								<h5 class="kantormainformlabel">Tanggal Hapus</h5>
 								<input type="date" name="dismissalDate" class="form-control" 
 									min=<?php echo $minDismissalDate;?>
-									value=<?php echo $minDismissalDate;?>
+									value="<?php echo date('Y-m-d');?>"
 									pattern='[0-9]{4}-[0-9]{2}-[0-9]{2}'>						
 								<div class="modalfooter">
 									<button type="button" class="btn modalleftbtn" 

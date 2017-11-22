@@ -68,7 +68,7 @@
 						// echo $agent4ID. "<br>";
 						$agents[] = $agent4ID;
 					}
-					echo "<br>";
+					// echo "<br>";
 
 					if (!$db) {
 						die("Connection failed: " . mysqli_connect_error());
@@ -289,10 +289,10 @@
 					<form action="">
 						<h5 class="kantormainformlabel">Tanggal&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;:</h5>
 						<input type="date" name="bfrDate"
-							id="startDate" onchange="closingFilter()" class="form-control kantormainselect">
+							id="startDate" value="2000-01-01" onchange="closingFilter()" class="form-control kantormainselect">
 						<h5 class="kantormainformlabel">s/d</h5>
 						<input type="date" name="aftDate"
-							id="endDate" onchange="closingFilter()" class="form-control kantormainselect">
+							id="endDate" value="<?php echo date('Y-m-d');?>" onchange="closingFilter()" class="form-control kantormainselect">
 						<!-- JS Not implemented YET -->
 						<br>
 						<script>
@@ -569,7 +569,7 @@
 							<div class="row">
 								<div class="col">
 									<h5 class="kantormainformlabel">Tanggal</h5>
-									<input class="form-control" type="date" name="date" required>
+									<input class="form-control" type="date" name="date" value="<?php echo date('Y-m-d');?>" required>
 								</div>
 								<div class="col">
 									<h5 class="kantormainformlabel">Harga (Rp)</h5>
@@ -723,7 +723,7 @@
 									}
 								}
 							}
-						</script>
+						</script>						
 					</div>
 				</div>
 			</div>
