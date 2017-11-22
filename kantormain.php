@@ -10,7 +10,35 @@
 	<body class="mainbody">
 		<?php include('sidebar.php'); ?>
 		<div class="content">
-			<?php include('header.php'); ?>
+			<?php include('header.php'); 
+				if(isset($_POST["addBName"])){
+					//Branch Add
+					$bAddSQL = $db->prepare("INSERT INTO `branch`
+						(`President_ID`, `VicePresident_ID`, `status`, `Name`, `address`) 
+						VALUES (?,?,1,?,?)");
+					$bAddSQL->bind_param('iiss',$f1,$f2,$f3,$f4);
+					if($_POST["addPID"]=="empty")
+						$PID = NULL;
+					else 
+						$PID = $_POST["addPID"];
+					if($_POST["addVPID"]=="empty")
+						$VPID = NULL;
+					else 
+						$VPID = $_POST["addVPID"];
+					$f1 = $PID;
+					$f2 = $VPID;
+					$f3 = $_POST["addBName"];
+					$f4 = $_POST["addBAddress"];
+
+					if($bAddSQL->execute()){
+						$bAddSQL->close();
+						// echo "Cabang berhasil ditambah";
+					}else{
+						$bAddSQL->close();
+						echo "Error: <br>" . mysqli_error($db);
+					}
+				}
+			?>
 			<div class="maincontent">
 				<div class="kantormainbtn">
 					<button onclick="document.getElementById('tambah').style.display='block'" class="btn kantormaintambahbtn" data-toggle="modal" data-target="#exampleModal">TAMBAH</button>
@@ -199,11 +227,12 @@
 							<h2>TAMBAH CABANG BARU</h2>
 						</header>
 						<div class="w3-container">
-							<form action="">
+							<form method="POST" action=<?php echo htmlspecialchars($_SERVER["PHP_SELF"]); ?>
+								onsubmit="return validateAddForm()" name="addForm">
 								<h5 class="kantormainformlabel">Nama Cabang</h5>
-								<input class="form-control" type="text" placeholder="Masukkan nama kantor">
+								<input name="addBName" class="form-control" type="text" placeholder="Masukkan nama kantor">
 								<h5 class="kantormainformlabel">Alamat Cabang</h5>
-								<input class="form-control" type="text" placeholder="Masukkan alamat kantor">
+								<input name="addBAddress" class="form-control" type="text" placeholder="Masukkan alamat kantor">
 								<br>
 								<div class="row">
 									<div class="col">
@@ -216,7 +245,8 @@
 														WHERE agent.Agent_ID != 0";
 											$result = mysqli_query($db, $sql);
 											if ($result->num_rows > 0) {
-												echo "<select name='PresidentID' class='form-control kantormainselectvpv'>";
+												echo "<select name='addPID' class='form-control kantormainselectvpv'
+													onchange='optionDisabling()'>";
 												echo "<option value='empty'> -Tidak Ada- </option>";
 												while($row = $result->fetch_assoc()) {
 													echo "<option value=".$row["Agent_ID"]."> ". $row["Name"] ." </option>";
@@ -233,7 +263,8 @@
 										<?php
 											$result = mysqli_query($db, $sql);
 											if ($result->num_rows > 0) {
-												echo "<select name='VicePresidentID' class='form-control kantormainselectvpv'>";
+												echo "<select name='addVPID' class='form-control kantormainselectvpv'
+													onchange='optionDisabling()'>";
 												echo "<option value='empty'> -Tidak Ada- </option>";
 												while($row = $result->fetch_assoc()) {
 													echo "<option value=".$row["Agent_ID"]."> ". $row["Name"] ." </option>";
@@ -252,6 +283,42 @@
 									<button type="submit" class="btn modalrightbtn">SIMPAN</button>
 								</div>
 							</form>
+							<script type="text/javascript">
+								function validateAddForm() {//Exactly what it says
+								    var x = document.forms["addForm"]["addVPID"];
+								    var y = document.forms["addForm"]["addPID"];
+								    if (x.selectedIndex != 0 && y.selectedIndex == 0) {
+								        alert("Kantor tidak dapat memiliki Wakil Kepala Cabang sebelum memiliki Kepala Cabang");
+								        return false;
+								    }
+								}
+								function optionDisabling(){//Disabling options on other selects based on what is selected
+								var select = document.getElementsByClassName("form-control kantormainselectvpv");
+								var selections = [];
+
+								for (var i = 0; i<2; i++) {
+									if(select[i].disabled == false && 
+										select[i].selectedIndex != 0){
+										selections.push(select[i].value);
+									}
+								}
+
+								for (var i = 0; i<2; i++) {
+									var opt = select[i].getElementsByTagName("option");
+									for (var j = 0; j < opt.length; j++) {
+										if(selections.indexOf(opt[j].value) == -1){
+										//not found on selections
+											opt[j].disabled = false;
+										}else if(opt[j].value == select[i].value){
+										//the currently selected option for this select box
+											opt[j].disabled = false; 
+										}else{//Found on selection and not the currently selected option
+											opt[j].disabled = true;
+										}
+									}
+								}
+							}
+							</script>
 						</div>
 					</div>
 				</div>
