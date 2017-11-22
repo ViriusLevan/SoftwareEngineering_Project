@@ -67,7 +67,7 @@
 							<th>Nama Cabang</th>
 							<th>Unit</th>
 							<th>Total Closing</th>
-							<th>Pendapatan Cabang dari Closing (Rp)</th>
+							<th>Pendapatan Cabang dari Closing</th>
 						</tr>
 						<?php
 							
@@ -164,7 +164,7 @@
 											echo "<td>". $row["Name"] ."</td>";
 											echo "<td>". $row["Unit"] ."</td>";
 											echo "<td>". $row["Productivity"] ."</td>";
-											echo '<td class="pull-right">'. number_format($row["Earnings"]) ."</td>";
+											echo '<td class="pull-right">'."Rp ". number_format($row["Earnings"]) ."</td>";
 										echo "</tr>";
 									}
 								} else {

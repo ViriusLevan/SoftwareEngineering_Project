@@ -125,7 +125,7 @@
 							<th>Nama Agen</th>
 							<th>Unit</th>
 							<th>Total Closing</th>
-							<th>Pendapatan agen dari Closing (Rp)</th>
+							<th>Pendapatan agen dari Closing</th>
 						</tr>
 					
 	<?php 
@@ -218,7 +218,7 @@
               echo "<tr><td> " . $AgentProRow["Name"]. " </td>"; 
               echo "<td> " . $AgentProRow["Unit"]. " </td>"; 
               echo "<td> " . $AgentProRow["Pro"] . " </td>"; 
-              echo '<td class="pull-right"> ' .  number_format($AgentProRow["Earn"]) . " </td>";
+              echo '<td class="pull-right"> ' . "Rp ".  number_format($AgentProRow["Earn"]) . " </td>";
 
             }
         } else {
