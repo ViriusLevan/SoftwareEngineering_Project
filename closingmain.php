@@ -871,12 +871,6 @@
 
             document.body.innerHTML = originalContents;
         }
-
-		jQuery(function($) {
-			$('#fadielGanteng').autoNumeric('init');   
-		});
-	</script>
-
 	</script>
 </body>
 </html>
