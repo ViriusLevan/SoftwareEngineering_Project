@@ -292,7 +292,7 @@
 							id="startDate" value="2000-01-01" onchange="closingFilter()" class="form-control filterdate">
 						<h5 class="kantormainformlabel">s/d</h5>
 						<input type="date" name="aftDate"
-							id="endDate" value="<?php echo date('Y-m-d');?>" onchange="closingFilter()" class="form-control filterdate">
+							id="endDate" value="<?php echo date('Y-m-d');?>" onchange="closingFilter()" class="form-control filterdate" max="<?php echo date('Y-m-d');?>">
 						<!-- JS Not implemented YET -->
 						<br>
 						<script>
@@ -569,7 +569,7 @@
 							<div class="row">
 								<div class="col">
 									<h5 class="kantormainformlabel">Tanggal</h5>
-									<input class="form-control" type="date" name="date" value="<?php echo date('Y-m-d');?>" required>
+									<input class="form-control" type="date" name="date" value="<?php echo date('Y-m-d');?>" 	max="<?php echo date('Y-m-d');?>" required>
 								</div>
 								<div class="col">
 									<h5 class="kantormainformlabel">Harga (Rp)</h5>

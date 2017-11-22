@@ -113,7 +113,8 @@
 							id="startDate" value="<?php echo date('Y-m-d');?>" class="form-control filterdate">
 						<h5 class="kantormainformlabel">s/d</h5>
 						<input type="date" name="aftDate"
-							id="endDate" value="<?php echo date('Y-m-d');?>" class="form-control filterdate">
+							id="endDate" value="<?php echo date('Y-m-d');?>" class="form-control filterdate"
+							max="<?php echo date('Y-m-d');?>">
 						<input type="submit" name="submit" class="btn kantormainfiltersubmit">
 					</form>
 				</div>
