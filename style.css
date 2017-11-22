@@ -40,6 +40,13 @@ body {
 	float: none;
 	text-align: right;
 }
+
+.filterdate{
+	margin: 3px;
+	width: 25%;
+	display: inline-block;
+	border-radius: 0;
+}
 /****************************************/
 .side{
 	position: fixed;

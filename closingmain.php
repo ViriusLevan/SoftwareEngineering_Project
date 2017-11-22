@@ -289,10 +289,10 @@
 					<form action="">
 						<h5 class="kantormainformlabel">Tanggal&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;:</h5>
 						<input type="date" name="bfrDate"
-							id="startDate" value="2000-01-01" onchange="closingFilter()" class="form-control kantormainselect">
+							id="startDate" value="2000-01-01" onchange="closingFilter()" class="form-control filterdate">
 						<h5 class="kantormainformlabel">s/d</h5>
 						<input type="date" name="aftDate"
-							id="endDate" value="<?php echo date('Y-m-d');?>" onchange="closingFilter()" class="form-control kantormainselect">
+							id="endDate" value="<?php echo date('Y-m-d');?>" onchange="closingFilter()" class="form-control filterdate">
 						<!-- JS Not implemented YET -->
 						<br>
 						<script>
