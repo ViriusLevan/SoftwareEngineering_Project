@@ -8,78 +8,78 @@ include('session.php');
 	<title>Closing</title>
 </head>
 <body class="mainbody" 
-	<?php
-	if(isset($_GET["id"])){
-		echo "onload ='agentOptions(1);showDelete();'";
-	}elseif(isset($_GET["detailid"])){
-		echo "onload ='agentOptions(1);showDetail();'";
-	}else{
-		echo "onload ='agentOptions(1)'";
-	}
+<?php
+if(isset($_GET["id"])){
+	echo "onload ='agentOptions(1);showDelete();'";
+}elseif(isset($_GET["detailid"])){
+	echo "onload ='agentOptions(1);showDetail();'";
+}else{
+	echo "onload ='agentOptions(1)'";
+}
 
-	if ($_SERVER["REQUEST_METHOD"] == "POST") {
-		if (isset($_POST["cID"])) {
-			$deletionSQL = $db->prepare("DELETE FROM `closing` WHERE closing_ID = ?");
-			$deletionSQL->bind_param('i',$f1);
-			$f1 = $_POST["cID"];
+if ($_SERVER["REQUEST_METHOD"] == "POST") {
+	if (isset($_POST["cID"])) {
+		$deletionSQL = $db->prepare("DELETE FROM `closing` WHERE closing_ID = ?");
+		$deletionSQL->bind_param('i',$f1);
+		$f1 = $_POST["cID"];
 
-			if($deletionSQL->execute()){
-				$deletionSQL->close();
+		if($deletionSQL->execute()){
+			$deletionSQL->close();
 						// echo "Closing berhasil dihapus";
-			}else{
-				$deletionSQL->close();
-				echo "Error: <br>" . mysqli_error($db);
-			}
-
+		}else{
+			$deletionSQL->close();
+			echo "Error: <br>" . mysqli_error($db);
 		}
-		else if(isset($_POST["address"])){
-			$address = $date = $price = $nAgents = $agent1ID = "";
-			$password = $passwordCon = "";
 
-			$address = test_input($_POST["address"]);
-			$date = $_POST["date"];
-			$price = test_input($_POST["price"]);
-			$nAgents = test_input($_POST["nAgents"]);
-			$agent1ID = test_input($_POST["agent1ID"]);
+	}
+	else if(isset($_POST["address"])){
+		$address = $date = $price = $nAgents = $agent1ID = "";
+		$password = $passwordCon = "";
 
-			if($nAgents>1)$agent2ID = test_input($_POST["agent2ID"]);
-			if($nAgents>2)$agent3ID = test_input($_POST["agent3ID"]);
-			if($nAgents>3)$agent4ID = test_input($_POST["agent4ID"]);
-			$agents = [];
+		$address = test_input($_POST["address"]);
+		$date = $_POST["date"];
+		$price = test_input($_POST["price"]);
+		$nAgents = test_input($_POST["nAgents"]);
+		$agent1ID = test_input($_POST["agent1ID"]);
+
+		if($nAgents>1)$agent2ID = test_input($_POST["agent2ID"]);
+		if($nAgents>2)$agent3ID = test_input($_POST["agent3ID"]);
+		if($nAgents>3)$agent4ID = test_input($_POST["agent4ID"]);
+		$agents = [];
 					// echo "<h2>Your Input:</h2>";
 
 					// if(isset($address))echo $address. "<br>";
 					// if(isset($date))echo $date. "<br>";
 					// if(isset($price))echo $price. "<br>";
 					// if(isset($nAgents))echo $nAgents. "<br>";
-			if(isset($agent1ID)){
+		if(isset($agent1ID)){
 						// echo $agent1ID. "<br>";
-				$agents[] = $agent1ID;
-			}
-			if(isset($agent2ID)){
+			$agents[] = $agent1ID;
+		}
+		if(isset($agent2ID)){
 						// echo $agent2ID. "<br>";
-				$agents[] = $agent2ID;
-			}
-			if(isset($agent3ID)){
+			$agents[] = $agent2ID;
+		}
+		if(isset($agent3ID)){
 						// echo $agent3ID. "<br>";
-				$agents[] = $agent3ID;
-			}
-			if(isset($agent4ID)){
+			$agents[] = $agent3ID;
+		}
+		if(isset($agent4ID)){
 						// echo $agent4ID. "<br>";
-				$agents[] = $agent4ID;
-			}
+			$agents[] = $agent4ID;
+		}
 					// echo "<br>";
 
-			if (!$db) {
-				die("Connection failed: " . mysqli_connect_error());
-			}
-			else{
-				$stmt = $db->prepare("INSERT INTO closing (`Date`, `Price`, `Address`)
-					VALUES (?,?,?)");
-				$stmt->bind_param('sis', $field1, $field2, $field3);
-				$field1 = $date;
-				$field2 = $price;
-				$field3 = $address;
+		if (!$db) {
+			die("Connection failed: " . mysqli_connect_error());
+		}
+		else{
+			$stmt = $db->prepare("INSERT INTO closing (`Date`, `Price`, `Address`)
+				VALUES (?,?,?)");
+			$stmt->bind_param('sis', $field1, $field2, $field3);
+			$field1 = $date;
+			$field2 = $price;
+			$field3 = $address;
 						if ($stmt->execute()) {//Closing Creation
 							$stmt->close();
 							// echo "Closing berhasil dibuat <br>";
@@ -286,49 +286,58 @@ include('session.php');
 					<br>
 					<div class="kantormainfilter">
 						<h2>Filter</h2>
-						<form action="">
+						<p id="date_filter">
+							<span id="date-label-from" class="date-label">From: </span><input class="date_range_filter date" type="text" id="datepicker_from" />
+							<span id="date-label-to" class="date-label">To:<input class="date_range_filter date" type="text" id="datepicker_to" />
+							</p>
+						<!-- <form action="">
 							<h5 class="kantormainformlabel">Tanggal&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;:</h5>
 							<input type="date" name="bfrDate"
 							id="startDate" value="2000-01-01" onchange="closingFilter()" class="form-control filterdate">
 							<h5 class="kantormainformlabel">s/d</h5>
 							<input type="date" name="aftDate"
 							id="endDate" value="<?php echo date('Y-m-d');?>" onchange="closingFilter()" class="form-control filterdate" max="<?php echo date('Y-m-d');?>">
-							<!-- JS Not implemented YET -->
+							
+
+
+
 							<br>
 							<script>
-							// 	function closingFilter() {
-							// 		var startDt = document.getElementById("startDate").value;
-							// 		var endDt = document.getElementById("endDate").value;
-							// 	// Declare variables
-							// 	var table, td, i;
-							// 	table = document.getElementById("closingTable");
-							// 	var numRows = table.rows.length;
-							// 	dt1 = new Date(startDt).getTime();
-							// 	dt2 = new Date(endDt).getTime();
-							// 	for (var i = 1; i < numRows; i++) {
-							// 		var cells = table.rows[i].getElementsByTagName('td');
-							// 		console.log(cells[2].innerHTML);
-							// 		dtTD = (new Date(cells[2].innerHTML)).getTime();
-							// 		if (dtTD>dt1 && dtTD<dt2) {
-							// 			table.rows[i].style.display = "";
-							// 		}else{
-							// 			table.rows[i].style.display = "none";
-							// 		}
-							// 	}
-							// }
+								function closingFilter() {
+									var startDt = document.getElementById("startDate").value;
+									var endDt = document.getElementById("endDate").value;
+								// Declare variables
+								var table, td, i;
+								table = document.getElementById("closingTable");
+								var numRows = table.rows.length;
+								dt1 = new Date(startDt).getTime();
+								dt2 = new Date(endDt).getTime();
+								for (var i = 1; i < numRows; i++) {
+									var cells = table.rows[i].getElementsByTagName('td');
+									console.log(cells[2].innerHTML);
+									dtTD = (new Date(cells[2].innerHTML)).getTime();
+									if (dtTD>dt1 && dtTD<dt2) {
+										table.rows[i].style.display = "";
+									}else{
+										table.rows[i].style.display = "none";
+									}
+								}
+							}
 						</script>
-					</form>
+					</form> -->
 				</div>
 				<br>
 				<div class="kantormaintabel" id="printableArea">
 					<div class="kantormaintabelheader"><h4>Hasil Closing</h4></div>
-					<table class="table sortable" id="closingTable">
-						<tr>
-							<th>Alamat</th>
-							<th>Tanggal</th>
-							<th>Harga</th>
-							<th>Opsi</th>
-						</tr>
+					<table class="table sortable" id="datatable">
+						<thead>
+							<tr>
+								<th>Alamat</th>
+								<th>Tanggal</th>
+								<th>Harga (Rp)</th>
+								<th>Opsi</th>
+							</tr>
+						</thead>
 						<?php
 						$closingSQL = "SELECT * FROM closing";
 						$closingResult = mysqli_query($db,$closingSQL);
@@ -338,7 +347,7 @@ include('session.php');
 								echo "<tr><td> " . $row["Address"]. " </td>";
 								echo "<td>   " . $row["Date"]. " </td>";
 								$asd = $row["closing_ID"];
-								echo "<td class='pull-right'> " . number_format($row["Price"]). " </td>";
+								echo "<td class='pull-right'> " . number_format($row["Price"]) . " </td>";
 								?>
 								<td>
 									<a href='closingmain.php?detailid=<?php echo $row["closing_ID"]; ?>' class="btn closingdetailedit">DETAIL</a>
@@ -356,7 +365,7 @@ include('session.php');
 					?>
 				</table>
 			</div>
-			<script src="script.js"></script>	
+			<!-- <script src="script.js"></script>	 -->
 			<script>
 			// function sortTable(n) {
 			//   var table, rows, switching, i,a, b, x, y, shouldSwitch, dir, switchcount = 0;
@@ -851,16 +860,16 @@ function secondaryInvolvementInsertion($db, $Agent_ID, $Closing_ID, $price, $age
 ?>
 
 <script>
-	document.getElementById("startDate").addEventListener("change", function() {
-		var input = this.value;
-		var startDateEntered = new Date(input);
-		document.getElementById("endDate").setAttribute("min", input);
-	});
-	document.getElementById("endDate").addEventListener("change", function() {
-		var input = this.value;
-		var endDateEntered = new Date(input);
-		document.getElementById("startDate").setAttribute("max", input);
-	});
+	// document.getElementById("startDate").addEventListener("change", function() {
+	// 	var input = this.value;
+	// 	var startDateEntered = new Date(input);
+	// 	document.getElementById("endDate").setAttribute("min", input);
+	// });
+	// document.getElementById("endDate").addEventListener("change", function() {
+	// 	var input = this.value;
+	// 	var endDateEntered = new Date(input);
+	// 	document.getElementById("startDate").setAttribute("max", input);
+	// });
 
 	function printDiv(divName) {
 		var printContents = document.getElementById(divName).innerHTML;
@@ -873,9 +882,9 @@ function secondaryInvolvementInsertion($db, $Agent_ID, $Closing_ID, $price, $age
 		document.body.innerHTML = originalContents;
 	}
 
-	jQuery(function($) {
-		$('#fadielGanteng').autoNumeric('init');   
-	});
+	// jQuery(function($) {
+	// 	$('#fadielGanteng').autoNumeric('init');   
+	// });
 </script>
 </body>
 </html>

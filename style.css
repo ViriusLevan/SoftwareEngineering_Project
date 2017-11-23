@@ -498,3 +498,7 @@ td{
 	font-size: 1.5rem;
 	margin-top: 7.5%;
 }
+
+.dataTables_length, .dataTables_filter {
+	display: none;
+}

@@ -4,8 +4,8 @@ $(function() {
       "sSearch": "Filter Data"
     },
     "iDisplayLength": -1,
+    "bSort" : false,
     "sPaginationType": "full_numbers",
-
   });
 
 
@@ -46,7 +46,7 @@ maxDateFilter = "";
 $.fn.dataTableExt.afnFiltering.push(
   function(oSettings, aData, iDataIndex) {
     if (typeof aData._date == 'undefined') {
-      aData._date = new Date(aData[0]).getTime();
+      aData._date = new Date(aData[1]).getTime();
     }
 
     if (minDateFilter && !isNaN(minDateFilter)) {
