@@ -338,7 +338,7 @@ include('session.php');
 								echo "<tr><td> " . $row["Address"]. " </td>";
 								echo "<td>   " . $row["Date"]. " </td>";
 								$asd = $row["closing_ID"];
-								echo "<td class='pull-right'> " . "Rp ". number_format($row["Price"]). " </td>";
+								echo "<td class='pull-right'> " . number_format($row["Price"]). " </td>";
 								?>
 								<td>
 									<a href='closingmain.php?detailid=<?php echo $row["closing_ID"]; ?>' class="btn closingdetailedit">DETAIL</a>
