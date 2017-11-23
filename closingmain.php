@@ -290,41 +290,6 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
 							<span id="date-label-from" class="date-label">From: </span><input class="date_range_filter date" type="text" id="datepicker_from" />
 							<span id="date-label-to" class="date-label">To:<input class="date_range_filter date" type="text" id="datepicker_to" />
 							</p>
-						<!-- <form action="">
-							<h5 class="kantormainformlabel">Tanggal&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;:</h5>
-							<input type="date" name="bfrDate"
-							id="startDate" value="2000-01-01" onchange="closingFilter()" class="form-control filterdate">
-							<h5 class="kantormainformlabel">s/d</h5>
-							<input type="date" name="aftDate"
-							id="endDate" value="<?php echo date('Y-m-d');?>" onchange="closingFilter()" class="form-control filterdate" max="<?php echo date('Y-m-d');?>">
-							
-
-
-
-							<br>
-							<script>
-								function closingFilter() {
-									var startDt = document.getElementById("startDate").value;
-									var endDt = document.getElementById("endDate").value;
-								// Declare variables
-								var table, td, i;
-								table = document.getElementById("closingTable");
-								var numRows = table.rows.length;
-								dt1 = new Date(startDt).getTime();
-								dt2 = new Date(endDt).getTime();
-								for (var i = 1; i < numRows; i++) {
-									var cells = table.rows[i].getElementsByTagName('td');
-									console.log(cells[2].innerHTML);
-									dtTD = (new Date(cells[2].innerHTML)).getTime();
-									if (dtTD>dt1 && dtTD<dt2) {
-										table.rows[i].style.display = "";
-									}else{
-										table.rows[i].style.display = "none";
-									}
-								}
-							}
-						</script>
-					</form> -->
 				</div>
 				<br>
 				<div class="kantormaintabel" id="printableArea">
@@ -365,53 +330,6 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
 					?>
 				</table>
 			</div>
-			<!-- <script src="script.js"></script>	 -->
-			<script>
-			// function sortTable(n) {
-			//   var table, rows, switching, i,a, b, x, y, shouldSwitch, dir, switchcount = 0;
-			//   table = document.getElementById("closingTable");
-			//   switching = true;
-			//   dir = "asc"; 
-			//   while (switching) {
-			//     switching = false;
-			//     rows = table.getElementsByTagName("TR");
-			//     for (i = 1; i < (rows.length - 1); i++) {
-			//       shouldSwitch = false;
-			//       x = rows[i].getElementsByTagName("TD")[n];
-			//       y = rows[i + 1].getElementsByTagName("TD")[n];
-			//       if (n==0) {
-			// 		a=x.innerHTML;
-			// 		b=y.innerHTML;
-			//       } else{
-			//       	a = parseInt(x.innerHTML);
-			//       	b = parseInt(y.innerHTML);
-			//       }
-
-			//       if (dir == "asc") {
-			//         if (a> b) {
-			//           shouldSwitch= true;
-			//           break;
-			//         }
-			//       } else if (dir == "desc") {
-			//         if (a< b) {
-			//           shouldSwitch= true;
-			//           break;
-			//         }
-			//       }
-			//     }
-			//     if (shouldSwitch) {
-			//       rows[i].parentNode.insertBefore(rows[i + 1], rows[i]);
-			//       switching = true;
-			//       switchcount ++; 
-			//     } else {
-			//       if (switchcount == 0 && dir == "asc") {
-			//         dir = "desc";
-			//         switching = true;
-			//       }
-			//     }
-			//   }
-			// }
-		</script>
 		<div id="delete" class="w3-modal" data-backdrop="">
 			<div class="w3-modal-content w3-animate-top w3-card-4">
 				<header class="w3-container modalheader">
@@ -882,9 +800,6 @@ function secondaryInvolvementInsertion($db, $Agent_ID, $Closing_ID, $price, $age
 		document.body.innerHTML = originalContents;
 	}
 
-	// jQuery(function($) {
-	// 	$('#fadielGanteng').autoNumeric('init');   
-	// });
 </script>
 </body>
 </html>
