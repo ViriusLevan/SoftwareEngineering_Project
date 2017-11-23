@@ -8,6 +8,52 @@
 		<title>Closing</title>
 	</head>
 	<body class="mainbody" 
+		<div>
+		<p id="date_filter">
+    <span id="date-label-from" class="date-label">From: </span><input class="date_range_filter date" type="text" id="datepicker_from" />
+    <span id="date-label-to" class="date-label">To:<input class="date_range_filter date" type="text" id="datepicker_to" />
+</p>
+    <table width="100%" class="display" id="datatable">
+      <thead>
+        <tr>
+          <th>Col1</th>
+          <th>Col2</th>
+        </tr>
+      </thead>
+      <tbody>
+        <tr>
+          <td>
+            03/03/2016
+          </td>
+          <td>5</td>
+        </tr>
+        <tr>
+          <td>
+            03/04/2017
+          </td>
+          <td>4</td>
+        </tr>
+        <tr>
+          <td>
+             03/05/2017
+          </td>
+          <td>2</td>
+        </tr>
+        <tr>
+          <td>
+            03/06/2016
+          </td>
+          <td>17</td>
+        </tr>
+        <tr>
+          <td>
+            03/07/2017
+          </td>
+          <td>10</td>
+        </tr>
+      </tbody>
+    </table>
+</div>
 		<?php
 			if(isset($_GET["id"])){
 				echo "onload ='agentOptions(1);showDelete();'";
@@ -356,51 +402,52 @@
 					?>
 				</table>
 			</div>
+			<script src="script.js"></script>	
 			<script>
-			function sortTable(n) {
-			  var table, rows, switching, i,a, b, x, y, shouldSwitch, dir, switchcount = 0;
-			  table = document.getElementById("closingTable");
-			  switching = true;
-			  dir = "asc"; 
-			  while (switching) {
-			    switching = false;
-			    rows = table.getElementsByTagName("TR");
-			    for (i = 1; i < (rows.length - 1); i++) {
-			      shouldSwitch = false;
-			      x = rows[i].getElementsByTagName("TD")[n];
-			      y = rows[i + 1].getElementsByTagName("TD")[n];
-			      if (n==0) {
-					a=x.innerHTML;
-					b=y.innerHTML;
-			      } else{
-			      	a = parseInt(x.innerHTML);
-			      	b = parseInt(y.innerHTML);
-			      }
+			// function sortTable(n) {
+			//   var table, rows, switching, i,a, b, x, y, shouldSwitch, dir, switchcount = 0;
+			//   table = document.getElementById("closingTable");
+			//   switching = true;
+			//   dir = "asc"; 
+			//   while (switching) {
+			//     switching = false;
+			//     rows = table.getElementsByTagName("TR");
+			//     for (i = 1; i < (rows.length - 1); i++) {
+			//       shouldSwitch = false;
+			//       x = rows[i].getElementsByTagName("TD")[n];
+			//       y = rows[i + 1].getElementsByTagName("TD")[n];
+			//       if (n==0) {
+			// 		a=x.innerHTML;
+			// 		b=y.innerHTML;
+			//       } else{
+			//       	a = parseInt(x.innerHTML);
+			//       	b = parseInt(y.innerHTML);
+			//       }
 			      
-			      if (dir == "asc") {
-			        if (a> b) {
-			          shouldSwitch= true;
-			          break;
-			        }
-			      } else if (dir == "desc") {
-			        if (a< b) {
-			          shouldSwitch= true;
-			          break;
-			        }
-			      }
-			    }
-			    if (shouldSwitch) {
-			      rows[i].parentNode.insertBefore(rows[i + 1], rows[i]);
-			      switching = true;
-			      switchcount ++; 
-			    } else {
-			      if (switchcount == 0 && dir == "asc") {
-			        dir = "desc";
-			        switching = true;
-			      }
-			    }
-			  }
-			}
+			//       if (dir == "asc") {
+			//         if (a> b) {
+			//           shouldSwitch= true;
+			//           break;
+			//         }
+			//       } else if (dir == "desc") {
+			//         if (a< b) {
+			//           shouldSwitch= true;
+			//           break;
+			//         }
+			//       }
+			//     }
+			//     if (shouldSwitch) {
+			//       rows[i].parentNode.insertBefore(rows[i + 1], rows[i]);
+			//       switching = true;
+			//       switchcount ++; 
+			//     } else {
+			//       if (switchcount == 0 && dir == "asc") {
+			//         dir = "desc";
+			//         switching = true;
+			//       }
+			//     }
+			//   }
+			// }
 			</script>
 			<div id="delete" class="w3-modal" data-backdrop="">
 				<div class="w3-modal-content w3-animate-top w3-card-4">
@@ -871,6 +918,10 @@
 
             document.body.innerHTML = originalContents;
         }
+
+		jQuery(function($) {
+			$('#fadielGanteng').autoNumeric('init');   
+		});
 	</script>
 </body>
 </html>
