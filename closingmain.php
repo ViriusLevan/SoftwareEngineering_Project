@@ -665,41 +665,80 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
 					<div class="w3-container">
 						<?php
 						$row = $_GET["detailid"];
+
+						$PPSQL = "SELECT Percentage, JobName
+						                          FROM `paypercentages`,closing
+						                          WHERE (DATEDIFF (closing.Date,ValidityEnd)<=0 OR ValidityEnd IS NULL)
+						                            AND DATEDIFF (closing.Date,ValidityStart)>=0
+						                            AND closing.closing_ID = $row";
+				        $PPResults = mysqli_query($db, $PPSQL);
+				        $PresP ="";
+				        $VPP = "";
+				        while ($PPRow = $PPResults->fetch_assoc()) {
+				            if($PPRow["JobName"] == "President"){
+				              $PresP = $PPRow["Percentage"];
+				            }else if($PPRow["JobName"] == "VicePresident"){
+				              $VPP = $PPRow["Percentage"];
+				            }
+				        }
+
 						$idSQL = "SELECT Agent.Agent_ID, Agent.Name, agent_involved_in_closing.earning, 
-						agent_involved_in_closing.workedAs, PhoneNumber 
-						from Agent_involved_in_closing, Agent 
-						where Agent.Agent_ID = agent_involved_in_closing.Agent_ID
-						AND agent.Agent_ID != 0
-						AND Closing_ID = ". $row;
+			                      agent_involved_in_closing.workedAs as workedAs, 
+			                      branch.Name AS bName, PhoneNumber, aCount.nAgents AS ac
+			                    FROM Agent_involved_in_closing, Agent, branch, agent_branch_employment,
+			                      (SELECT closing.closing_ID AS cID, closing.Date As cDate,
+			                          COUNT(agent_involved_in_closing.Agent_ID) AS nAgents
+			                        FROM agent_involved_in_closing, closing
+			                        WHERE agent_involved_in_closing.Closing_ID = closing.closing_ID
+			                            AND agent_involved_in_closing.workedAs IN (1,7,13,19)
+			                        GROUP BY closing.closing_ID) aCount
+			                    WHERE Agent.Agent_ID = agent_involved_in_closing.Agent_ID
+			                    AND aCount.cID = agent_involved_in_closing.Closing_ID
+			                    AND DATEDIFF(aCount.cDate, agent_branch_employment.Started)>=0
+			                    AND (DATEDIFF(aCount.cDate, agent_branch_employment.End)<=0 OR agent_branch_employment.End IS NULL)
+			                    AND agent_branch_employment.Branch_ID = branch.branch_id
+			                    AND agent_branch_employment.Agent_ID = agent.Agent_ID
+			                    AND agent_involved_in_closing.Closing_ID = $row 
+			                    ORDER BY workedAs ASC";
+
 						$idResults = mysqli_query($db, $idSQL);
 
 						if ($idResults->num_rows > 0) {
-							echo '<table class="table">';
-							echo "<tr> <th>Nama</th> <th>Komisi</th> <th>Sebagai</th> 
-							<th>No. Telepon</th> <th>Opsi</th> </tr>";
+							
 							while($agentRow = $idResults->fetch_assoc()) { 
+								if($agentRow["workedAs"] == 1 || $agentRow["workedAs"] == 7 
+									|| $agentRow["workedAs"] == 13 || $agentRow["workedAs"] == 19){
+									echo '</table>'; 
+									echo '<table class="table">';
+									echo "<tr> <th>Nama</th> <th>Komisi</th> <th>Persentase</th> <th>Sebagai</th> 
+									<th>No. Telepon</th> <th>Opsi</th> </tr>";
+								}
 								$workedAs = "";
+              					$Percentage = "";
 								$workedAs = setWorkedAs($agentRow["workedAs"]);
+								$Percentage = setPercentage($agentRow["workedAs"],$agentRow["ac"],$PresP,$VPP);
 
 					              // output data of each row
 								echo "<tr><td> " . $agentRow["Name"]. " </td>"; 
-								echo '<td class="pull-right"> ' . number_format($agentRow["earning"]). " </td>"; 
+								echo '<td class="pull-right"> ' . number_format($agentRow["earning"]). " </td>";
+              					echo "<td> " . $Percentage . "% </td>"; 
 								echo "<td> " .  $workedAs . " </td>";
 								echo "<td> " . $agentRow["PhoneNumber"]. " </td>";
 
 								?> 
 								<td>
 
-									<a class="btn closingdetailagen" href='agent_details.php?id=<?php echo $agentRow["Agent_ID"]; ?>'>DETAIL</a> 
+									<a class="btn closingdetailagen" 
+										href='agent_details.php?id=<?php echo $agentRow["Agent_ID"]; ?>'>DETAIL</a> 
 								</td></tr>
 								<?php
 
 							}
+							echo "</table>";
 						} else {
 					            //SHOULD NEVER HAPPEN
 							echo "Tidak ada agen";
 						}
-						echo '</table>'; 
 						?>
 
 						<?php 
@@ -731,6 +770,38 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
 
 							return $workedAs;
 						}
+							function setPercentage($code,$count,$pres,$vp){
+						        $workedAs = "";
+						        if($count == 4){
+						          $workedAs = 25;
+						        }else if($code>12){
+						          $workedAs = 25;
+						        }else if($code>6 && $count==3){
+						          $workedAs = 25;
+						        }else if($code>6 && $count==2){
+						          $workedAs = 50;
+						        }else if($code<7 && ($count==3 || $count==2)){
+						          $workedAs = 50;
+						        }else if($code<7 && $count==1){
+						          $workedAs = 100;
+						        }
+
+						        if($code%6==0){
+						          $workedAs = 1;
+						        }else if($code%6==1){
+						          //The actual agent
+						        }else if($code%6==2){
+						          $workedAs = $pres;
+						        }else if($code%6==3){
+						          $workedAs = $vp;
+						        }else if($code%6==4){
+						          $workedAs = 7;
+						        }else {
+						          $workedAs = 2;
+						        }
+
+						        return $workedAs;
+						    }
 						?>
 					</div>
 					<div class="modalfooterclosing">
