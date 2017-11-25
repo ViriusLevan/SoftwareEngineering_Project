@@ -704,19 +704,70 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
 						$idResults = mysqli_query($db, $idSQL);
 
 						if ($idResults->num_rows > 0) {
-							
+							$involvements = [];
+							$count = -1;
 							while($agentRow = $idResults->fetch_assoc()) { 
 								if($agentRow["workedAs"] == 1 || $agentRow["workedAs"] == 7 
 									|| $agentRow["workedAs"] == 13 || $agentRow["workedAs"] == 19){
+									
+								//just in case there is only primary involevement in the closing
+									if($agentRow["workedAs"] != 1){
+										if(!in_array(2, $involvements)){
+											createEmptyRow(setWorkedAs(2+($count*6)),
+												setPercentage(2+($count*6),$agentRow["ac"],$PresP,$VPP));
+										}
+										if(!in_array(3, $involvements)){
+											createEmptyRow(setWorkedAs(3+($count*6)),
+												setPercentage(3+($count*6),$agentRow["ac"],$PresP,$VPP));
+										}
+										if(!in_array(4, $involvements)){
+											createEmptyRow(setWorkedAs(4+($count*6)),
+												setPercentage(4+($count*6),$agentRow["ac"],$PresP,$VPP));
+										}
+										if(!in_array(5, $involvements)){
+											createEmptyRow(setWorkedAs(5+($count*6)),
+												setPercentage(5+($count*6),$agentRow["ac"],$PresP,$VPP));
+										}
+										if(!in_array(0, $involvements)){
+											createEmptyRow(setWorkedAs(6*($count+1)),
+												setPercentage(6*($count+1),$agentRow["ac"],$PresP,$VPP));
+										}
+									}
+									$count++;
+									$involvements = [];
 									echo '</table>'; 
 									echo '<table class="table">';
 									echo "<tr> <th>Nama</th> <th>Komisi</th> <th>Persentase</th> <th>Sebagai</th> 
 									<th>No. Telepon</th> <th>Opsi</th> </tr>";
 								}
+
+								//print empty rows based on current workedAs and involvements not yet printed
+								if($agentRow["workedAs"]%6>2 && !in_array(2, $involvements)){
+									createEmptyRow(setWorkedAs(2+($count*6)),
+										setPercentage(2+($count*6),$agentRow["ac"],$PresP,$VPP));
+									$involvements[] = 2;
+								}
+								if($agentRow["workedAs"]%6>3 && !in_array(3, $involvements)){
+									createEmptyRow(setWorkedAs(3+($count*6)),
+										setPercentage(3+($count*6),$agentRow["ac"],$PresP,$VPP));
+									$involvements[] = 3;
+								}
+								if($agentRow["workedAs"]%6>4 && !in_array(4, $involvements)){
+									createEmptyRow(setWorkedAs(4+($count*6)),
+										setPercentage(4+($count*6),$agentRow["ac"],$PresP,$VPP));
+									$involvements[] = 4;
+								}
+								if($agentRow["workedAs"]%6>5 && !in_array(5, $involvements)){
+									createEmptyRow(setWorkedAs(5+($count*6)),
+										setPercentage(5+($count*6),$agentRow["ac"],$PresP,$VPP));
+									$involvements[] = 5;
+								}
+
 								$workedAs = "";
               					$Percentage = "";
 								$workedAs = setWorkedAs($agentRow["workedAs"]);
 								$Percentage = setPercentage($agentRow["workedAs"],$agentRow["ac"],$PresP,$VPP);
+								$involvements[] = $agentRow["workedAs"]%6;
 
 					              // output data of each row
 								echo "<tr><td> " . $agentRow["Name"]. " </td>"; 
@@ -724,7 +775,6 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
               					echo "<td> " . $Percentage . "% </td>"; 
 								echo "<td> " .  $workedAs . " </td>";
 								echo "<td> " . $agentRow["PhoneNumber"]. " </td>";
-
 								?> 
 								<td>
 
@@ -734,6 +784,31 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
 								<?php
 
 							}
+							//print empty rows of last agent
+							if(!in_array(2, $involvements)){
+								createEmptyRow(setWorkedAs(2+($count*6)),
+									setPercentage(2+($count*6),$agentRow["ac"],$PresP,$VPP));
+								$involvements[] = 2;
+							}
+							if(!in_array(3, $involvements)){
+								createEmptyRow(setWorkedAs(3+($count*6)),
+									setPercentage(3+($count*6),$agentRow["ac"],$PresP,$VPP));
+								$involvements[] = 3;
+							}
+							if(!in_array(4, $involvements)){
+								createEmptyRow(setWorkedAs(4+($count*6)),
+									setPercentage(4+($count*6),$agentRow["ac"],$PresP,$VPP));
+								$involvements[] = 4;
+							}
+							if(!in_array(5, $involvements)){
+								createEmptyRow(setWorkedAs(5+($count*6)),
+									setPercentage(5+($count*6),$agentRow["ac"],$PresP,$VPP));
+								$involvements[] = 5;
+							}
+							if(!in_array(0, $involvements)){
+								createEmptyRow(setWorkedAs(6*($count+1)),
+									setPercentage(6*($count+1),$agentRow["ac"],$PresP,$VPP));
+							}
 							echo "</table>";
 						} else {
 					            //SHOULD NEVER HAPPEN
@@ -742,34 +817,34 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
 						?>
 
 						<?php 
-						function setWorkedAs($code){
-							$workedAs = "";
-							if($code>18){
-								$workedAs = "Agen 4";
-							}else if($code>12){
-								$workedAs = "Agen 3";
-							}else if($code>6){
-								$workedAs = "Agen 2";
-							}else{
-								$workedAs = "Agen 1";
-							}
+							function setWorkedAs($code){
+								$workedAs = "";
+								if($code>18){
+									$workedAs = "Agen 4";
+								}else if($code>12){
+									$workedAs = "Agen 3";
+								}else if($code>6){
+									$workedAs = "Agen 2";
+								}else{
+									$workedAs = "Agen 1";
+								}
 
-							if($code%6==0){
-								$workedAs = "Upline ketiga ".$workedAs;
-							}else if($code%6==1){
-				                //The actual agent
-							}else if($code%6==2){
-								$workedAs = "Presiden cabang  ".$workedAs;
-							}else if($code%6==3){
-								$workedAs = "Wakil presiden cabang ".$workedAs;
-							}else if($code%6==4){
-								$workedAs = "Upline pertama ".$workedAs;
-							}else {
-								$workedAs = "Upline kedua ".$workedAs;
-							}
+								if($code%6==0){
+									$workedAs = "Upline ketiga ".$workedAs;
+								}else if($code%6==1){
+					                //The actual agent
+								}else if($code%6==2){
+									$workedAs = "Presiden cabang  ".$workedAs;
+								}else if($code%6==3){
+									$workedAs = "Wakil presiden cabang ".$workedAs;
+								}else if($code%6==4){
+									$workedAs = "Upline pertama ".$workedAs;
+								}else {
+									$workedAs = "Upline kedua ".$workedAs;
+								}
 
-							return $workedAs;
-						}
+								return $workedAs;
+							}
 							function setPercentage($code,$count,$pres,$vp){
 						        $workedAs = "";
 						        if($count == 4){
@@ -801,6 +876,15 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
 						        }
 
 						        return $workedAs;
+						    }
+
+						    function createEmptyRow($workedAs, $percentage){
+						    	echo "<tr><td>-----------</td>"; 
+								echo "<td>-----------</td>";
+              					echo "<td> " . $percentage . "% </td>"; 
+								echo "<td> " .  $workedAs . " </td>";
+								echo "<td>-----------</td>";
+								echo "<td>-----------</td> </tr>";
 						    }
 						?>
 					</div>
