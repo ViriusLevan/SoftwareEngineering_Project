@@ -117,12 +117,12 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
 					////////////
 									//Secondary involvement insertion
 									$cAgentSQL =
-									"SELECT branch.President_ID,branch.VicePresident_ID, agent.ImmediateUpline_ID
-									FROM branch,agent,agent_branch_employment
-									WHERE branch.branch_id = agent_branch_employment.Branch_ID
-									AND agent_branch_employment.Agent_ID = agent.Agent_ID
-									AND agent_branch_employment.End IS NULL
-									AND agent.Agent_ID = " . $agents[$i];
+										"SELECT branch.President_ID,branch.VicePresident_ID, agent.ImmediateUpline_ID
+										FROM branch,agent,agent_branch_employment
+										WHERE branch.branch_id = agent_branch_employment.Branch_ID
+										AND agent_branch_employment.Agent_ID = agent.Agent_ID
+										AND agent_branch_employment.End IS NULL
+										AND agent.Agent_ID = " . $agents[$i];
 									$cAgentResult = mysqli_query($db, $cAgentSQL);
 									$cAgentRow = $cAgentResult->fetch_assoc();
 									//President & Vice President
@@ -130,51 +130,53 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
 									$VicePresidentID  = $cAgentRow["VicePresident_ID"];
 									$ImmediateUplineID = $cAgentRow["ImmediateUpline_ID"];
 									$cPresP = $cVPP = "";
-									//If there is a president and he's not the primary agent
-									if($PresidentID != null && $PresidentID != $agents[$i]){
-										$cPresPSQL = //Current President Percentage
-										"SELECT Percentage FROM `paypercentages`
-										WHERE JobName = 'President' AND ValidityEnd IS NULL";
+
+									$cPresPSQL = //Current President Percentage
+											"SELECT Percentage FROM `paypercentages`
+											WHERE JobName = 'President' AND ValidityEnd IS NULL";
 										$cPresPResult = mysqli_query($db, $cPresPSQL);
 										$cPresPRow = $cPresPResult->fetch_assoc();
 										$cPresP = $cPresPRow["Percentage"];
+									//If there is a president and he's not the primary agent
+									if($PresidentID != null && !in_array($PresidentID , $agents)){
 										secondaryInvolvementInsertion(
 											$db, $PresidentID, $cID, $price, $p, $cPresP, $i, 2);
+										$agents[] = $PresidentID;
+									}else{
+										secondaryInvolvementInsertion(
+											$db, 0, $cID, $price, $p, $cPresP, $i, 2);
 									}
-									//If there is a vice president and he's not the primary agent
-									if($VicePresidentID != null && $VicePresidentID != $agents[$i]){
-										$cVPPSQL = //Current Vice President Percentage
-										"SELECT Percentage FROM `paypercentages`
-										WHERE JobName = 'Vice President' AND ValidityEnd IS NULL";
+
+
+									$cVPPSQL = //Current Vice President Percentage
+											"SELECT Percentage FROM `paypercentages`
+											WHERE JobName = 'VicePresident' AND ValidityEnd IS NULL";
 										$cVPPResult = mysqli_query($db, $cVPPSQL);
 										$cVPPRow = $cVPPResult->fetch_assoc();
 										$cVPP = $cVPPRow["Percentage"];
+									//If there is a vice president and he's not the primary agent
+									if($VicePresidentID != null && !in_array($VicePresidentID , $agents)){
 										secondaryInvolvementInsertion(
 											$db, $VicePresidentID, $cID, $price, $p, $cVPP, $i, 3);
+										$agents[] = $VicePresidentID;
+									}else{
+										secondaryInvolvementInsertion(
+											$db, 0, $cID, $price, $p, $cVPP, $i, 3);
 									}
 									//Uplines
 									
 									if($ImmediateUplineID != null){//Upline 1
 										$UP2IDSQL = //Upline 2 ID and status of upline 1
-										"SELECT ImmediateUpline_ID,Status FROM agent WHERE Agent_ID=" . $ImmediateUplineID;
+											"SELECT ImmediateUpline_ID,Status FROM agent WHERE Agent_ID=" . $ImmediateUplineID;
 										$UP2IDResult = mysqli_query($db, $UP2IDSQL);
 										$UP2IDRow = $UP2IDResult->fetch_assoc();
 										$UP2ID = $UP2IDRow["ImmediateUpline_ID"];
 										if($UP2IDRow["Status"] == 0){//Upline 1 is fired/not in employment
 											secondaryInvolvementInsertion(//Money goes to the company
 												$db, 0, $cID, $price, $p, 7, $i, 4);
-										}
-										if(in_array($ImmediateUplineID , $agents)){//one of the primary agents involved
-											if($ImmediateUplineID == $PresidentID ){//Branch President
-												secondaryInvolvementInsertion(
-													$db, 0, $cID, $price, $p, $cPresP, $i, 2);
-												}else if($ImmediateUplineID == $VicePresidentID){//Branch VP
-													secondaryInvolvementInsertion(
-														$db, 0, $cID, $price, $p, $cVPP, $i, 3);
-												}else{//Neither branch pres nor VP
-													secondaryInvolvementInsertion(
-														$db, 0, $cID, $price, $p, 7, $i, 4);
-												}
+										}else if(in_array($ImmediateUplineID , $agents)){//involvement already exists
+											secondaryInvolvementInsertion(
+												$db, 0, $cID, $price, $p, 7, $i, 4);
 										}else if($ImmediateUplineID == $PresidentID){//Branch President
 											secondaryInvolvementInsertion(
 												$db, $ImmediateUplineID, $cID, $price, $p, $cPresP, $i, 2);
@@ -196,17 +198,12 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
 											$UP3IDResult = mysqli_query($db, $UP3IDSQL);
 											$UP3IDRow = $UP3IDResult->fetch_assoc();
 											$UP3ID = $UP3IDRow["ImmediateUpline_ID"];
-											if(in_array($UP2ID , $agents)){//one of the primary agents involved
-												if($UP2ID == $PresidentID ){//Branch President
-													secondaryInvolvementInsertion(
-														$db, 0, $cID, $price, $p, $cPresP, $i, 2);
-													}else if($UP2ID == $VicePresidentID){//Branch VP
-														secondaryInvolvementInsertion(
-															$db, 0, $cID, $price, $p, $cVPP, $i, 3);
-													}else{//Neither branch pres nor VP
-														secondaryInvolvementInsertion(
-															$db, 0, $cID, $price, $p, 2, $i, 5);
-													}
+											if($UP3IDRow["Status"] == 0){//Upline 2 is fired/not in employment
+												secondaryInvolvementInsertion(//Money goes to the company
+													$db, 0, $cID, $price, $p, 2, $i, 5);
+											}else if(in_array($UP2ID , $agents)){//involvement already exists
+												secondaryInvolvementInsertion(
+													$db, 0, $cID, $price, $p, 2, $i, 5);
 											}else if($UP2ID == $PresidentID){//Branch President
 												secondaryInvolvementInsertion(
 													$db, $UP2ID, $cID, $price, $p, $cPresP, $i, 2);
@@ -228,21 +225,12 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
 												$UP3StatusResult = mysqli_query($db, $UP3StatusSQL);
 												$UP3StatusRow = $UP3StatusResult->fetch_assoc();
 												$UP3Status = $UP3StatusRow["ImmediateUpline_ID"];
-												if($UP3IDRow["Status"] == 0){//Upline 3 is fired/not in employment
+												if($UP3StatusRow["Status"] == 0){//Upline 3 is fired/not in employment
 													secondaryInvolvementInsertion(//Money goes to the company
-														$db, 0, $cID, $price, $p, 2, $i, 6);
-												}
-												if(in_array($UP3ID , $agents)){//one of the primary agents involved
-													if($UP3ID == $PresidentID ){//Branch President
-														secondaryInvolvementInsertion(
-															$db, 0, $cID, $price, $p, $cPresP, $i, 2);
-														}else if($UP3ID == $VicePresidentID){//Branch VP
-															secondaryInvolvementInsertion(
-																$db, 0, $cID, $price, $p, $cVPP, $i, 3);
-														}else{//Neither branch pres nor VP
-															secondaryInvolvementInsertion(
-																$db, 0, $cID, $price, $p, 1, $i, 6);
-														}
+														$db, 0, $cID, $price, $p, 1, $i, 6);
+												}else if(in_array($UP3ID , $agents)){//involvement already exists
+													secondaryInvolvementInsertion(
+														$db, 0, $cID, $price, $p, 1, $i, 6);
 												}else if($UP3ID == $PresidentID){//Branch President
 													secondaryInvolvementInsertion(
 														$db, $UP3ID, $cID, $price, $p, $cPresP, $i, 2);
@@ -257,8 +245,23 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
 													secondaryInvolvementInsertion(
 														$db, $UP3ID, $cID, $price, $p, 1, $i, 6);
 												}
+											}else{
+												secondaryInvolvementInsertion(//Upline 3 company
+													$db, 0, $cID, $price, $p, 1, $i, 6);
 											}
+										}else{
+											secondaryInvolvementInsertion(//Upline 2 company
+												$db, 0, $cID, $price, $p, 2, $i, 5);
+											secondaryInvolvementInsertion(//Upline 3 company
+												$db, 0, $cID, $price, $p, 1, $i, 6);
 										}
+									}else{
+										secondaryInvolvementInsertion(//Upline 1 company
+												$db, 0, $cID, $price, $p, 7, $i, 4);
+										secondaryInvolvementInsertion(//Upline 2 company
+												$db, 0, $cID, $price, $p, 2, $i, 5);
+										secondaryInvolvementInsertion(//Upline 3 company
+												$db, 0, $cID, $price, $p, 1, $i, 6);
 									}
 								}
 								else{
@@ -291,6 +294,18 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
 							<span id="date-label-to" class="date-label">To:<input class="date_range_filter date" type="text" id="datepicker_to" />
 							</p>
 				</div>
+				<script>
+					function printDiv(divName) {
+						var printContents = document.getElementById(divName).innerHTML;
+						var originalContents = document.body.innerHTML;
+
+						document.body.innerHTML = printContents;
+
+						window.print();
+
+						document.body.innerHTML = originalContents;
+					}
+				</script>
 				<br>
 				<div class="kantormaintabel" id="printableArea">
 					<div class="kantormaintabelheader"><h4>Hasil Closing</h4></div>
@@ -497,7 +512,7 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
 								<div class="row">
 									<div class="col">
 										<h5 class="kantormainformlabel">Tanggal</h5>
-										<input class="form-control" type="date" name="date" value="<?php echo date('Y-m-d');?>" 	max="<?php echo date('Y-m-d');?>" required>
+										<input class="form-control" type="date" name="date" value="<?php echo date('Y-m-d');?>" 	min="2000-01-01" max="<?php echo date('Y-m-d');?>" required>
 									</div>
 									<div class="col">
 										<h5 class="kantormainformlabel">Harga (Rp)</h5>
@@ -694,8 +709,6 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
 			                        GROUP BY closing.closing_ID) aCount
 			                    WHERE Agent.Agent_ID = agent_involved_in_closing.Agent_ID
 			                    AND aCount.cID = agent_involved_in_closing.Closing_ID
-			                    AND DATEDIFF(aCount.cDate, agent_branch_employment.Started)>=0
-			                    AND (DATEDIFF(aCount.cDate, agent_branch_employment.End)<=0 OR agent_branch_employment.End IS NULL)
 			                    AND agent_branch_employment.Branch_ID = branch.branch_id
 			                    AND agent_branch_employment.Agent_ID = agent.Agent_ID
 			                    AND agent_involved_in_closing.Closing_ID = $row 
@@ -704,70 +717,20 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
 						$idResults = mysqli_query($db, $idSQL);
 
 						if ($idResults->num_rows > 0) {
-							$involvements = [];
-							$count = -1;
 							while($agentRow = $idResults->fetch_assoc()) { 
 								if($agentRow["workedAs"] == 1 || $agentRow["workedAs"] == 7 
 									|| $agentRow["workedAs"] == 13 || $agentRow["workedAs"] == 19){
 									
-								//just in case there is only primary involevement in the closing
-									if($agentRow["workedAs"] != 1){
-										if(!in_array(2, $involvements)){
-											createEmptyRow(setWorkedAs(2+($count*6)),
-												setPercentage(2+($count*6),$agentRow["ac"],$PresP,$VPP));
-										}
-										if(!in_array(3, $involvements)){
-											createEmptyRow(setWorkedAs(3+($count*6)),
-												setPercentage(3+($count*6),$agentRow["ac"],$PresP,$VPP));
-										}
-										if(!in_array(4, $involvements)){
-											createEmptyRow(setWorkedAs(4+($count*6)),
-												setPercentage(4+($count*6),$agentRow["ac"],$PresP,$VPP));
-										}
-										if(!in_array(5, $involvements)){
-											createEmptyRow(setWorkedAs(5+($count*6)),
-												setPercentage(5+($count*6),$agentRow["ac"],$PresP,$VPP));
-										}
-										if(!in_array(0, $involvements)){
-											createEmptyRow(setWorkedAs(6*($count+1)),
-												setPercentage(6*($count+1),$agentRow["ac"],$PresP,$VPP));
-										}
-									}
-									$count++;
-									$involvements = [];
 									echo '</table>'; 
 									echo '<table class="table">';
 									echo "<tr> <th>Nama</th> <th>Komisi</th> <th>Persentase</th> <th>Sebagai</th> 
 									<th>No. Telepon</th> <th>Opsi</th> </tr>";
 								}
 
-								//print empty rows based on current workedAs and involvements not yet printed
-								if($agentRow["workedAs"]%6>2 && !in_array(2, $involvements)){
-									createEmptyRow(setWorkedAs(2+($count*6)),
-										setPercentage(2+($count*6),$agentRow["ac"],$PresP,$VPP));
-									$involvements[] = 2;
-								}
-								if($agentRow["workedAs"]%6>3 && !in_array(3, $involvements)){
-									createEmptyRow(setWorkedAs(3+($count*6)),
-										setPercentage(3+($count*6),$agentRow["ac"],$PresP,$VPP));
-									$involvements[] = 3;
-								}
-								if($agentRow["workedAs"]%6>4 && !in_array(4, $involvements)){
-									createEmptyRow(setWorkedAs(4+($count*6)),
-										setPercentage(4+($count*6),$agentRow["ac"],$PresP,$VPP));
-									$involvements[] = 4;
-								}
-								if($agentRow["workedAs"]%6>5 && !in_array(5, $involvements)){
-									createEmptyRow(setWorkedAs(5+($count*6)),
-										setPercentage(5+($count*6),$agentRow["ac"],$PresP,$VPP));
-									$involvements[] = 5;
-								}
-
 								$workedAs = "";
               					$Percentage = "";
 								$workedAs = setWorkedAs($agentRow["workedAs"]);
 								$Percentage = setPercentage($agentRow["workedAs"],$agentRow["ac"],$PresP,$VPP);
-								$involvements[] = $agentRow["workedAs"]%6;
 
 					              // output data of each row
 								echo "<tr><td> " . $agentRow["Name"]. " </td>"; 
@@ -783,31 +746,6 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
 								</td></tr>
 								<?php
 
-							}
-							//print empty rows of last agent
-							if(!in_array(2, $involvements)){
-								createEmptyRow(setWorkedAs(2+($count*6)),
-									setPercentage(2+($count*6),$agentRow["ac"],$PresP,$VPP));
-								$involvements[] = 2;
-							}
-							if(!in_array(3, $involvements)){
-								createEmptyRow(setWorkedAs(3+($count*6)),
-									setPercentage(3+($count*6),$agentRow["ac"],$PresP,$VPP));
-								$involvements[] = 3;
-							}
-							if(!in_array(4, $involvements)){
-								createEmptyRow(setWorkedAs(4+($count*6)),
-									setPercentage(4+($count*6),$agentRow["ac"],$PresP,$VPP));
-								$involvements[] = 4;
-							}
-							if(!in_array(5, $involvements)){
-								createEmptyRow(setWorkedAs(5+($count*6)),
-									setPercentage(5+($count*6),$agentRow["ac"],$PresP,$VPP));
-								$involvements[] = 5;
-							}
-							if(!in_array(0, $involvements)){
-								createEmptyRow(setWorkedAs(6*($count+1)),
-									setPercentage(6*($count+1),$agentRow["ac"],$PresP,$VPP));
 							}
 							echo "</table>";
 						} else {
@@ -932,29 +870,6 @@ function secondaryInvolvementInsertion($db, $Agent_ID, $Closing_ID, $price, $age
 }
 ?>
 
-<script>
-	// document.getElementById("startDate").addEventListener("change", function() {
-	// 	var input = this.value;
-	// 	var startDateEntered = new Date(input);
-	// 	document.getElementById("endDate").setAttribute("min", input);
-	// });
-	// document.getElementById("endDate").addEventListener("change", function() {
-	// 	var input = this.value;
-	// 	var endDateEntered = new Date(input);
-	// 	document.getElementById("startDate").setAttribute("max", input);
-	// });
 
-	function printDiv(divName) {
-		var printContents = document.getElementById(divName).innerHTML;
-		var originalContents = document.body.innerHTML;
-
-		document.body.innerHTML = printContents;
-
-		window.print();
-
-		document.body.innerHTML = originalContents;
-	}
-
-</script>
 </body>
 </html>

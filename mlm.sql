@@ -3,7 +3,7 @@
 -- https://www.phpmyadmin.net/
 --
 -- Host: 127.0.0.1
--- Generation Time: Nov 09, 2017 at 03:28 PM
+-- Generation Time: Nov 27, 2017 at 03:24 AM
 -- Server version: 10.1.21-MariaDB
 -- PHP Version: 7.1.1
 
@@ -62,32 +62,39 @@ INSERT INTO `agent` (`Agent_ID`, `Name`, `ImmediateUpline_ID`, `Status`, `PhoneN
 (1, 'John', NULL, 1, '0123456789'),
 (2, 'Jane', 1, 1, '0025134'),
 (3, 'Dude', NULL, 1, '01234'),
-(4, 'Tir', 2, 1, '11223344');
+(4, 'Tir', 2, 1, '11223344'),
+(6, 'Doe', 2, 0, '999'),
+(7, 'AA', 2, 0, '123123'),
+(8, 'Doe', 1, 1, '122'),
+(9, 'Fayr', 2, 1, '222');
 
 -- --------------------------------------------------------
 
 --
--- Table structure for table `Agent_Branch_Employment`
+-- Table structure for table `agent_branch_employment`
 --
 
-CREATE TABLE `Agent_Branch_Employment` (
-	`Agent_ID` int(11) NOT NULL,
-	`Branch_ID` int(11) NOT NULL,
-	`Started` DATE NOT NULL,
-	`End` date DEFAULT NULL
-)ENGINE=InnoDB DEFAULT CHARSET=latin1;
+CREATE TABLE `agent_branch_employment` (
+  `Agent_ID` int(11) NOT NULL,
+  `Branch_ID` int(11) NOT NULL,
+  `Started` date NOT NULL,
+  `End` date DEFAULT NULL
+) ENGINE=InnoDB DEFAULT CHARSET=latin1;
 
 --
--- Dumping data for table `Agent_Branch_Employment`
+-- Dumping data for table `agent_branch_employment`
 --
 
-INSERT INTO `Agent_Branch_Employment` (`Agent_ID`, `Branch_ID`, `Started`, `End`) VALUES
+INSERT INTO `agent_branch_employment` (`Agent_ID`, `Branch_ID`, `Started`, `End`) VALUES
 (0, 1, '2000-01-01', NULL),
 (1, 1, '2000-01-01', NULL),
 (2, 1, '2000-01-01', NULL),
 (3, 1, '2000-01-01', NULL),
-(4, 1, '2000-01-01', NULL);
-
+(4, 1, '2000-01-01', NULL),
+(6, 2, '2017-11-20', '2017-11-28'),
+(7, 1, '2017-11-27', '2017-11-28'),
+(8, 1, '2017-11-27', NULL),
+(9, 2, '2017-11-27', NULL);
 
 -- --------------------------------------------------------
 
@@ -107,7 +114,14 @@ CREATE TABLE `agent_has_downline` (
 INSERT INTO `agent_has_downline` (`Agent_ID`, `Downline_ID`) VALUES
 (1, 2),
 (1, 4),
-(2, 4);
+(1, 6),
+(1, 7),
+(1, 8),
+(1, 9),
+(2, 4),
+(2, 6),
+(2, 7),
+(2, 9);
 
 -- --------------------------------------------------------
 
@@ -127,15 +141,30 @@ CREATE TABLE `agent_involved_in_closing` (
 --
 
 INSERT INTO `agent_involved_in_closing` (`Agent_ID`, `Closing_ID`, `earning`, `workedAs`) VALUES
-(0, 1, 3500, 10),
-(0, 6, 5250, 10),
-(1, 1, 50000, 1),
-(1, 2, 500000, 1),
-(1, 5, 139300, 4),
-(1, 6, 75000, 1),
-(2, 1, 50000, 7),
-(2, 5, 1990000, 1),
-(2, 6, 75000, 7);
+(0, 24, 6000, 2),
+(0, 24, 4000, 3),
+(0, 24, 7000, 4),
+(0, 24, 2000, 5),
+(0, 24, 1000, 6),
+(0, 24, 6000, 8),
+(0, 24, 4000, 9),
+(0, 24, 7000, 10),
+(0, 24, 2000, 11),
+(0, 24, 1000, 12),
+(0, 24, 6000, 14),
+(0, 24, 4000, 15),
+(0, 24, 7000, 16),
+(0, 24, 2000, 17),
+(0, 24, 1000, 18),
+(0, 24, 6000, 20),
+(0, 24, 4000, 21),
+(0, 24, 7000, 22),
+(0, 24, 2000, 23),
+(0, 24, 1000, 24),
+(1, 24, 100000, 1),
+(2, 24, 100000, 13),
+(8, 24, 100000, 7),
+(9, 24, 100000, 19);
 
 -- --------------------------------------------------------
 
@@ -157,9 +186,11 @@ CREATE TABLE `branch` (
 --
 
 INSERT INTO `branch` (`branch_id`, `President_ID`, `VicePresident_ID`, `status`, `Name`, `address`) VALUES
-(1, NULL, NULL, 1, 'First', 'AAAAAAA Street'),
-(2, NULL, NULL, 1, 'Second', 'Dukuh Kupang'),
-(4, NULL, NULL, 1, 'Denver', 'Citraland');
+(1, 1, NULL, 1, 'First', 'AAAAAAA Street'),
+(2, 2, NULL, 1, 'Second', 'Dukuh Kupang'),
+(4, 3, 6, 1, 'Denver', 'Citraland'),
+(5, NULL, NULL, 0, 'Fair', 'Grounds'),
+(6, NULL, NULL, 0, '', '');
 
 -- --------------------------------------------------------
 
@@ -179,10 +210,7 @@ CREATE TABLE `closing` (
 --
 
 INSERT INTO `closing` (`closing_ID`, `Date`, `Price`, `Address`) VALUES
-(1, '2017-10-12', 100000, 'Qual'),
-(2, '2017-10-28', 500000, 'Honolulu'),
-(5, '1990-10-10', 1990000, 'FFF'),
-(6, '2014-07-11', 150000, 'FFF');
+(24, '2017-11-27', 400000, 'Quadruple');
 
 -- --------------------------------------------------------
 
@@ -191,7 +219,7 @@ INSERT INTO `closing` (`closing_ID`, `Date`, `Price`, `Address`) VALUES
 --
 
 CREATE TABLE `paypercentages` (
-  `PPID` INT(11) NOT NULL,
+  `PPID` int(11) NOT NULL,
   `JobName` varchar(70) NOT NULL,
   `Percentage` double NOT NULL,
   `ValidityStart` date NOT NULL,
@@ -222,6 +250,13 @@ ALTER TABLE `admin`
 ALTER TABLE `agent`
   ADD PRIMARY KEY (`Agent_ID`),
   ADD KEY `fk_Agent_ImmediateUpline_ID` (`ImmediateUpline_ID`);
+
+--
+-- Indexes for table `agent_branch_employment`
+--
+ALTER TABLE `agent_branch_employment`
+  ADD KEY `Has_or_had_an_agent` (`Branch_ID`),
+  ADD KEY `agent_branch_employment_ibfk_1` (`Agent_ID`);
 
 --
 -- Indexes for table `agent_has_downline`
@@ -265,17 +300,17 @@ ALTER TABLE `paypercentages`
 -- AUTO_INCREMENT for table `agent`
 --
 ALTER TABLE `agent`
-  MODIFY `Agent_ID` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=5;
+  MODIFY `Agent_ID` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=10;
 --
 -- AUTO_INCREMENT for table `branch`
 --
 ALTER TABLE `branch`
-  MODIFY `branch_id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=5;
+  MODIFY `branch_id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=7;
 --
 -- AUTO_INCREMENT for table `closing`
 --
 ALTER TABLE `closing`
-  MODIFY `closing_ID` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=8;
+  MODIFY `closing_ID` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=25;
 --
 -- AUTO_INCREMENT for table `paypercentages`
 --
@@ -292,12 +327,12 @@ ALTER TABLE `agent`
   ADD CONSTRAINT `fk_Agent_ImmediateUpline_ID` FOREIGN KEY (`ImmediateUpline_ID`) REFERENCES `agent` (`Agent_ID`);
 
 --
--- Constraints for table `Agent_Branch_Employment`
+-- Constraints for table `agent_branch_employment`
 --
-ALTER TABLE `Agent_Branch_Employment`
-  ADD CONSTRAINT `Works_or_worked` FOREIGN KEY (`Agent_ID`) REFERENCES `agent` (`Agent_ID`),
-  ADD CONSTRAINT `Has_or_had_an_agent` FOREIGN KEY (`Branch_ID`) REFERENCES `branch` (`branch_ID`);
-  
+ALTER TABLE `agent_branch_employment`
+  ADD CONSTRAINT `Has_or_had_an_agent` FOREIGN KEY (`Branch_ID`) REFERENCES `branch` (`branch_id`),
+  ADD CONSTRAINT `agent_branch_employment_ibfk_1` FOREIGN KEY (`Agent_ID`) REFERENCES `agent` (`Agent_ID`);
+
 --
 -- Constraints for table `agent_has_downline`
 --
