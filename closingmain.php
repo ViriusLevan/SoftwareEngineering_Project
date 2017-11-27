@@ -138,9 +138,11 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
 										$cPresPRow = $cPresPResult->fetch_assoc();
 										$cPresP = $cPresPRow["Percentage"];
 									//If there is a president and he's not the primary agent
-									if($PresidentID != null && $PresidentID != $agents[$i]){										secondaryInvolvementInsertion(
+									if($PresidentID != null && !in_array($PresidentID , $agents)){
+										secondaryInvolvementInsertion(
 											$db, $PresidentID, $cID, $price, $p, $cPresP, $i, 2);
-									}else if($PresidentID == null){
+										$agents[] = $PresidentID;
+									}else{
 										secondaryInvolvementInsertion(
 											$db, 0, $cID, $price, $p, $cPresP, $i, 2);
 									}
@@ -153,10 +155,11 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
 										$cVPPRow = $cVPPResult->fetch_assoc();
 										$cVPP = $cVPPRow["Percentage"];
 									//If there is a vice president and he's not the primary agent
-									if($VicePresidentID != null && $VicePresidentID != $agents[$i]){
+									if($VicePresidentID != null && !in_array($VicePresidentID , $agents)){
 										secondaryInvolvementInsertion(
 											$db, $VicePresidentID, $cID, $price, $p, $cVPP, $i, 3);
-									}else if($VicePresidentID == null){
+										$agents[] = $VicePresidentID;
+									}else{
 										secondaryInvolvementInsertion(
 											$db, 0, $cID, $price, $p, $cVPP, $i, 3);
 									}
@@ -171,18 +174,9 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
 										if($UP2IDRow["Status"] == 0){//Upline 1 is fired/not in employment
 											secondaryInvolvementInsertion(//Money goes to the company
 												$db, 0, $cID, $price, $p, 7, $i, 4);
-										}
-										if(in_array($ImmediateUplineID , $agents)){//one of the primary agents involved
-											if($ImmediateUplineID == $PresidentID ){//Branch President
-												secondaryInvolvementInsertion(
-													$db, 0, $cID, $price, $p, $cPresP, $i, 2);
-												}else if($ImmediateUplineID == $VicePresidentID){//Branch VP
-													secondaryInvolvementInsertion(
-														$db, 0, $cID, $price, $p, $cVPP, $i, 3);
-												}else{//Neither branch pres nor VP
-													secondaryInvolvementInsertion(
-														$db, 0, $cID, $price, $p, 7, $i, 4);
-												}
+										}else if(in_array($ImmediateUplineID , $agents)){//involvement already exists
+											secondaryInvolvementInsertion(
+												$db, 0, $cID, $price, $p, 7, $i, 4);
 										}else if($ImmediateUplineID == $PresidentID){//Branch President
 											secondaryInvolvementInsertion(
 												$db, $ImmediateUplineID, $cID, $price, $p, $cPresP, $i, 2);
@@ -207,18 +201,9 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
 											if($UP3IDRow["Status"] == 0){//Upline 2 is fired/not in employment
 												secondaryInvolvementInsertion(//Money goes to the company
 													$db, 0, $cID, $price, $p, 2, $i, 5);
-											}
-											if(in_array($UP2ID , $agents)){//one of the primary agents involved
-												if($UP2ID == $PresidentID ){//Branch President
-													secondaryInvolvementInsertion(
-														$db, 0, $cID, $price, $p, $cPresP, $i, 2);
-													}else if($UP2ID == $VicePresidentID){//Branch VP
-														secondaryInvolvementInsertion(
-															$db, 0, $cID, $price, $p, $cVPP, $i, 3);
-													}else{//Neither branch pres nor VP
-														secondaryInvolvementInsertion(
-															$db, 0, $cID, $price, $p, 2, $i, 5);
-													}
+											}else if(in_array($UP2ID , $agents)){//involvement already exists
+												secondaryInvolvementInsertion(
+													$db, 0, $cID, $price, $p, 2, $i, 5);
 											}else if($UP2ID == $PresidentID){//Branch President
 												secondaryInvolvementInsertion(
 													$db, $UP2ID, $cID, $price, $p, $cPresP, $i, 2);
@@ -243,18 +228,9 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
 												if($UP3StatusRow["Status"] == 0){//Upline 3 is fired/not in employment
 													secondaryInvolvementInsertion(//Money goes to the company
 														$db, 0, $cID, $price, $p, 1, $i, 6);
-												}
-												if(in_array($UP3ID , $agents)){//one of the primary agents involved
-													if($UP3ID == $PresidentID ){//Branch President
-														secondaryInvolvementInsertion(
-															$db, 0, $cID, $price, $p, $cPresP, $i, 2);
-														}else if($UP3ID == $VicePresidentID){//Branch VP
-															secondaryInvolvementInsertion(
-																$db, 0, $cID, $price, $p, $cVPP, $i, 3);
-														}else{//Neither branch pres nor VP
-															secondaryInvolvementInsertion(
-																$db, 0, $cID, $price, $p, 1, $i, 6);
-														}
+												}else if(in_array($UP3ID , $agents)){//involvement already exists
+													secondaryInvolvementInsertion(
+														$db, 0, $cID, $price, $p, 1, $i, 6);
 												}else if($UP3ID == $PresidentID){//Branch President
 													secondaryInvolvementInsertion(
 														$db, $UP3ID, $cID, $price, $p, $cPresP, $i, 2);
@@ -318,6 +294,18 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
 							<span id="date-label-to" class="date-label">To:<input class="date_range_filter date" type="text" id="datepicker_to" />
 							</p>
 				</div>
+				<script>
+					function printDiv(divName) {
+						var printContents = document.getElementById(divName).innerHTML;
+						var originalContents = document.body.innerHTML;
+
+						document.body.innerHTML = printContents;
+
+						window.print();
+
+						document.body.innerHTML = originalContents;
+					}
+				</script>
 				<br>
 				<div class="kantormaintabel" id="printableArea">
 					<div class="kantormaintabelheader"><h4>Hasil Closing</h4></div>
@@ -524,7 +512,7 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
 								<div class="row">
 									<div class="col">
 										<h5 class="kantormainformlabel">Tanggal</h5>
-										<input class="form-control" type="date" name="date" value="<?php echo date('Y-m-d');?>" 	max="<?php echo date('Y-m-d');?>" required>
+										<input class="form-control" type="date" name="date" value="<?php echo date('Y-m-d');?>" 	min="2000-01-01" max="<?php echo date('Y-m-d');?>" required>
 									</div>
 									<div class="col">
 										<h5 class="kantormainformlabel">Harga (Rp)</h5>
@@ -731,70 +719,20 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
 						$idResults = mysqli_query($db, $idSQL);
 
 						if ($idResults->num_rows > 0) {
-							$involvements = [];
-							$count = -1;
 							while($agentRow = $idResults->fetch_assoc()) { 
 								if($agentRow["workedAs"] == 1 || $agentRow["workedAs"] == 7 
 									|| $agentRow["workedAs"] == 13 || $agentRow["workedAs"] == 19){
 									
-								//just in case there is only primary involevement in the closing
-									if($agentRow["workedAs"] != 1){
-										if(!in_array(2, $involvements)){
-											createEmptyRow(setWorkedAs(2+($count*6)),
-												setPercentage(2+($count*6),$agentRow["ac"],$PresP,$VPP));
-										}
-										if(!in_array(3, $involvements)){
-											createEmptyRow(setWorkedAs(3+($count*6)),
-												setPercentage(3+($count*6),$agentRow["ac"],$PresP,$VPP));
-										}
-										if(!in_array(4, $involvements)){
-											createEmptyRow(setWorkedAs(4+($count*6)),
-												setPercentage(4+($count*6),$agentRow["ac"],$PresP,$VPP));
-										}
-										if(!in_array(5, $involvements)){
-											createEmptyRow(setWorkedAs(5+($count*6)),
-												setPercentage(5+($count*6),$agentRow["ac"],$PresP,$VPP));
-										}
-										if(!in_array(0, $involvements)){
-											createEmptyRow(setWorkedAs(6*($count+1)),
-												setPercentage(6*($count+1),$agentRow["ac"],$PresP,$VPP));
-										}
-									}
-									$count++;
-									$involvements = [];
 									echo '</table>'; 
 									echo '<table class="table">';
 									echo "<tr> <th>Nama</th> <th>Komisi</th> <th>Persentase</th> <th>Sebagai</th> 
 									<th>No. Telepon</th> <th>Opsi</th> </tr>";
 								}
 
-								//print empty rows based on current workedAs and involvements not yet printed
-								if($agentRow["workedAs"]%6>2 && !in_array(2, $involvements)){
-									createEmptyRow(setWorkedAs(2+($count*6)),
-										setPercentage(2+($count*6),$agentRow["ac"],$PresP,$VPP));
-									$involvements[] = 2;
-								}
-								if($agentRow["workedAs"]%6>3 && !in_array(3, $involvements)){
-									createEmptyRow(setWorkedAs(3+($count*6)),
-										setPercentage(3+($count*6),$agentRow["ac"],$PresP,$VPP));
-									$involvements[] = 3;
-								}
-								if($agentRow["workedAs"]%6>4 && !in_array(4, $involvements)){
-									createEmptyRow(setWorkedAs(4+($count*6)),
-										setPercentage(4+($count*6),$agentRow["ac"],$PresP,$VPP));
-									$involvements[] = 4;
-								}
-								if($agentRow["workedAs"]%6>5 && !in_array(5, $involvements)){
-									createEmptyRow(setWorkedAs(5+($count*6)),
-										setPercentage(5+($count*6),$agentRow["ac"],$PresP,$VPP));
-									$involvements[] = 5;
-								}
-
 								$workedAs = "";
               					$Percentage = "";
 								$workedAs = setWorkedAs($agentRow["workedAs"]);
 								$Percentage = setPercentage($agentRow["workedAs"],$agentRow["ac"],$PresP,$VPP);
-								$involvements[] = $agentRow["workedAs"]%6;
 
 					              // output data of each row
 								echo "<tr><td> " . $agentRow["Name"]. " </td>"; 
@@ -810,31 +748,6 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
 								</td></tr>
 								<?php
 
-							}
-							//print empty rows of last agent
-							if(!in_array(2, $involvements)){
-								createEmptyRow(setWorkedAs(2+($count*6)),
-									setPercentage(2+($count*6),$agentRow["ac"],$PresP,$VPP));
-								$involvements[] = 2;
-							}
-							if(!in_array(3, $involvements)){
-								createEmptyRow(setWorkedAs(3+($count*6)),
-									setPercentage(3+($count*6),$agentRow["ac"],$PresP,$VPP));
-								$involvements[] = 3;
-							}
-							if(!in_array(4, $involvements)){
-								createEmptyRow(setWorkedAs(4+($count*6)),
-									setPercentage(4+($count*6),$agentRow["ac"],$PresP,$VPP));
-								$involvements[] = 4;
-							}
-							if(!in_array(5, $involvements)){
-								createEmptyRow(setWorkedAs(5+($count*6)),
-									setPercentage(5+($count*6),$agentRow["ac"],$PresP,$VPP));
-								$involvements[] = 5;
-							}
-							if(!in_array(0, $involvements)){
-								createEmptyRow(setWorkedAs(6*($count+1)),
-									setPercentage(6*($count+1),$agentRow["ac"],$PresP,$VPP));
 							}
 							echo "</table>";
 						} else {
@@ -959,29 +872,6 @@ function secondaryInvolvementInsertion($db, $Agent_ID, $Closing_ID, $price, $age
 }
 ?>
 
-<script>
-	// document.getElementById("startDate").addEventListener("change", function() {
-	// 	var input = this.value;
-	// 	var startDateEntered = new Date(input);
-	// 	document.getElementById("endDate").setAttribute("min", input);
-	// });
-	// document.getElementById("endDate").addEventListener("change", function() {
-	// 	var input = this.value;
-	// 	var endDateEntered = new Date(input);
-	// 	document.getElementById("startDate").setAttribute("max", input);
-	// });
 
-	function printDiv(divName) {
-		var printContents = document.getElementById(divName).innerHTML;
-		var originalContents = document.body.innerHTML;
-
-		document.body.innerHTML = printContents;
-
-		window.print();
-
-		document.body.innerHTML = originalContents;
-	}
-
-</script>
 </body>
 </html>
