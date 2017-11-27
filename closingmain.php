@@ -117,12 +117,12 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
 					////////////
 									//Secondary involvement insertion
 									$cAgentSQL =
-									"SELECT branch.President_ID,branch.VicePresident_ID, agent.ImmediateUpline_ID
-									FROM branch,agent,agent_branch_employment
-									WHERE branch.branch_id = agent_branch_employment.Branch_ID
-									AND agent_branch_employment.Agent_ID = agent.Agent_ID
-									AND agent_branch_employment.End IS NULL
-									AND agent.Agent_ID = " . $agents[$i];
+										"SELECT branch.President_ID,branch.VicePresident_ID, agent.ImmediateUpline_ID
+										FROM branch,agent,agent_branch_employment
+										WHERE branch.branch_id = agent_branch_employment.Branch_ID
+										AND agent_branch_employment.Agent_ID = agent.Agent_ID
+										AND agent_branch_employment.End IS NULL
+										AND agent.Agent_ID = " . $agents[$i];
 									$cAgentResult = mysqli_query($db, $cAgentSQL);
 									$cAgentRow = $cAgentResult->fetch_assoc();
 									//President & Vice President
@@ -133,8 +133,8 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
 									//If there is a president and he's not the primary agent
 									if($PresidentID != null && $PresidentID != $agents[$i]){
 										$cPresPSQL = //Current President Percentage
-										"SELECT Percentage FROM `paypercentages`
-										WHERE JobName = 'President' AND ValidityEnd IS NULL";
+											"SELECT Percentage FROM `paypercentages`
+											WHERE JobName = 'President' AND ValidityEnd IS NULL";
 										$cPresPResult = mysqli_query($db, $cPresPSQL);
 										$cPresPRow = $cPresPResult->fetch_assoc();
 										$cPresP = $cPresPRow["Percentage"];
@@ -144,8 +144,8 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
 									//If there is a vice president and he's not the primary agent
 									if($VicePresidentID != null && $VicePresidentID != $agents[$i]){
 										$cVPPSQL = //Current Vice President Percentage
-										"SELECT Percentage FROM `paypercentages`
-										WHERE JobName = 'Vice President' AND ValidityEnd IS NULL";
+											"SELECT Percentage FROM `paypercentages`
+											WHERE JobName = 'VicePresident' AND ValidityEnd IS NULL";
 										$cVPPResult = mysqli_query($db, $cVPPSQL);
 										$cVPPRow = $cVPPResult->fetch_assoc();
 										$cVPP = $cVPPRow["Percentage"];
@@ -156,7 +156,7 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
 									
 									if($ImmediateUplineID != null){//Upline 1
 										$UP2IDSQL = //Upline 2 ID and status of upline 1
-										"SELECT ImmediateUpline_ID,Status FROM agent WHERE Agent_ID=" . $ImmediateUplineID;
+											"SELECT ImmediateUpline_ID,Status FROM agent WHERE Agent_ID=" . $ImmediateUplineID;
 										$UP2IDResult = mysqli_query($db, $UP2IDSQL);
 										$UP2IDRow = $UP2IDResult->fetch_assoc();
 										$UP2ID = $UP2IDRow["ImmediateUpline_ID"];
