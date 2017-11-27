@@ -130,27 +130,35 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
 									$VicePresidentID  = $cAgentRow["VicePresident_ID"];
 									$ImmediateUplineID = $cAgentRow["ImmediateUpline_ID"];
 									$cPresP = $cVPP = "";
-									//If there is a president and he's not the primary agent
-									if($PresidentID != null && $PresidentID != $agents[$i]){
-										$cPresPSQL = //Current President Percentage
+
+									$cPresPSQL = //Current President Percentage
 											"SELECT Percentage FROM `paypercentages`
 											WHERE JobName = 'President' AND ValidityEnd IS NULL";
 										$cPresPResult = mysqli_query($db, $cPresPSQL);
 										$cPresPRow = $cPresPResult->fetch_assoc();
 										$cPresP = $cPresPRow["Percentage"];
-										secondaryInvolvementInsertion(
+									//If there is a president and he's not the primary agent
+									if($PresidentID != null && $PresidentID != $agents[$i]){										secondaryInvolvementInsertion(
 											$db, $PresidentID, $cID, $price, $p, $cPresP, $i, 2);
+									}else if($PresidentID == null){
+										secondaryInvolvementInsertion(
+											$db, 0, $cID, $price, $p, $cPresP, $i, 2);
 									}
-									//If there is a vice president and he's not the primary agent
-									if($VicePresidentID != null && $VicePresidentID != $agents[$i]){
-										$cVPPSQL = //Current Vice President Percentage
+
+
+									$cVPPSQL = //Current Vice President Percentage
 											"SELECT Percentage FROM `paypercentages`
 											WHERE JobName = 'VicePresident' AND ValidityEnd IS NULL";
 										$cVPPResult = mysqli_query($db, $cVPPSQL);
 										$cVPPRow = $cVPPResult->fetch_assoc();
 										$cVPP = $cVPPRow["Percentage"];
+									//If there is a vice president and he's not the primary agent
+									if($VicePresidentID != null && $VicePresidentID != $agents[$i]){
 										secondaryInvolvementInsertion(
 											$db, $VicePresidentID, $cID, $price, $p, $cVPP, $i, 3);
+									}else if($VicePresidentID == null){
+										secondaryInvolvementInsertion(
+											$db, 0, $cID, $price, $p, $cVPP, $i, 3);
 									}
 									//Uplines
 									
@@ -196,6 +204,10 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
 											$UP3IDResult = mysqli_query($db, $UP3IDSQL);
 											$UP3IDRow = $UP3IDResult->fetch_assoc();
 											$UP3ID = $UP3IDRow["ImmediateUpline_ID"];
+											if($UP3IDRow["Status"] == 0){//Upline 2 is fired/not in employment
+												secondaryInvolvementInsertion(//Money goes to the company
+													$db, 0, $cID, $price, $p, 2, $i, 5);
+											}
 											if(in_array($UP2ID , $agents)){//one of the primary agents involved
 												if($UP2ID == $PresidentID ){//Branch President
 													secondaryInvolvementInsertion(
@@ -228,9 +240,9 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
 												$UP3StatusResult = mysqli_query($db, $UP3StatusSQL);
 												$UP3StatusRow = $UP3StatusResult->fetch_assoc();
 												$UP3Status = $UP3StatusRow["ImmediateUpline_ID"];
-												if($UP3IDRow["Status"] == 0){//Upline 3 is fired/not in employment
+												if($UP3StatusRow["Status"] == 0){//Upline 3 is fired/not in employment
 													secondaryInvolvementInsertion(//Money goes to the company
-														$db, 0, $cID, $price, $p, 2, $i, 6);
+														$db, 0, $cID, $price, $p, 1, $i, 6);
 												}
 												if(in_array($UP3ID , $agents)){//one of the primary agents involved
 													if($UP3ID == $PresidentID ){//Branch President
@@ -257,8 +269,23 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
 													secondaryInvolvementInsertion(
 														$db, $UP3ID, $cID, $price, $p, 1, $i, 6);
 												}
+											}else{
+												secondaryInvolvementInsertion(//Upline 3 company
+													$db, 0, $cID, $price, $p, 1, $i, 6);
 											}
+										}else{
+											secondaryInvolvementInsertion(//Upline 2 company
+												$db, 0, $cID, $price, $p, 2, $i, 5);
+											secondaryInvolvementInsertion(//Upline 3 company
+												$db, 0, $cID, $price, $p, 1, $i, 6);
 										}
+									}else{
+										secondaryInvolvementInsertion(//Upline 1 company
+												$db, 0, $cID, $price, $p, 7, $i, 4);
+										secondaryInvolvementInsertion(//Upline 2 company
+												$db, 0, $cID, $price, $p, 2, $i, 5);
+										secondaryInvolvementInsertion(//Upline 3 company
+												$db, 0, $cID, $price, $p, 1, $i, 6);
 									}
 								}
 								else{
