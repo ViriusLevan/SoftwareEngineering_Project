@@ -709,8 +709,6 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
 			                        GROUP BY closing.closing_ID) aCount
 			                    WHERE Agent.Agent_ID = agent_involved_in_closing.Agent_ID
 			                    AND aCount.cID = agent_involved_in_closing.Closing_ID
-			                    AND DATEDIFF(aCount.cDate, agent_branch_employment.Started)>=0
-			                    AND (DATEDIFF(aCount.cDate, agent_branch_employment.End)<=0 OR agent_branch_employment.End IS NULL)
 			                    AND agent_branch_employment.Branch_ID = branch.branch_id
 			                    AND agent_branch_employment.Agent_ID = agent.Agent_ID
 			                    AND agent_involved_in_closing.Closing_ID = $row 
